@@ -7,5 +7,7 @@ namespace TuneMates_Backend.DataBase
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
         public DbSet<User> Users => Set<User>();
+
+        public DbSet<Room> Rooms => Set<Room>();
     }
 }
