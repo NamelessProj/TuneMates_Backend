@@ -1,6 +1,7 @@
 ﻿using Isopoh.Cryptography.Argon2;
 using Microsoft.EntityFrameworkCore;
 using TuneMates_Backend.DataBase;
+using TuneMates_Backend.Utils;
 
 namespace TuneMates_Backend.Controller
 {
@@ -42,7 +43,7 @@ namespace TuneMates_Backend.Controller
                 return TypedResults.BadRequest("Username, Email, and Password are required.");
 
             // Check if the email is already in use
-            if (await db.Users.AnyAsync(u => u.Email == user.Email))
+            if (await HelpMethods.IsEmailInUse(db, user.Email))
                 return TypedResults.Conflict("Email is already in use.");
 
             // Hash the password before storing it. We do this step last to avoid unnecessary computation.
@@ -53,9 +54,22 @@ namespace TuneMates_Backend.Controller
             return TypedResults.Ok(new UserResponse(user));
         }
 
-        public static async Task<IResult> EditUser()
+        public static async Task<IResult> EditUserById(AppDbContext db, int id, UserDTO userDto)
         {
-            return TypedResults.Ok();
+            var user = await db.Users.FindAsync(id);
+
+            if (user == null)
+                return TypedResults.NotFound("User not found.");
+
+            // Update fields if they are provided
+            if (!string.IsNullOrEmpty(userDto.Username))
+                user.Username = userDto.Username;
+
+            if (!string.IsNullOrEmpty(userDto.Email) && !userDto.Email.Equals(user.Email) && !await HelpMethods.IsEmailInUse(db, userDto.Email))
+                user.Email = userDto.Email;
+
+            await db.SaveChangesAsync();
+            return TypedResults.Ok(new UserResponse(user));
         }
 
         public static async Task<IResult> DeleteUser()
