@@ -8,6 +8,7 @@ namespace TuneMates_Backend.Route
         {
             var userGroup = group.MapGroup("/user");
 
+            userGroup.MapGet("/", UserController.GetAllUser);
             userGroup.MapPost("/", UserController.CreateUser);
             userGroup.MapPut("/", UserController.EditUser);
             userGroup.MapDelete("/", UserController.DeleteUser);
