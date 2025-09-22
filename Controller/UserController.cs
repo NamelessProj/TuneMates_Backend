@@ -103,12 +103,18 @@ namespace TuneMates_Backend.Controller
             return TypedResults.Ok("Password updated successfully.");
         }
 
-        public static async Task<IResult> DeleteUserById(AppDbContext db, int id)
+        public static async Task<IResult> DeleteUserById(AppDbContext db, int id, UserDTO userDto)
         {
             var user = await db.Users.FindAsync(id);
 
             if (user == null)
                 return TypedResults.NotFound("User not found.");
+
+            if (string.IsNullOrEmpty(userDto.Password))
+                return TypedResults.BadRequest("Password is required to delete the account.");
+
+            if (!Argon2.Verify(user.PasswordHash, userDto.Password))
+                return TypedResults.Unauthorized();
 
             db.Users.Remove(user);
             await db.SaveChangesAsync();
