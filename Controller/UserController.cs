@@ -2,9 +2,9 @@
 
 namespace TuneMates_Backend.Controller
 {
-    public class UserController
+    public static class UserController
     {
-        public async Task<IResult> CreateUser(AppDbContext db)
+        public static async Task<IResult> CreateUser(AppDbContext db)
         {
             var user = new User
             {
@@ -16,12 +16,12 @@ namespace TuneMates_Backend.Controller
             return TypedResults.Ok();
         }
 
-        public async Task<IResult> EditUser()
+        public static async Task<IResult> EditUser()
         {
             return TypedResults.Ok();
         }
 
-        public async Task<IResult> DeleteUser()
+        public static async Task<IResult> DeleteUser()
         {
             return TypedResults.Ok();
         }
