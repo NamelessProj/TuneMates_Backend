@@ -2,6 +2,7 @@ using Isopoh.Cryptography.Argon2;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using TuneMates_Backend.DataBase;
+using TuneMates_Backend.Route;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,8 @@ builder.Services.AddDbContext<AppDbContext>(opts => opts.UseNpgsql(builder.Confi
 var app = builder.Build();
 
 var api = app.MapGroup("/api");
+
+api.MapUserRoutes();
 
 api.MapGet("/", TestFunction);
 api.MapGet("/connect", Test2Function);
