@@ -72,9 +72,16 @@ namespace TuneMates_Backend.Controller
             return TypedResults.Ok(new UserResponse(user));
         }
 
-        public static async Task<IResult> DeleteUser()
+        public static async Task<IResult> DeleteUserById(AppDbContext db, int id)
         {
-            return TypedResults.Ok();
+            var user = await db.Users.FindAsync(id);
+
+            if (user == null)
+                return TypedResults.NotFound("User not found.");
+
+            db.Users.Remove(user);
+            await db.SaveChangesAsync();
+            return TypedResults.Ok("User deleted successfully.");
         }
     }
 }
