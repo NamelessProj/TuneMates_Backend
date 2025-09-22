@@ -46,6 +46,10 @@ namespace TuneMates_Backend.Controller
             if (await HelpMethods.IsEmailInUse(db, user.Email))
                 return TypedResults.Conflict("Email is already in use.");
 
+            // Validate email format
+            if (HelpMethods.IsValidEmail(user.Email))
+                return TypedResults.BadRequest("Invalid email format.");
+
             // Check if passwords match
             if (!userDto.Password.Equals(userDto.PasswordConfirm))
                 return TypedResults.BadRequest("Password and the confirmation do not match.");
@@ -69,8 +73,13 @@ namespace TuneMates_Backend.Controller
             if (!string.IsNullOrEmpty(userDto.Username))
                 user.Username = userDto.Username;
 
-            if (!string.IsNullOrEmpty(userDto.Email) && !userDto.Email.Equals(user.Email) && !await HelpMethods.IsEmailInUse(db, userDto.Email))
+            if (!string.IsNullOrEmpty(userDto.Email) &&
+                !userDto.Email.Equals(user.Email) &&
+                HelpMethods.IsValidEmail(userDto.Email) &&
+                !await HelpMethods.IsEmailInUse(db, userDto.Email))
+            {
                 user.Email = userDto.Email;
+            }
 
             await db.SaveChangesAsync();
             return TypedResults.Ok(new UserResponse(user));
