@@ -13,6 +13,7 @@ var app = builder.Build();
 var api = app.MapGroup("/api");
 
 api.MapUserRoutes();
+api.MapRoomRoutes();
 
 // Launch the application.
 app.Run();
