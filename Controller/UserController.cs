@@ -19,6 +19,16 @@ namespace TuneMates_Backend.Controller
             return TypedResults.Ok(users);
         }
 
+        public static async Task<IResult> GetUserById(AppDbContext db, int id)
+        {
+            var user = await db.Users.FindAsync(id);
+
+            if (user == null)
+                return TypedResults.NotFound("User not found.");
+
+            return TypedResults.Ok(new UserResponse(user));
+        }
+
         public static async Task<IResult> CreateUser(AppDbContext db, UserDTO userDto)
         {
             User user = new User()
