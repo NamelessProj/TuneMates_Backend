@@ -39,12 +39,16 @@ namespace TuneMates_Backend.Controller
             };
 
             // Check for null or empty fields
-            if (string.IsNullOrEmpty(user.Username) || string.IsNullOrEmpty(user.Email) || string.IsNullOrEmpty(userDto.Password))
+            if (string.IsNullOrEmpty(user.Username) || string.IsNullOrEmpty(user.Email) || string.IsNullOrEmpty(userDto.Password) || string.IsNullOrEmpty(userDto.PasswordConfirm))
                 return TypedResults.BadRequest("Username, Email, and Password are required.");
 
             // Check if the email is already in use
             if (await HelpMethods.IsEmailInUse(db, user.Email))
                 return TypedResults.Conflict("Email is already in use.");
+
+            // Check if passwords match
+            if (!userDto.Password.Equals(userDto.PasswordConfirm))
+                return TypedResults.BadRequest("Password and the confirmation do not match.");
 
             // Hash the password before storing it. We do this step last to avoid unnecessary computation.
             user.PasswordHash = Argon2.Hash(userDto.Password);
