@@ -72,6 +72,24 @@ namespace TuneMates_Backend.Controller
             return TypedResults.Ok(new UserResponse(user));
         }
 
+        public static async Task<IResult> EditUserPasswordById(AppDbContext db, int id, UserDTO userDto)
+        {
+            var user = await db.Users.FindAsync(id);
+
+            if (user == null)
+                return TypedResults.NotFound("User not found.");
+
+            if (string.IsNullOrEmpty(userDto.Password) || string.IsNullOrEmpty(userDto.PasswordConfirm))
+                return TypedResults.BadRequest("Password and PasswordConfirm are required.");
+
+            if (!userDto.Password.Equals(userDto.PasswordConfirm))
+                return TypedResults.BadRequest("Password and PasswordConfirm do not match.");
+
+            user.PasswordHash = Argon2.Hash(userDto.Password);
+            await db.SaveChangesAsync();
+            return TypedResults.Ok("Password updated successfully.");
+        }
+
         public static async Task<IResult> DeleteUserById(AppDbContext db, int id)
         {
             var user = await db.Users.FindAsync(id);
