@@ -23,5 +23,20 @@ namespace TuneMates_Backend.Utils
                 return false;
             }
         }
+
+        public static string GenerateSlug(string s)
+        {
+            // Convert to lower case
+            s = s.ToLowerInvariant();
+            // Replace spaces with hyphens
+            s = System.Text.RegularExpressions.Regex.Replace(s, @"\s+", "-");
+            // Remove invalid characters
+            s = System.Text.RegularExpressions.Regex.Replace(s, @"[^a-z0-9\-]", "");
+            // Remove multiple hyphens
+            s = System.Text.RegularExpressions.Regex.Replace(s, @"-+", "-");
+            // Trim hyphens from start and end
+            s = s.Trim('-');
+            return s;
+        }
     }
 }
