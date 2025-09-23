@@ -9,7 +9,7 @@ namespace TuneMates_Backend.Route
             var roomGroup = group.MapGroup("/room");
 
             roomGroup.MapGet("/{id:int}", RoomController.GetRoomById);
-            roomGroup.MapGet("/slug/{slug:string}", RoomController.GetRoomBySlug);
+            roomGroup.MapGet("/slug/{slug}", RoomController.GetRoomBySlug);
             roomGroup.MapGet("/user/{id:int}", RoomController.GetAllRoomsFromUser);
             roomGroup.MapPost("/", RoomController.CreateRoom);
             roomGroup.MapPut("/{id:int}", RoomController.EditRoom);
