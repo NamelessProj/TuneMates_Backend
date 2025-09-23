@@ -1,4 +1,5 @@
 ﻿using Isopoh.Cryptography.Argon2;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TuneMates_Backend.DataBase;
 using TuneMates_Backend.Utils;
@@ -29,7 +30,7 @@ namespace TuneMates_Backend.Controller
             return TypedResults.Ok(new RoomResponse(room));
         }
 
-        public static async Task<IResult> CreateRoom(AppDbContext db, RoomDTO roomDto)
+        public static async Task<IResult> CreateRoom(AppDbContext db, [FromBody] RoomDTO roomDto)
         {
             Room room = new()
             {
@@ -63,7 +64,7 @@ namespace TuneMates_Backend.Controller
             return TypedResults.Created($"/room/{room.Id}", new RoomResponse(room));
         }
 
-        public static async Task<IResult> EditRoom(AppDbContext db, RoomDTO roomDto, int id)
+        public static async Task<IResult> EditRoom(AppDbContext db, [FromBody] RoomDTO roomDto, int id)
         {
             var room = await db.Rooms.FindAsync(id);
 
@@ -106,7 +107,7 @@ namespace TuneMates_Backend.Controller
             return TypedResults.Ok(new RoomResponse(room));
         }
 
-        public static async Task<IResult> EditRoomPassword(AppDbContext db, RoomDTO roomDto, int id)
+        public static async Task<IResult> EditRoomPassword(AppDbContext db, [FromBody] RoomDTO roomDto, int id)
         {
             var room = await db.Rooms.FindAsync(id);
 

@@ -1,4 +1,5 @@
 ﻿using Isopoh.Cryptography.Argon2;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TuneMates_Backend.DataBase;
 using TuneMates_Backend.Utils;
@@ -30,7 +31,7 @@ namespace TuneMates_Backend.Controller
             return TypedResults.Ok(new UserResponse(user));
         }
 
-        public static async Task<IResult> CreateUser(AppDbContext db, UserDTO userDto)
+        public static async Task<IResult> CreateUser(AppDbContext db, [FromBody] UserDTO userDto)
         {
             User user = new User()
             {
@@ -65,7 +66,7 @@ namespace TuneMates_Backend.Controller
             return TypedResults.Ok(new UserResponse(user));
         }
 
-        public static async Task<IResult> EditUser(AppDbContext db, int id, UserDTO userDto)
+        public static async Task<IResult> EditUser(AppDbContext db, int id, [FromBody] UserDTO userDto)
         {
             var user = await db.Users.FindAsync(id);
 
@@ -88,7 +89,7 @@ namespace TuneMates_Backend.Controller
             return TypedResults.Ok(new UserResponse(user));
         }
 
-        public static async Task<IResult> EditUserPassword(AppDbContext db, int id, UserDTO userDto)
+        public static async Task<IResult> EditUserPassword(AppDbContext db, int id, [FromBody] UserDTO userDto)
         {
             var user = await db.Users.FindAsync(id);
 
@@ -109,7 +110,7 @@ namespace TuneMates_Backend.Controller
             return TypedResults.Ok("Password updated successfully.");
         }
 
-        public static async Task<IResult> DeleteUser(AppDbContext db, int id, UserDTO userDto)
+        public static async Task<IResult> DeleteUser(AppDbContext db, int id, [FromBody] UserDTO userDto)
         {
             var user = await db.Users.FindAsync(id);
 
