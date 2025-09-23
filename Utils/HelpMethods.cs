@@ -38,5 +38,21 @@ namespace TuneMates_Backend.Utils
             s = s.Trim('-');
             return s;
         }
+
+        public static bool IsPasswordValid(string password)
+        {
+            // At least 8 characters, at least one uppercase letter, one lowercase letter, one digit, and one special character
+            if (password.Length < 8)
+                return false;
+            if (!System.Text.RegularExpressions.Regex.IsMatch(password, @"[A-Z]"))
+                return false;
+            if (!System.Text.RegularExpressions.Regex.IsMatch(password, @"[a-z]"))
+                return false;
+            if (!System.Text.RegularExpressions.Regex.IsMatch(password, @"[0-9]"))
+                return false;
+            if (!System.Text.RegularExpressions.Regex.IsMatch(password, @"[\W_]"))
+                return false;
+            return true;
+        }
     }
 }
