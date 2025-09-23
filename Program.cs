@@ -1,4 +1,3 @@
-using Isopoh.Cryptography.Argon2;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using TuneMates_Backend.DataBase;
