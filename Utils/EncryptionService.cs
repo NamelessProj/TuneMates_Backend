@@ -13,8 +13,8 @@ namespace TuneMates_Backend.Utils
     {
         private readonly byte[] _key;
 
-        private const int TagByteLength = 16; // 128 bits
-        private const int NonceByteLength = 12; // 96 bits
+        private const int TagByteSize = 16; // 128 bits
+        private const int NonceByteSize = 12; // 96 bits
 
         public EncryptionService(IConfiguration cfg)
         {
@@ -28,11 +28,11 @@ namespace TuneMates_Backend.Utils
 
         public string Encrypt(string plaintext)
         {
-            using var aes = new AesGcm(_key);
-            byte[] nonce = RandomNumberGenerator.GetBytes(NonceByteLength); // 96-bit nonce
+            using var aes = new AesGcm(_key, TagByteSize);
+            byte[] nonce = RandomNumberGenerator.GetBytes(NonceByteSize); // 96-bit nonce
             byte[] plaintextBytes = Encoding.UTF8.GetBytes(plaintext);
             byte[] cyphertext = new byte[plaintextBytes.Length];
-            byte[] tag = new byte[TagByteLength]; // 128-bit tag
+            byte[] tag = new byte[TagByteSize]; // 128-bit tag
 
             aes.Encrypt(nonce, plaintextBytes, cyphertext, tag);
 
@@ -49,11 +49,11 @@ namespace TuneMates_Backend.Utils
         {
             // Decode the base64 string
             byte[] combined = Convert.FromBase64String(cyphertextBase64);
-            byte[] nonce = combined.Take(NonceByteLength).ToArray();
-            byte[] tag = combined.Skip(NonceByteLength).Take(TagByteLength).ToArray();
-            byte[] cyphertext = combined.Skip(NonceByteLength + TagByteLength).ToArray();
+            byte[] nonce = combined.Take(NonceByteSize).ToArray();
+            byte[] tag = combined.Skip(NonceByteSize).Take(TagByteSize).ToArray();
+            byte[] cyphertext = combined.Skip(NonceByteSize + TagByteSize).ToArray();
 
-            using var aes = new AesGcm(_key);
+            using var aes = new AesGcm(_key, TagByteSize);
             byte[] plaintext = new byte[cyphertext.Length];
             aes.Decrypt(nonce, cyphertext, tag, plaintext);
 
