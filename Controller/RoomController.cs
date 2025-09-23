@@ -63,7 +63,7 @@ namespace TuneMates_Backend.Controller
             return TypedResults.Created($"/room/{room.Id}", new RoomResponse(room));
         }
 
-        public static async Task<IResult> UpdateRoom(AppDbContext db, RoomDTO roomDto, int id)
+        public static async Task<IResult> EditRoom(AppDbContext db, RoomDTO roomDto, int id)
         {
             var room = await db.Rooms.FindAsync(id);
 
@@ -106,7 +106,7 @@ namespace TuneMates_Backend.Controller
             return TypedResults.Ok(new RoomResponse(room));
         }
 
-        public static async Task<IResult> UpdateRoomPassword(AppDbContext db, RoomDTO roomDto, int id)
+        public static async Task<IResult> EditRoomPassword(AppDbContext db, RoomDTO roomDto, int id)
         {
             var room = await db.Rooms.FindAsync(id);
 
