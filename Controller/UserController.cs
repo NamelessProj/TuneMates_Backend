@@ -62,7 +62,7 @@ namespace TuneMates_Backend.Controller
             return TypedResults.Ok(new UserResponse(user));
         }
 
-        public static async Task<IResult> EditUserById(AppDbContext db, int id, UserDTO userDto)
+        public static async Task<IResult> EditUser(AppDbContext db, int id, UserDTO userDto)
         {
             var user = await db.Users.FindAsync(id);
 
@@ -85,7 +85,7 @@ namespace TuneMates_Backend.Controller
             return TypedResults.Ok(new UserResponse(user));
         }
 
-        public static async Task<IResult> EditUserPasswordById(AppDbContext db, int id, UserDTO userDto)
+        public static async Task<IResult> EditUserPassword(AppDbContext db, int id, UserDTO userDto)
         {
             var user = await db.Users.FindAsync(id);
 
@@ -103,7 +103,7 @@ namespace TuneMates_Backend.Controller
             return TypedResults.Ok("Password updated successfully.");
         }
 
-        public static async Task<IResult> DeleteUserById(AppDbContext db, int id, UserDTO userDto)
+        public static async Task<IResult> DeleteUser(AppDbContext db, int id, UserDTO userDto)
         {
             var user = await db.Users.FindAsync(id);
 
