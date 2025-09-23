@@ -7,5 +7,6 @@
         public bool IsActive { get; set; } = true;
         public string Password { get; set; } = string.Empty;
         public string PasswordConfirm { get; set; } = string.Empty;
+        public string SpotifyPlaylistId { get; set; } = string.Empty;
     }
 }
