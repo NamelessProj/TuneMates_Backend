@@ -22,8 +22,9 @@ namespace TuneMates_Backend.Utils
             if (string.IsNullOrEmpty(base64Key))
                 throw new ArgumentNullException("Encryption key is not configured.");
             _key = Convert.FromBase64String(base64Key);
-            if (_key.Length != 32) // AES-256 requires a 32-byte key (256 bits)
-                throw new ArgumentException("Encryption key must be 32 bytes (256 bits) long.");
+            int actualBytes = _key.Length;
+            if (actualBytes != 32) // AES-256 requires a 32-byte key (256 bits)
+                throw new ArgumentException($"Encryption key must be 32 bytes (256 bits) long. Current length: {actualBytes} bytes.");
         }
 
         public string Encrypt(string plaintext)
