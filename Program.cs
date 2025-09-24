@@ -1,6 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using TuneMates_Backend.DataBase;
 using TuneMates_Backend.Route;
 using TuneMates_Backend.Utils;
