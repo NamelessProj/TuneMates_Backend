@@ -31,6 +31,64 @@ namespace TuneMates_Backend.Controller
             return TypedResults.Ok(new UserResponse(user));
         }
 
+        public static async Task<IResult> Register(HttpContext http, AppDbContext db, [FromBody] UserDTO userDto)
+        {
+            if (string.IsNullOrWhiteSpace(userDto.Username) ||
+                string.IsNullOrWhiteSpace(userDto.Email) ||
+                string.IsNullOrWhiteSpace(userDto.Password) ||
+                string.IsNullOrWhiteSpace(userDto.PasswordConfirm))
+                return TypedResults.BadRequest("Username, Email, Password, and PasswordConfirm are required.");
+
+            if (!HelpMethods.IsEmailValid(userDto.Email))
+                return TypedResults.BadRequest("Invalid email format.");
+
+            if (!HelpMethods.IsPasswordValid(userDto.Password))
+                return TypedResults.BadRequest("Password must be at least 8 characters long and include uppercase, lowercase, digit, and special character.");
+
+            if (!userDto.Password.Equals(userDto.PasswordConfirm))
+                return TypedResults.BadRequest("Password and PasswordConfirm do not match.");
+
+            if (await HelpMethods.IsEmailInUse(db, userDto.Email))
+                return TypedResults.Conflict("Email is already in use.");
+
+            User user = new()
+            {
+                Username = userDto.Username,
+                Email = userDto.Email,
+                PasswordHash = Argon2.Hash(userDto.Password)
+            };
+
+            db.Users.Add(user);
+            await db.SaveChangesAsync();
+
+            IConfiguration cfg = http.RequestServices.GetRequiredService<IConfiguration>();
+            string token = HelpMethods.GenerateJwtToken(cfg, user.Id);
+
+            return TypedResults.Ok(new {
+                User = new UserResponse(user),
+                Token = token
+            });
+        }
+
+        public static async Task<IResult> Login(HttpContext http, AppDbContext db, [FromBody] UserDTO userDto)
+        {
+            if (string.IsNullOrEmpty(userDto.Email) || string.IsNullOrEmpty(userDto.Password))
+                return TypedResults.BadRequest("Email and Password are required.");
+
+            var user = await db.Users.FirstOrDefaultAsync(u => u.Email == userDto.Email);
+
+            if (user == null || !Argon2.Verify(user.PasswordHash, userDto.Password))
+                return TypedResults.Unauthorized();
+
+            IConfiguration cfg = http.RequestServices.GetRequiredService<IConfiguration>();
+            string token = HelpMethods.GenerateJwtToken(cfg, user.Id);
+
+            return TypedResults.Ok(new {
+                User = new UserResponse(user),
+                Token = token
+            });
+        }
+
         public static async Task<IResult> CreateUser(AppDbContext db, [FromBody] UserDTO userDto)
         {
             User user = new User()
@@ -51,7 +109,7 @@ namespace TuneMates_Backend.Controller
                 return TypedResults.Conflict("Email is already in use.");
 
             // Validate email format
-            if (HelpMethods.IsValidEmail(user.Email))
+            if (HelpMethods.IsEmailValid(user.Email))
                 return TypedResults.BadRequest("Invalid email format.");
 
             // Check if passwords match
@@ -79,7 +137,7 @@ namespace TuneMates_Backend.Controller
 
             if (!string.IsNullOrEmpty(userDto.Email) &&
                 !userDto.Email.Equals(user.Email) &&
-                HelpMethods.IsValidEmail(userDto.Email) &&
+                HelpMethods.IsEmailValid(userDto.Email) &&
                 !await HelpMethods.IsEmailInUse(db, userDto.Email))
             {
                 user.Email = userDto.Email;
