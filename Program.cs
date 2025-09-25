@@ -36,6 +36,8 @@ builder.Services.AddDbContext<AppDbContext>(opts => opts.UseNpgsql(builder.Confi
 
 var app = builder.Build();
 
+DataBaseService.EnsureDatabaseCreated(app.Services);
+
 app.UseAuthentication();
 app.UseAuthorization();
 
