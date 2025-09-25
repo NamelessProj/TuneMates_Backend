@@ -36,20 +36,27 @@ builder.Services.AddDbContext<AppDbContext>(opts => opts.UseNpgsql(builder.Confi
 
 var app = builder.Build();
 
+app.UseAuthentication();
+app.UseAuthorization();
+
 var api = app.MapGroup("/api");
 
 api.MapUserRoutes();
 api.MapRoomRoutes();
 
-api.MapGet("/test/{text}", TestEndpoint);
+api.MapPost("/test/{text}", TestEndpoint).RequireAuthorization();
 
 static async Task<IResult> TestEndpoint(HttpContext http, string text)
 {
-    IConfiguration cfg = http.RequestServices.GetRequiredService<IConfiguration>();
-    EncryptionService encryptionService = new(cfg);
-    string encrypted = encryptionService.Encrypt(text);
-    string decrypted = encryptionService.Decrypt(encrypted);
-    return TypedResults.Ok(new { original = text, encrypted, decrypted });
+    // Getting the user ID from the JWT token
+    var userId = HelpMethods.GetUserIdFromJwtClaims(http);
+
+    return TypedResults.Ok(new
+    {
+        Message = "Test endpoint is working!",
+        Text = text,
+        UserId = userId != null ? userId : 0
+    });
 }
 
 // Launch the application.
