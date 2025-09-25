@@ -87,5 +87,19 @@ namespace TuneMates_Backend.Utils
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
+        public static int? GetUserIdFromJwtClaims(HttpContext http)
+        {
+            var claims = http.User.Claims.Select(c => new { c.Type, c.Value }).ToList();
+
+            var userIdClaim = http.User.Claims.FirstOrDefault(c =>
+                c.Type == JwtRegisteredClaimNames.Sub ||
+                c.Type == ClaimTypes.NameIdentifier ||
+                c.Type.EndsWith("/nameidentifier")
+            );
+            var userId = userIdClaim != null && int.TryParse(userIdClaim.Value, out var id) ? id : 0;
+
+            return userId == 0 ? null : userId;
+        }
     }
 }
