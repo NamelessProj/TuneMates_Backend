@@ -40,26 +40,6 @@ namespace TuneMates_Backend.Utils
         }
 
         /// <summary>
-        /// Generate a URL-friendly slug from a given string
-        /// </summary>
-        /// <param name="s">The input string</param>
-        /// <returns>A URL-friendly slug</returns>
-        public static string GenerateSlug(string s)
-        {
-            // Convert to lower case
-            s = s.ToLowerInvariant();
-            // Replace spaces with hyphens
-            s = System.Text.RegularExpressions.Regex.Replace(s, @"\s+", "-");
-            // Remove invalid characters
-            s = System.Text.RegularExpressions.Regex.Replace(s, @"[^a-z0-9\-]", "");
-            // Remove multiple hyphens
-            s = System.Text.RegularExpressions.Regex.Replace(s, @"-+", "-");
-            // Trim hyphens from start and end
-            s = s.Trim('-');
-            return s;
-        }
-
-        /// <summary>
         /// Validate password complexity
         /// </summary>
         /// <param name="password">The password to validate</param>
@@ -78,6 +58,26 @@ namespace TuneMates_Backend.Utils
             if (!System.Text.RegularExpressions.Regex.IsMatch(password, @"[\W_]"))
                 return false;
             return true;
+        }
+
+        /// <summary>
+        /// Generate a URL-friendly slug from a given string
+        /// </summary>
+        /// <param name="s">The input string</param>
+        /// <returns>A URL-friendly slug</returns>
+        public static string GenerateSlug(string s)
+        {
+            // Convert to lower case
+            s = s.ToLowerInvariant();
+            // Replace spaces with hyphens
+            s = System.Text.RegularExpressions.Regex.Replace(s, @"\s+", "-");
+            // Remove invalid characters
+            s = System.Text.RegularExpressions.Regex.Replace(s, @"[^a-z0-9\-]", "");
+            // Remove multiple hyphens
+            s = System.Text.RegularExpressions.Regex.Replace(s, @"-+", "-");
+            // Trim hyphens from start and end
+            s = s.Trim('-');
+            return s;
         }
 
         /// <summary>
