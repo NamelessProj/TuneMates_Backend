@@ -14,7 +14,7 @@ where they can share and enjoy music together in real-time. The backend is built
 ## Running the Application
 1. Clone the repository:
    ```bash
-   git clone fdfdffgsdfsdfs 
+   git clone https://github.com/NamelessProj/TuneMates_Backend.git 
    dotnet run
    ```
 1. Navigate to `http://localhost:7016` in your web browser.
