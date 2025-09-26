@@ -11,7 +11,7 @@ namespace TuneMates_Backend.Route
         /// <returns>The updated <see cref="RouteGroupBuilder"/> with user routes mapped.</returns>
         public static RouteGroupBuilder MapUserRoutes(this RouteGroupBuilder group)
         {
-            var userGroup = group.MapGroup("/user");
+            var userGroup = group.MapGroup("/users");
 
             userGroup.MapGet("/", UserController.GetAllUser);
             userGroup.MapGet("/{id:int}", UserController.GetUserById);

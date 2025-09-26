@@ -11,7 +11,7 @@ namespace TuneMates_Backend.Route
         /// <returns>The updated <see cref="RouteGroupBuilder"/> with room routes mapped.</returns>
         public static RouteGroupBuilder MapRoomRoutes(this RouteGroupBuilder group)
         {
-            var roomGroup = group.MapGroup("/room");
+            var roomGroup = group.MapGroup("/rooms");
 
             roomGroup.MapGet("/", RoomController.GetAllRoomsFromUser).RequireAuthorization();
             roomGroup.MapGet("/{id:int}", RoomController.GetRoomById).RequireAuthorization();
