@@ -8,6 +8,12 @@ namespace TuneMates_Backend.Controller
 {
     public static class RoomController
     {
+        /// <summary>
+        /// Get all rooms belonging to the authenticated user.
+        /// </summary>
+        /// <param name="http">The HTTP context, used to get the user ID from JWT claims.</param>
+        /// <param name="db">The database context.</param>
+        /// <returns>A list of <see cref="RoomResponse"/> objects if the user is authenticated, otherwise an unauthorized response.</returns>
         public static async Task<IResult> GetAllRoomsFromUser(HttpContext http, AppDbContext db)
         {
             var id = HelpMethods.GetUserIdFromJwtClaims(http);
@@ -17,6 +23,13 @@ namespace TuneMates_Backend.Controller
             return TypedResults.Ok(rooms);
         }
 
+        ///<summary>
+        /// Get a room by its <paramref name="id"/>. Only the owner of the room can access it.
+        ///</summary>
+        ///<param name="http">The HTTP context, used to get the user ID from JWT claims.</param>
+        ///<param name="db">The database context.</param>
+        ///<param name="id">The ID of the room to retrieve.</param>
+        ///<returns>A <see cref="RoomResponse"/> if found and authorized, otherwise an appropriate error response.</returns>
         public static async Task<IResult> GetRoomById(HttpContext http, AppDbContext db, int id)
         {
             var room = await db.Rooms.FindAsync(id);
@@ -30,6 +43,12 @@ namespace TuneMates_Backend.Controller
             return TypedResults.Ok(new RoomResponse(room));
         }
 
+        /// <summary>
+        /// Get a room by its slug. This endpoint is public and does not require authentication.
+        /// </summary>
+        /// <param name="db">The database context.</param>
+        /// <param name="slug">The slug of the room to retrieve.</param>
+        /// <returns>A <see cref="RoomResponse"/> if found, otherwise a not found response.</returns>
         public static async Task<IResult> GetRoomBySlug(AppDbContext db, string slug)
         {
             var room = await db.Rooms.FirstOrDefaultAsync(r => r.Slug == slug);
@@ -38,6 +57,13 @@ namespace TuneMates_Backend.Controller
             return TypedResults.Ok(new RoomResponse(room));
         }
 
+        /// <summary>
+        /// Create a new room for the authenticated user.
+        /// </summary>
+        /// <param name="http">The HTTP context, used to get the user ID from JWT claims.</param>
+        /// <param name="db">The database context.</param>
+        /// <param name="roomDto">The room data transfer object containing the details of the room to be created.</param>
+        /// <returns>A Created result with the new room's details if successful, otherwise an appropriate error response.</returns>
         public static async Task<IResult> CreateRoom(HttpContext http, AppDbContext db, [FromBody] RoomDTO roomDto)
         {
 
@@ -78,6 +104,14 @@ namespace TuneMates_Backend.Controller
             return TypedResults.Created($"/room/{room.Id}", new RoomResponse(room));
         }
 
+        /// <summary>
+        /// Edit an existing room. Only the owner of the room can edit it.
+        /// </summary>
+        /// <param name="http">The HTTP context, used to get the user ID from JWT claims.</param>
+        /// <param name="db">The database context.</param>
+        /// <param name="roomDto">The room data transfer object containing the updated details of the room.</param>
+        /// <param name="roomId">The ID of the room to be edited.</param>
+        /// <returns>The updated room details if successful, otherwise an appropriate error response.</returns>
         public static async Task<IResult> EditRoom(HttpContext http, AppDbContext db, [FromBody] RoomDTO roomDto, int roomId)
         {
             var id = HelpMethods.GetUserIdFromJwtClaims(http);
@@ -128,6 +162,14 @@ namespace TuneMates_Backend.Controller
             return TypedResults.Ok(new RoomResponse(room));
         }
 
+        /// <summary>
+        /// Edit the password of an existing room. Only the owner of the room can edit it.
+        /// </summary>
+        /// <param name="http">The HTTP context, used to get the user ID from JWT claims.</param>
+        /// <param name="db">The database context.</param>
+        /// <param name="roomDto">THe room data transfer object containing the new password details.</param>
+        /// <param name="id">The ID of the room to be edited.</param>
+        /// <returns>The updated room details if successful, otherwise an appropriate error response.</returns>
         public static async Task<IResult> EditRoomPassword(HttpContext http, AppDbContext db, [FromBody] RoomDTO roomDto, int id)
         {
             var userId = HelpMethods.GetUserIdFromJwtClaims(http);
@@ -152,6 +194,13 @@ namespace TuneMates_Backend.Controller
             return TypedResults.Ok(new RoomResponse(room));
         }
 
+        /// <summary>
+        /// Delete a room by its ID. Only the owner of the room can delete it.
+        /// </summary>
+        /// <param name="http">The HTTP context, used to get the user ID from JWT claims.</param>
+        /// <param name="db">The database context.</param>
+        /// <param name="id">The ID of the room to be deleted.</param>
+        /// <returns>The result of the deletion operation, either success or an appropriate error response.</returns>
         public static async Task<IResult> DeleteRoom(HttpContext http, AppDbContext db, int id)
         {
             var room = await db.Rooms.FindAsync(id);
