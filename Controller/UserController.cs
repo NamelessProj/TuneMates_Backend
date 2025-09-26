@@ -124,8 +124,12 @@ namespace TuneMates_Backend.Controller
             return TypedResults.Ok(new UserResponse(user));
         }
 
-        public static async Task<IResult> EditUser(AppDbContext db, int id, [FromBody] UserDTO userDto)
+        public static async Task<IResult> EditUser(HttpContext http, AppDbContext db, [FromBody] UserDTO userDto)
         {
+            var id = HelpMethods.GetUserIdFromJwtClaims(http);
+            if (id == null)
+                return TypedResults.Unauthorized();
+
             var user = await db.Users.FindAsync(id);
 
             if (user == null)
@@ -147,8 +151,12 @@ namespace TuneMates_Backend.Controller
             return TypedResults.Ok(new UserResponse(user));
         }
 
-        public static async Task<IResult> EditUserPassword(AppDbContext db, int id, [FromBody] UserDTO userDto)
+        public static async Task<IResult> EditUserPassword(HttpContext http, AppDbContext db, [FromBody] UserDTO userDto)
         {
+            var id = HelpMethods.GetUserIdFromJwtClaims(http);
+            if (id == null)
+                return TypedResults.Unauthorized();
+
             var user = await db.Users.FindAsync(id);
 
             if (user == null)
@@ -168,8 +176,12 @@ namespace TuneMates_Backend.Controller
             return TypedResults.Ok("Password updated successfully.");
         }
 
-        public static async Task<IResult> DeleteUser(AppDbContext db, int id, [FromBody] UserDTO userDto)
+        public static async Task<IResult> DeleteUser(HttpContext http, AppDbContext db, [FromBody] UserDTO userDto)
         {
+            var id = HelpMethods.GetUserIdFromJwtClaims(http);
+            if (id == null)
+                return TypedResults.Unauthorized();
+
             var user = await db.Users.FindAsync(id);
 
             if (user == null)
