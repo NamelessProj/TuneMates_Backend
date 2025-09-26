@@ -4,6 +4,11 @@ namespace TuneMates_Backend.Route
 {
     public static class RoomRoutes
     {
+        /// <summary>
+        /// Map room-related routes to the given <see cref="RouteGroupBuilder"/>.
+        /// </summary>
+        /// <param name="group">The <see cref="RouteGroupBuilder"/> to map the routes to.</param>
+        /// <returns>The updated <see cref="RouteGroupBuilder"/> with room routes mapped.</returns>
         public static RouteGroupBuilder MapRoomRoutes(this RouteGroupBuilder group)
         {
             var roomGroup = group.MapGroup("/room");

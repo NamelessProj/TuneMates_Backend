@@ -4,6 +4,11 @@ namespace TuneMates_Backend.Route
 {
     public static class UserRoutes
     {
+        /// <summary>
+        /// Map user-related routes to the given <see cref="RouteGroupBuilder"/>.
+        /// </summary>
+        /// <param name="group">The <see cref="RouteGroupBuilder"/> to map the routes to.</param>
+        /// <returns>The updated <see cref="RouteGroupBuilder"/> with user routes mapped.</returns>
         public static RouteGroupBuilder MapUserRoutes(this RouteGroupBuilder group)
         {
             var userGroup = group.MapGroup("/user");
