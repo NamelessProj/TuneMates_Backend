@@ -1,3 +1,7 @@
+![.NET version](https://img.shields.io/badge/.NET_9-512BD4?style=for-the-badge)
+![Project licence](https://img.shields.io/github/license/NamelessProj/TuneMates_Backend?style=for-the-badge)
+![Repo size](https://img.shields.io/github/repo-size/NamelessProj/TuneMates_Backend?style=for-the-badge)
+
 # TuneMates_Backend
 TuneMates is a web application that allows users to create and join music listening rooms, 
 where they can share and enjoy music together in real-time. The backend is built using .NET 9 in C#.
