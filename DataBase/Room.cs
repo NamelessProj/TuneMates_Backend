@@ -3,6 +3,7 @@
     public class Room
     {
         public int Id { get; set; }
+        /// <value>The ID of the user who created the room</value>
         public int UserId { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Slug { get; set; } = string.Empty;
