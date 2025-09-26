@@ -10,6 +10,10 @@
 
         public RoomResponse() { }
 
+        /// <summary>
+        /// Constructs a RoomResponse object from a <see cref="Room"/> object.
+        /// </summary>
+        /// <param name="r">The <see cref="Room"/> object to convert.</param>
         public RoomResponse(Room r)
         {
             Id = r.Id;

@@ -9,6 +9,10 @@
 
         public UserResponse() { }
 
+        /// <summary>
+        /// Constructs a UserResponse object from a <see cref="User"/> object.
+        /// </summary>
+        /// <param name="user">The <see cref="User"/> object to convert.</param>
         public UserResponse(User user)
         {
             Id = user.Id;
