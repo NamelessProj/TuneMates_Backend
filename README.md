@@ -72,4 +72,4 @@ The `Jwt:Issuer` and `Jwt:Audience` should be set to appropriate values for your
 - `GET /api/rooms/{slug}`: Get details of a specific room by its slug.
 - `PUT /api/rooms/{id}`: Update a room by its id (requires authentication and ownership).
 - `PUT /api/rooms/password/{id}`: Update a room's password by its id (requires authentication and ownership).
-- `DELETE /api/rooms/{slug}`: Delete a room by its slug (requires authentication and ownership).
+- `DELETE /api/rooms/{id}`: Delete a room by its slug (requires authentication and ownership).
