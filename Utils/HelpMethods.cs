@@ -10,11 +10,22 @@ namespace TuneMates_Backend.Utils
 {
     public static class HelpMethods
     {
+        /// <summary>
+        /// Check if an email is already in use in the database
+        /// </summary>
+        /// <param name="db">The database context</param>
+        /// <param name="email">The email to check</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. The task result contains true if the email is in use, otherwise false.</returns>
         public static async Task<bool> IsEmailInUse(AppDbContext db, string email)
         {
             return await db.Users.AnyAsync(u => u.Email == email);
         }
 
+        /// <summary>
+        /// Validate the format of an email address
+        /// </summary>
+        /// <param name="email">The email address to validate</param>
+        /// <returns>A <c>bool</c> indicating whether the email format is valid</returns>
         public static bool IsEmailValid(string email)
         {
             try
@@ -28,6 +39,11 @@ namespace TuneMates_Backend.Utils
             }
         }
 
+        /// <summary>
+        /// Generate a URL-friendly slug from a given string
+        /// </summary>
+        /// <param name="s">The input string</param>
+        /// <returns>A URL-friendly slug</returns>
         public static string GenerateSlug(string s)
         {
             // Convert to lower case
@@ -43,6 +59,11 @@ namespace TuneMates_Backend.Utils
             return s;
         }
 
+        /// <summary>
+        /// Validate password complexity
+        /// </summary>
+        /// <param name="password">The password to validate</param>
+        /// <returns>A <c>bool</c> indicating whether the password meets complexity requirements</returns>
         public static bool IsPasswordValid(string password)
         {
             // At least 8 characters, at least one uppercase letter, one lowercase letter, one digit, and one special character
@@ -59,6 +80,13 @@ namespace TuneMates_Backend.Utils
             return true;
         }
 
+        /// <summary>
+        /// Generate a JWT token for a user with the given <paramref name="id"/>
+        /// </summary>
+        /// <param name="cfg">The configuration containing JWT settings</param>
+        /// <param name="id">The user ID</param>
+        /// <returns>A JWT token as a <c>string</c></returns>
+        /// <exception cref="ArgumentNullException">Thrown if JWT configuration is missing or incomplete</exception>
         public static string GenerateJwtToken(IConfiguration cfg, int id)
         {
             var jwtKey = cfg["Jwt:Key"];
@@ -88,6 +116,11 @@ namespace TuneMates_Backend.Utils
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
+        /// <summary>
+        /// Extract the user ID from JWT claims in the given <paramref name="http"/> context
+        /// </summary>
+        /// <param name="http">The current HTTP context</param>
+        /// <returns>The user ID as a nullable <c>int</c>, or <c>null</c> if not found or invalid</returns>
         public static int? GetUserIdFromJwtClaims(HttpContext http)
         {
             var claims = http.User.Claims.Select(c => new { c.Type, c.Value }).ToList();
