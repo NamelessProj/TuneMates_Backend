@@ -8,6 +8,11 @@ namespace TuneMates_Backend.Controller
 {
     public static class UserController
     {
+        /// <summary>
+        /// Get all users (for testing purposes only, not for production)
+        /// </summary>
+        /// <param name="db">Database context</param>
+        /// <returns>A list of all users in the form of <see cref="UserResponse"/></returns>
         public static async Task<IResult> GetAllUser(AppDbContext db)
         {
             var users = await db.Users.Select(u => new UserResponse
@@ -21,6 +26,12 @@ namespace TuneMates_Backend.Controller
             return TypedResults.Ok(users);
         }
 
+        /// <summary>
+        /// Get user by <paramref name="id"/>
+        /// </summary>
+        /// <param name="db">Database context</param>
+        /// <param name="id">User ID</param>
+        /// <returns>The user in the form of <see cref="UserResponse"/></returns>
         public static async Task<IResult> GetUserById(AppDbContext db, int id)
         {
             var user = await db.Users.FindAsync(id);
@@ -31,6 +42,13 @@ namespace TuneMates_Backend.Controller
             return TypedResults.Ok(new UserResponse(user));
         }
 
+        /// <summary>
+        /// Register a new user
+        /// </summary>
+        /// <param name="http">The current HTTP context</param>
+        /// <param name="db">Database context</param>
+        /// <param name="userDto">User data transfer object containing registration details</param>
+        /// <returns>The registered user in the form of <see cref="UserResponse"/> and a JWT token</returns>
         public static async Task<IResult> Register(HttpContext http, AppDbContext db, [FromBody] UserDTO userDto)
         {
             if (string.IsNullOrWhiteSpace(userDto.Username) ||
@@ -70,6 +88,13 @@ namespace TuneMates_Backend.Controller
             });
         }
 
+        /// <summary>
+        /// Authenticate a user and provide a JWT token
+        /// </summary>
+        /// <param name="http">The current HTTP context</param>
+        /// <param name="db">The database context</param>
+        /// <param name="userDto">User data transfer object containing login details</param>
+        /// <returns>The authenticated user in the form of <see cref="UserResponse"/> and a JWT token</returns>
         public static async Task<IResult> Login(HttpContext http, AppDbContext db, [FromBody] UserDTO userDto)
         {
             if (string.IsNullOrEmpty(userDto.Email) || string.IsNullOrEmpty(userDto.Password))
@@ -89,6 +114,13 @@ namespace TuneMates_Backend.Controller
             });
         }
 
+        /// <summary>
+        /// Edit user details
+        /// </summary>
+        /// <param name="http">The current HTTP context</param>
+        /// <param name="db">The database context</param>
+        /// <param name="userDto">The user data transfer object containing updated user details</param>
+        /// <returns>The updated user in the form of <see cref="UserResponse"/></returns>
         public static async Task<IResult> EditUser(HttpContext http, AppDbContext db, [FromBody] UserDTO userDto)
         {
             var id = HelpMethods.GetUserIdFromJwtClaims(http);
@@ -116,6 +148,13 @@ namespace TuneMates_Backend.Controller
             return TypedResults.Ok(new UserResponse(user));
         }
 
+        /// <summary>
+        /// Change user password
+        /// </summary>
+        /// <param name="http">The current HTTP context</param>
+        /// <param name="db">The database context</param>
+        /// <param name="userDto">The user data transfer object containing the new password details</param>
+        /// <returns>A success message if the password was updated successfully</returns>
         public static async Task<IResult> EditUserPassword(HttpContext http, AppDbContext db, [FromBody] UserDTO userDto)
         {
             var id = HelpMethods.GetUserIdFromJwtClaims(http);
@@ -141,6 +180,13 @@ namespace TuneMates_Backend.Controller
             return TypedResults.Ok("Password updated successfully.");
         }
 
+        /// <summary>
+        /// Delete user account
+        /// </summary>
+        /// <param name="http">The current HTTP context</param>
+        /// <param name="db">The database context</param>
+        /// <param name="userDto">The user data transfer object containing the password for verification</param>
+        /// <returns>A success message if the account was deleted successfully</returns>
         public static async Task<IResult> DeleteUser(HttpContext http, AppDbContext db, [FromBody] UserDTO userDto)
         {
             var id = HelpMethods.GetUserIdFromJwtClaims(http);
