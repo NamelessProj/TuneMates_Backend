@@ -63,7 +63,7 @@ namespace TuneMates_Backend.Controller
         /// <param name="http">The HTTP context, used to get the user ID from JWT claims.</param>
         /// <param name="db">The database context.</param>
         /// <param name="roomDto">The room data transfer object containing the details of the room to be created.</param>
-        /// <returns>A Created result with the new room's details if successful, otherwise an appropriate error response.</returns>
+        /// <returns>A <see cref="RoomResponse"/> if the room is created successfully, otherwise an appropriate error response.</returns>
         public static async Task<IResult> CreateRoom(HttpContext http, AppDbContext db, [FromBody] RoomDTO roomDto)
         {
 
@@ -111,7 +111,7 @@ namespace TuneMates_Backend.Controller
         /// <param name="db">The database context.</param>
         /// <param name="roomDto">The room data transfer object containing the updated details of the room.</param>
         /// <param name="roomId">The ID of the room to be edited.</param>
-        /// <returns>The updated room details if successful, otherwise an appropriate error response.</returns>
+        /// <returns>A <see cref="RoomResponse"/> if the room is updated successfully, otherwise an appropriate error response.</returns>
         public static async Task<IResult> EditRoom(HttpContext http, AppDbContext db, [FromBody] RoomDTO roomDto, int roomId)
         {
             var id = HelpMethods.GetUserIdFromJwtClaims(http);
@@ -169,7 +169,7 @@ namespace TuneMates_Backend.Controller
         /// <param name="db">The database context.</param>
         /// <param name="roomDto">THe room data transfer object containing the new password details.</param>
         /// <param name="id">The ID of the room to be edited.</param>
-        /// <returns>The updated room details if successful, otherwise an appropriate error response.</returns>
+        /// <returns>A <see cref="RoomResponse"/> if the password is updated successfully, otherwise an appropriate error response.</returns>
         public static async Task<IResult> EditRoomPassword(HttpContext http, AppDbContext db, [FromBody] RoomDTO roomDto, int id)
         {
             var userId = HelpMethods.GetUserIdFromJwtClaims(http);
@@ -200,7 +200,7 @@ namespace TuneMates_Backend.Controller
         /// <param name="http">The HTTP context, used to get the user ID from JWT claims.</param>
         /// <param name="db">The database context.</param>
         /// <param name="id">The ID of the room to be deleted.</param>
-        /// <returns>The result of the deletion operation, either success or an appropriate error response.</returns>
+        /// <returns>A success message if the room is deleted successfully, otherwise an appropriate error response.</returns>
         public static async Task<IResult> DeleteRoom(HttpContext http, AppDbContext db, int id)
         {
             var room = await db.Rooms.FindAsync(id);
