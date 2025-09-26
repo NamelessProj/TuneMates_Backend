@@ -8,17 +8,25 @@ namespace TuneMates_Backend.Controller
 {
     public static class RoomController
     {
-        public static async Task<IResult> GetAllRoomsFromUser(AppDbContext db, int id)
+        public static async Task<IResult> GetAllRoomsFromUser(HttpContext http, AppDbContext db)
         {
+            var id = HelpMethods.GetUserIdFromJwtClaims(http);
+            if (id == null)
+                return TypedResults.Unauthorized();
             var rooms = await db.Rooms.Where(r => r.UserId == id).Select(r => new RoomResponse(r)).ToListAsync();
             return TypedResults.Ok(rooms);
         }
 
-        public static async Task<IResult> GetRoomById(AppDbContext db, int id)
+        public static async Task<IResult> GetRoomById(HttpContext http, AppDbContext db, int id)
         {
             var room = await db.Rooms.FindAsync(id);
             if (room == null)
                 return TypedResults.NotFound("Room not found.");
+
+            var userId = HelpMethods.GetUserIdFromJwtClaims(http);
+            if (userId == null || room.UserId != userId)
+                return TypedResults.Unauthorized();
+
             return TypedResults.Ok(new RoomResponse(room));
         }
 
@@ -30,12 +38,18 @@ namespace TuneMates_Backend.Controller
             return TypedResults.Ok(new RoomResponse(room));
         }
 
-        public static async Task<IResult> CreateRoom(AppDbContext db, [FromBody] RoomDTO roomDto)
+        public static async Task<IResult> CreateRoom(HttpContext http, AppDbContext db, [FromBody] RoomDTO roomDto)
         {
+
+            var userId = HelpMethods.GetUserIdFromJwtClaims(http);
+            if (userId == null || !await db.Users.AnyAsync(u => u.Id == userId))
+                return TypedResults.Unauthorized();
+
             Room room = new()
             {
                 Name = roomDto.Name,
-                IsActive = roomDto.IsActive
+                IsActive = roomDto.IsActive,
+                UserId = userId.Value,
             };
 
             // Check for null or empty fields
@@ -43,8 +57,8 @@ namespace TuneMates_Backend.Controller
                 return TypedResults.BadRequest("Name and Password are required.");
 
             // Check if the user already has a room with the same name
-            //if (await db.Rooms.AnyAsync(r => r.Name == room.Name && r.UserId == roomDto.UserId))
-            //    return TypedResults.Conflict("You already have a room with this name. Please choose a different name.");
+            if (await db.Rooms.AnyAsync(r => r.Name == room.Name && r.UserId == userId))
+                return TypedResults.Conflict("You already have a room with this name. Please choose a different name.");
 
             // Create a URL-friendly slug from the room name
             room.Slug = HelpMethods.GenerateSlug(room.Name);
@@ -64,9 +78,16 @@ namespace TuneMates_Backend.Controller
             return TypedResults.Created($"/room/{room.Id}", new RoomResponse(room));
         }
 
-        public static async Task<IResult> EditRoom(AppDbContext db, [FromBody] RoomDTO roomDto, int id)
+        public static async Task<IResult> EditRoom(HttpContext http, AppDbContext db, [FromBody] RoomDTO roomDto, int roomId)
         {
-            var room = await db.Rooms.FindAsync(id);
+            var id = HelpMethods.GetUserIdFromJwtClaims(http);
+            if (id == null || !await db.Users.AnyAsync(u => u.Id == id))
+                return TypedResults.Unauthorized();
+
+            // Get the room by the UserId and roomId to ensure the user owns the room
+            var room = await db.Rooms.AnyAsync(r => r.Id == roomId && r.UserId == id) 
+                ? await db.Rooms.FindAsync(roomId) 
+                : null;
 
             if (room == null)
                 return TypedResults.NotFound("Room not found.");
@@ -82,8 +103,8 @@ namespace TuneMates_Backend.Controller
                 room.Name = roomDto.Name;
 
                 // Check if the user already has a room with the same name
-                //if (await db.Rooms.AnyAsync(r => r.Name == room.Name && r.UserId == room.UserId && r.Id != room.Id))
-                //    room.Name = oldName; // Revert to old name if duplicate found
+                if (await db.Rooms.AnyAsync(r => r.Name == room.Name && r.UserId == room.UserId && r.Id != room.Id))
+                    room.Name = oldName; // Revert to old name if duplicate found
 
                 // Regenerate the slug only if the name has changed (case-insensitive)
                 if (!oldName.ToLowerInvariant().Equals(room.Name.ToLowerInvariant()))
@@ -107,12 +128,17 @@ namespace TuneMates_Backend.Controller
             return TypedResults.Ok(new RoomResponse(room));
         }
 
-        public static async Task<IResult> EditRoomPassword(AppDbContext db, [FromBody] RoomDTO roomDto, int id)
+        public static async Task<IResult> EditRoomPassword(HttpContext http, AppDbContext db, [FromBody] RoomDTO roomDto, int id)
         {
+            var userId = HelpMethods.GetUserIdFromJwtClaims(http);
+            if (userId == null || !await db.Users.AnyAsync(u => u.Id == userId))
+                return TypedResults.Unauthorized();
+
             var room = await db.Rooms.FindAsync(id);
 
-            if (room == null)
-                return TypedResults.NotFound("Room not found.");
+            // Ensure the room exists and belongs to the authenticated user
+            if (room == null || room.UserId != userId)
+                return TypedResults.Unauthorized();
 
             if (string.IsNullOrWhiteSpace(roomDto.Password) || string.IsNullOrWhiteSpace(roomDto.PasswordConfirm))
                 return TypedResults.BadRequest("Password and PasswordConfirm are required.");
@@ -126,12 +152,16 @@ namespace TuneMates_Backend.Controller
             return TypedResults.Ok(new RoomResponse(room));
         }
 
-        public static async Task<IResult> DeleteRoom(AppDbContext db, int id)
+        public static async Task<IResult> DeleteRoom(HttpContext http, AppDbContext db, int id)
         {
             var room = await db.Rooms.FindAsync(id);
 
             if (room == null)
                 return TypedResults.NotFound("Room not found.");
+
+            var userId = HelpMethods.GetUserIdFromJwtClaims(http);
+            if (userId == null || room.UserId != userId)
+                return TypedResults.Unauthorized();
 
             db.Rooms.Remove(room);
             await db.SaveChangesAsync();
