@@ -89,41 +89,6 @@ namespace TuneMates_Backend.Controller
             });
         }
 
-        public static async Task<IResult> CreateUser(AppDbContext db, [FromBody] UserDTO userDto)
-        {
-            User user = new User()
-            {
-                Username = userDto.Username,
-                Email = userDto.Email
-            };
-
-            // Check for null or empty fields
-            if (string.IsNullOrEmpty(user.Username) || string.IsNullOrEmpty(user.Email) || string.IsNullOrEmpty(userDto.Password) || string.IsNullOrEmpty(userDto.PasswordConfirm))
-                return TypedResults.BadRequest("Username, Email, and Password are required.");
-
-            if (!HelpMethods.IsPasswordValid(userDto.Password))
-                return TypedResults.BadRequest("Password must be at least 8 characters long and include uppercase, lowercase, digit, and special character.");
-
-            // Check if the email is already in use
-            if (await HelpMethods.IsEmailInUse(db, user.Email))
-                return TypedResults.Conflict("Email is already in use.");
-
-            // Validate email format
-            if (HelpMethods.IsEmailValid(user.Email))
-                return TypedResults.BadRequest("Invalid email format.");
-
-            // Check if passwords match
-            if (!userDto.Password.Equals(userDto.PasswordConfirm))
-                return TypedResults.BadRequest("Password and the confirmation do not match.");
-
-            // Hash the password before storing it. We do this step last to avoid unnecessary computation.
-            user.PasswordHash = Argon2.Hash(userDto.Password);
-
-            db.Users.Add(user);
-            await db.SaveChangesAsync();
-            return TypedResults.Ok(new UserResponse(user));
-        }
-
         public static async Task<IResult> EditUser(HttpContext http, AppDbContext db, [FromBody] UserDTO userDto)
         {
             var id = HelpMethods.GetUserIdFromJwtClaims(http);
