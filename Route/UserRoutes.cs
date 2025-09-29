@@ -14,6 +14,7 @@ namespace TuneMates_Backend.Route
             var userGroup = group.MapGroup("/users");
 
             userGroup.MapGet("/", UserController.GetAllUser);
+            userGroup.MapGet("/me", UserController.GetCurrentUser).RequireAuthorization();
             userGroup.MapGet("/{id:int}", UserController.GetUserById);
             userGroup.MapPost("/register", UserController.Register);
             userGroup.MapPost("/login", UserController.Login);
