@@ -43,6 +43,25 @@ namespace TuneMates_Backend.Controller
         }
 
         /// <summary>
+        /// Get the currently authenticated user
+        /// </summary>
+        /// <param name="http">The current HTTP context</param>
+        /// <param name="db">The database context</param>
+        /// <returns>The current user in the form of <see cref="UserResponse"/></returns>
+        public static async Task<IResult> GetCurrentUser(HttpContext http, AppDbContext db)
+        {
+            var id = HelpMethods.GetUserIdFromJwtClaims(http);
+            if (id == null)
+                return TypedResults.Unauthorized();
+
+            var user = await db.Users.FindAsync(id);
+            if (user == null)
+                return TypedResults.NotFound("User not found.");
+
+            return TypedResults.Ok(new UserResponse(user));
+        }
+
+        /// <summary>
         /// Register a new user
         /// </summary>
         /// <param name="http">The current HTTP context</param>
