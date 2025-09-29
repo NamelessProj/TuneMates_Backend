@@ -9,5 +9,7 @@ namespace TuneMates_Backend.DataBase
         public DbSet<User> Users => Set<User>();
 
         public DbSet<Room> Rooms => Set<Room>();
+
+        public DbSet<Song> Songs => Set<Song>();
     }
 }
