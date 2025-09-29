@@ -17,9 +17,9 @@ namespace TuneMates_Backend.Route
             userGroup.MapGet("/{id:int}", UserController.GetUserById);
             userGroup.MapPost("/register", UserController.Register);
             userGroup.MapPost("/login", UserController.Login);
-            userGroup.MapPut("/", UserController.EditUser).RequireAuthorization();
-            userGroup.MapPut("/password", UserController.EditUserPassword).RequireAuthorization();
-            userGroup.MapDelete("/", UserController.DeleteUser).RequireAuthorization();
+            userGroup.MapPut("/me", UserController.EditUser).RequireAuthorization();
+            userGroup.MapPut("/me/password", UserController.EditUserPassword).RequireAuthorization();
+            userGroup.MapDelete("/me", UserController.DeleteUser).RequireAuthorization();
 
             return userGroup;
         }
