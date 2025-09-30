@@ -8,7 +8,7 @@ namespace TuneMates_Backend.Controller
     public static class SongController
     {
         /// <summary>
-        /// Get all songs from a specific room
+        /// Get all songs from a specific room\
         /// </summary>
         /// <param name="http">The HTTP context</param>
         /// <param name="db">The database context</param>
@@ -62,7 +62,8 @@ namespace TuneMates_Backend.Controller
         //{ }
 
         /// <summary>
-        /// Add a new song to a specific room by its Spotify ID
+        /// Add a new song to a specific room by its Spotify ID.
+        /// Used by every user in the room to make requests for songs to be added to the playlist.
         /// </summary>
         /// <param name="cfg">The configuration containing Spotify settings</param>
         /// <param name="db">The database context</param>
