@@ -88,3 +88,8 @@ The application uses JWT (JSON Web Tokens) for authentication. After a user logs
 - 🔒 `PUT /api/rooms/{id}`: Update a room by its id.
 - 🔒 `PUT /api/rooms/password/{id}`: Update a room's password by its id.
 - 🔒 `DELETE /api/rooms/{id}`: Delete a room by its slug.
+
+### Songs
+- 🔒 `GET /api/songs/room/{roomId}`: Get all songs in a specific room.
+- 🔒 `GET /api/songs/room/{roomId}/status/{status}`: Get songs in a specific room by their status ([SongStatus](/Database/SongStatus.cs) Pending, Approved, Refused).
+- `POST /api/songs/room/{roomId}`: Add a new song to a room. The song will be in "Pending" status by default.
