@@ -71,6 +71,9 @@ namespace TuneMates_Backend.Controller
             if (userId == null || !await db.Users.AnyAsync(u => u.Id == userId))
                 return TypedResults.Unauthorized();
 
+            if (await db.Rooms.CountAsync(r => r.UserId == userId) >= Constants.MaxRoomPerUser)
+                return TypedResults.BadRequest($"You have reached the maximum number of rooms allowed ({Constants.MaxRoomPerUser}). Please delete an existing room before creating a new one.");
+
             Room room = new()
             {
                 Name = roomDto.Name,
