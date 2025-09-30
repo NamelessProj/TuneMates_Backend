@@ -48,6 +48,7 @@ namespace TuneMates_Backend.Controller
         /// </summary>
         /// <param name="db">The database context.</param>
         /// <param name="slug">The slug of the room to retrieve.</param>
+        /// <param name="roomDto">The room data transfer object containing the password for the room.</param>
         /// <returns>A <see cref="RoomResponse"/> if found, otherwise a not found response.</returns>
         public static async Task<IResult> GetRoomBySlug(AppDbContext db, string slug, [FromBody] RoomDTO roomDto)
         {
