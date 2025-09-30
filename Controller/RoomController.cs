@@ -49,11 +49,20 @@ namespace TuneMates_Backend.Controller
         /// <param name="db">The database context.</param>
         /// <param name="slug">The slug of the room to retrieve.</param>
         /// <returns>A <see cref="RoomResponse"/> if found, otherwise a not found response.</returns>
-        public static async Task<IResult> GetRoomBySlug(AppDbContext db, string slug)
+        public static async Task<IResult> GetRoomBySlug(AppDbContext db, string slug, [FromBody] RoomDTO roomDto)
         {
+            var password = roomDto.Password;
+            if (string.IsNullOrWhiteSpace(password))
+                return TypedResults.BadRequest("Password is required.");
+
             var room = await db.Rooms.FirstOrDefaultAsync(r => r.Slug == slug);
             if (room == null)
                 return TypedResults.NotFound("Room not found.");
+
+            // Verify the provided password against the stored hash
+            if (!Argon2.Verify(room.PasswordHash, password))
+                return TypedResults.Unauthorized();
+
             return TypedResults.Ok(new RoomResponse(room));
         }
 
