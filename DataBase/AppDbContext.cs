@@ -11,5 +11,7 @@ namespace TuneMates_Backend.DataBase
         public DbSet<Room> Rooms => Set<Room>();
 
         public DbSet<Song> Songs => Set<Song>();
+
+        public DbSet<Token> Tokens => Set<Token>();
     }
 }
