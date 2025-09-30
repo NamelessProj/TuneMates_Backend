@@ -1,4 +1,4 @@
-![.NET version](https://img.shields.io/badge/.NET_9-512BD4?style=for-the-badge)
+﻿![.NET version](https://img.shields.io/badge/.NET_9-512BD4?style=for-the-badge)
 ![Project licence](https://img.shields.io/github/license/NamelessProj/TuneMates_Backend?style=for-the-badge)
 ![Repo size](https://img.shields.io/github/repo-size/NamelessProj/TuneMates_Backend?style=for-the-badge)
 
@@ -45,6 +45,11 @@ Example:
     "Key": "don't worry about it, this is a good key at least i hope so",
     "Issuer": "TuneMates",
     "Audience": "TuneMatesUsers"
+  },
+  "Spotify": {
+    "ClientId": "your_spotify_client_id",
+    "ClientSecret": "your_spotify_client_secret",
+    "RedirectUri": "your_redirect_uri"
   }
 }
 ```
@@ -57,19 +62,29 @@ The `Jwt:Key` should be a strong secret key used for signing JWT tokens.
 
 The `Jwt:Issuer` and `Jwt:Audience` should be set to appropriate values for your application.
 
+The `Spotify` section should contain your Spotify API credentials.
+
+>[!TIP]
+> ### Spotify Developer Account
+> To use Spotify's API, you need to create a Spotify Developer account and register your application to obtain the `ClientId` and `ClientSecret`. You can do this at [Spotify for Developers](https://developer.spotify.com/dashboard/applications).
+
+## JWT Authentication
+The application uses JWT (JSON Web Tokens) for authentication. After a user logs in, they will receive a JWT token that must be included in the `Authorization` header of subsequent requests to protected endpoints. The token should be prefixed with `Bearer `.
+
 ## API Endpoints
+> 🔒: Endpoints that require authentication.
 ### Users
 - `POST /api/users/register`: Register a new user.
 - `POST /api/users/login`: Login and receive a JWT token.
-- `GET /api/users/me`: Get the current user's information (requires authentication).
-- `PUT /api/users/me`: Update the current user's information (requires authentication).
-- `PUT /api/users/me/password`: Update the current user's password (requires authentication).
-- `DELETE /api/users/me`: Delete the current user's account (requires authentication).
+- 🔒 `GET /api/users/me`: Get the current user's information.
+- 🔒 `PUT /api/users/me`: Update the current user's information.
+- 🔒 `PUT /api/users/me/password`: Update the current user's password.
+- 🔒 `DELETE /api/users/me`: Delete the current user's account.
 
 ### Rooms
-- `POST /api/rooms`: Create a new room (requires authentication).
-- `GET /api/rooms`: Get a list of all rooms from the authenticated user (rooms that the user owns).
+- 🔒 `POST /api/rooms`: Create a new room.
+- 🔒 `GET /api/rooms`: Get a list of all rooms from the authenticated user.
 - `GET /api/rooms/{slug}`: Get details of a specific room by its slug.
-- `PUT /api/rooms/{id}`: Update a room by its id (requires authentication and ownership).
-- `PUT /api/rooms/password/{id}`: Update a room's password by its id (requires authentication and ownership).
-- `DELETE /api/rooms/{id}`: Delete a room by its slug (requires authentication and ownership).
+- 🔒 `PUT /api/rooms/{id}`: Update a room by its id.
+- 🔒 `PUT /api/rooms/password/{id}`: Update a room's password by its id.
+- 🔒 `DELETE /api/rooms/{id}`: Delete a room by its slug.
