@@ -8,7 +8,7 @@ namespace TuneMates_Backend.Controller
     public static class SongController
     {
         /// <summary>
-        /// Get all songs from a specific room\
+        /// Get all songs from a specific room
         /// </summary>
         /// <param name="http">The HTTP context</param>
         /// <param name="db">The database context</param>
