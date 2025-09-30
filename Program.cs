@@ -43,6 +43,7 @@ var api = app.MapGroup("/api");
 
 api.MapUserRoutes();
 api.MapRoomRoutes();
+api.MapSongRoutes();
 
 api.MapPost("/test/{text}", TestEndpoint).RequireAuthorization();
 
