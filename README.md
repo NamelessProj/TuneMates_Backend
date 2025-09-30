@@ -91,5 +91,5 @@ The application uses JWT (JSON Web Tokens) for authentication. After a user logs
 
 ### Songs
 - 🔒 `GET /api/songs/room/{roomId}`: Get all songs in a specific room.
-- 🔒 `GET /api/songs/room/{roomId}/status/{status}`: Get songs in a specific room by their status ([SongStatus](/Database/SongStatus.cs) Pending, Approved, Refused).
+- 🔒 `GET /api/songs/room/{roomId}/status/{status}`: Get songs in a specific room by their status ([SongStatus](/DataBase/SongStatus.cs) Pending, Approved, Refused).
 - `POST /api/songs/room/{roomId}`: Add a new song to a room. The song will be in "Pending" status by default.
