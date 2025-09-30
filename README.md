@@ -91,7 +91,7 @@ The application uses JWT (JSON Web Tokens) for authentication. After a user logs
 ### Rooms
 - 🔒 `POST /api/rooms`: Create a new room.
 - 🔒 `GET /api/rooms`: Get a list of all rooms from the authenticated user.
-- `GET /api/rooms/{slug}`: Get details of a specific room by its slug.
+- `GET /api/rooms/{slug}`: Get details of a specific room by its slug. _Requires room password_
 - 🔒 `PUT /api/rooms/{id}`: Update a room by its id.
 - 🔒 `PUT /api/rooms/password/{id}`: Update a room's password by its id.
 - 🔒 `DELETE /api/rooms/{id}`: Delete a room by its slug.
