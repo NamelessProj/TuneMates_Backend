@@ -2,14 +2,21 @@
 ![Project licence](https://img.shields.io/github/license/NamelessProj/TuneMates_Backend?style=for-the-badge)
 ![Repo size](https://img.shields.io/github/repo-size/NamelessProj/TuneMates_Backend?style=for-the-badge)
 
-# TuneMates_Backend
+# TuneMates - Backend
 TuneMates is a web application that allows users to create and join music listening rooms, 
 where they can share and enjoy music together in real-time. The backend is built using .NET 9 in C#.
 
 ## Features
 - User authentication and authorization
-- Create and join music listening rooms
+- Create and join rooms to add songs to a shared Spotify playlist
 - JWT token generation for secure communication
+
+## Libraries and Tools
+- [.NET 9](https://dotnet.microsoft.com/en-us/download/dotnet/9.0): The framework used to build the backend.
+- [Entity Framework Core](https://docs.microsoft.com/en-us/ef/core/): ORM for database interactions.
+- [JWT Bearer Authentication](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/configure-jwt-bearer-authentication?view=aspnetcore-9.0): For handling JWT authentication.
+- [Supabase](https://supabase.com/): Backend as a service platform used for database and authentication.
+- [Spotify API](https://developer.spotify.com/documentation/web-api/): For integrating Spotify functionalities.
 
 ## Running the Application
 1. Clone the repository:
