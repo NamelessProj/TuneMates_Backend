@@ -1,0 +1,169 @@
+﻿@HostAddress = https://localhost:7016
+
+@JwtToken = your_jwt_token_from_login_or_register
+
+@Rooms = api/rooms
+@Users = api/users
+@Songs = api/songs
+
+
+#### TEST ####
+
+
+@text=string
+POST {{HostAddress}}/api/test/{{text}}
+Authorization: Bearer {{JwtToken}}
+
+###
+
+
+#### ROOMS ####
+
+
+GET {{HostAddress}}/{{Rooms}}
+Authorization: Bearer {{JwtToken}}
+
+###
+
+@id=0
+GET {{HostAddress}}/{{Rooms}}/{{id}}
+Authorization: Bearer {{JwtToken}}
+
+###
+
+@slug=string
+GET {{HostAddress}}/{{Rooms}}/slug/{{slug}}
+
+###
+
+POST {{HostAddress}}/{{Rooms}}
+Content-Type: application/json
+Authorization: Bearer {{JwtToken}}
+
+{
+  "Name": "My First Room"
+  "IsActive": true,
+  "Password": "securepassword"
+  "PasswordConfirm": "securepassword"
+}
+
+###
+
+PUT {{HostAddress}}/{{Rooms}}/{{id}}
+Content-Type: application/json
+Authorization: Bearer {{JwtToken}}
+
+{
+  "Name": "My First Room"
+  "IsActive": true,
+}
+
+###
+
+PUT {{HostAddress}}/{{Rooms}}/password/{{id}}
+Content-Type: application/json
+Authorization: Bearer {{JwtToken}}
+
+{
+  "Password": "newsecurepassword",
+  "PasswordConfirm": "newsecurepassword"
+}
+
+###
+
+DELETE {{HostAddress}}/{{Rooms}}/{{id}}
+Authorization: Bearer {{JwtToken}}
+
+###
+
+
+#### USERS ####
+
+
+GET {{HostAddress}}/{{Users}}
+
+###
+
+GET {{HostAddress}}/{{Users}}/me
+Authorization: Bearer {{JwtToken}}
+
+###
+
+@id=0
+GET {{HostAddress}}/{{Users}}/{{id}}
+
+###
+
+POST {{HostAddress}}/{{Users}}/login
+Content-Type: application/json
+
+{
+  "Email": "anemail@email.com",
+  "Password": "securepassword"
+}
+
+###
+
+POST {{HostAddress}}/{{Users}}/register
+Content-Type: application/json
+
+{
+  "Username": "myusername",
+  "Email": "anemail@email.com",
+  "Password": "securepassword",
+  "PasswordConfirm": "securepassword"
+}
+
+###
+
+PUT {{HostAddress}}/{{Users}}/me
+Content-Type: application/json
+Authorization: Bearer {{JwtToken}}
+
+{
+  "Username": "myusername",
+  "Email": "anemail@email.com"
+}
+
+###
+
+PUT {{HostAddress}}/{{Users}}/me/password
+Content-Type: application/json
+Authorization: Bearer {{JwtToken}}
+
+{
+  "Password": "securepassword",
+  "PasswordConfirm": "securepassword"
+}
+
+###
+
+DELETE {{HostAddress}}/{{Users}}/me
+Authorization: Bearer {{JwtToken}}
+
+###
+
+
+#### SONGS ####
+
+
+@roomId=0
+GET {{HostAddress}}/{{Songs}}/room/{{roomId}}
+Authorization: Bearer {{JwtToken}}
+
+###
+
+@status=string
+GET {{HostAddress}}/{{Songs}}/room/{{roomId}}/status/{{status}}
+Authorization: Bearer {{JwtToken}}
+
+###
+
+POST {{HostAddress}}/{{Songs}}/room/{{roomId}}
+Content-Type: application/json
+
+{
+  "SongId": "SpotifySongId"
+}
+
+###
