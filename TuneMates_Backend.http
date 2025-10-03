@@ -159,11 +159,7 @@ Authorization: Bearer {{JwtToken}}
 
 ###
 
-POST {{HostAddress}}/{{Songs}}/room/{{roomId}}
-Content-Type: application/json
-
-{
-  "SongId": "SpotifySongId"
-}
+@songId=string
+POST {{HostAddress}}/{{Songs}}/room/{{roomId}}/{{songId}}
 
 ###
