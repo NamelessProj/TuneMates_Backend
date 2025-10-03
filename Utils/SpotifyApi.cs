@@ -29,7 +29,7 @@ namespace TuneMates_Backend.Utils
         /// </summary>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. The task result contains the access token as a string.</returns>
         /// <exception cref="Exception">Thrown when the Spotify client ID or secret is not configured, or when the access token cannot be retrieved from Spotify.</exception>
-        public async Task<string> GetAccessToken()
+        public async Task<string> GetAccessTokenAsync()
         {
             // Check if we have a valid token in the database
             var token = await _db.Tokens.OrderByDescending(t => t.CreatedAt).FirstOrDefaultAsync();
@@ -75,9 +75,9 @@ namespace TuneMates_Backend.Utils
         /// </summary>
         /// <param name="songId">The Spotify ID of the song</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. The task result contains the song details as a <see cref="Song"/> object, or null if not found.</returns>
-        public async Task<Song?> GetSongDetails(string songId)
+        public async Task<Song?> GetSongDetailsAsync(string songId)
         {
-            string accessToken = await GetAccessToken();
+            string accessToken = await GetAccessTokenAsync();
 
             // Requesting song details from Spotify API using the access token
             HttpRequestMessage request = new(HttpMethod.Get, $"https://api.spotify.com/v1/tracks/{songId}");
