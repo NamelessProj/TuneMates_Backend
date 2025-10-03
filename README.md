@@ -97,6 +97,6 @@ The application uses JWT (JSON Web Tokens) for authentication. After a user logs
 - 🔒 `DELETE /api/rooms/{id}`: Delete a room by its id.
 
 ### Songs
-- `POST /api/songs/room/{roomId}`: Add a new song to a room. The song will be in "Pending" status by default.
+- `POST /api/songs/room/{roomId}/{songId}`: Add a new song to a room using a Spotify song ID. The song will be in "Pending" status by default.
 - 🔒 `GET /api/songs/room/{roomId}`: Get all songs in a specific room.
 - 🔒 `GET /api/songs/room/{roomId}/status/{status}`: Get songs in a specific room by their status ([SongStatus](/DataBase/SongStatus.cs) Pending, Approved, Refused).
