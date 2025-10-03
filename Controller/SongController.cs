@@ -70,12 +70,8 @@ namespace TuneMates_Backend.Controller
         /// <param name="roomId">The ID of the room</param>
         /// <param name="song">The song object containing the Spotify ID</param>
         /// <returns>The added song details or an error result</returns>
-        public static async Task<IResult> AddSongToRoom(IConfiguration cfg, AppDbContext db, int roomId, [FromBody] Song song)
+        public static async Task<IResult> AddSongToRoom(IConfiguration cfg, AppDbContext db, int roomId, string songId)
         {
-            string songSpotifyId = song.SongId;
-            if (string.IsNullOrWhiteSpace(songSpotifyId))
-                return TypedResults.BadRequest("Song ID is required");
-
             var room = await db.Rooms.FindAsync(roomId);
             if (room == null)
                 return TypedResults.NotFound("Room not found");
@@ -83,12 +79,12 @@ namespace TuneMates_Backend.Controller
             // Getting the song details from Spotify API
             HttpClient httpClient = new();
             SpotifyApi spotifyApi = new(httpClient, db, cfg);
-            var spotifySong = await spotifyApi.GetSongDetailsAsync(songSpotifyId);
+            var spotifySong = await spotifyApi.GetSongDetailsAsync(songId);
             if (spotifySong == null)
                 return TypedResults.NotFound("Song not found on Spotify");
 
             // Check if the song already exists in the room
-            var existingSong = await db.Songs.FirstOrDefaultAsync(s => s.RoomId == roomId && s.SongId == songSpotifyId);
+            var existingSong = await db.Songs.FirstOrDefaultAsync(s => s.RoomId == roomId && s.SongId == songId);
             if (existingSong != null)
                 return TypedResults.Conflict("Song already exists in the room");
 
