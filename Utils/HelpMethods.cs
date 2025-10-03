@@ -16,7 +16,7 @@ namespace TuneMates_Backend.Utils
         /// <param name="db">The database context</param>
         /// <param name="email">The email to check</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. The task result contains true if the email is in use, otherwise false.</returns>
-        public static async Task<bool> IsEmailInUse(AppDbContext db, string email)
+        public static async Task<bool> IsEmailInUseAsync(AppDbContext db, string email)
         {
             return await db.Users.AnyAsync(u => u.Email == email);
         }
