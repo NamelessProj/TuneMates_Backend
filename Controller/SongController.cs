@@ -83,7 +83,7 @@ namespace TuneMates_Backend.Controller
             // Getting the song details from Spotify API
             HttpClient httpClient = new();
             SpotifyApi spotifyApi = new(httpClient, db, cfg);
-            var spotifySong = await spotifyApi.GetSongDetails(songSpotifyId);
+            var spotifySong = await spotifyApi.GetSongDetailsAsync(songSpotifyId);
             if (spotifySong == null)
                 return TypedResults.NotFound("Song not found on Spotify");
 
