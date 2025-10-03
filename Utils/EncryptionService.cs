@@ -17,7 +17,7 @@ namespace TuneMates_Backend.Utils
         private const int NonceByteSize = 12; // 96 bits
 
         /// <summary>
-        /// Initializes the <see cref="EncryptionService"/> with a base64-encoded key from <paramref name="cfg"/> (Configuration).
+        /// Initializes the <see cref="EncryptionService"/> with a base64-encoded key from <paramref name="cfg"/> (<see cref="IConfiguration"/>).
         /// </summary>
         /// <param name="cfg">^The configuration containing the encryption key.</param>
         /// <exception cref="ArgumentNullException">Thrown if the encryption key is not configured.</exception>
