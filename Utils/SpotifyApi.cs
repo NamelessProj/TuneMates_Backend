@@ -33,8 +33,9 @@ namespace TuneMates_Backend.Utils
         {
             // Check if we have a valid token in the database
             var token = await _db.Tokens.OrderByDescending(t => t.CreatedAt).FirstOrDefaultAsync();
+            EncryptionService encryptionService = new(_cfg);
             if (token != null && token.ExpiresAt > DateTime.UtcNow.AddMinutes(1))
-                return token.RefreshToken;
+                return encryptionService.Decrypt(token.RefreshToken);
 
             // If not, request a new one from Spotify
 
@@ -65,6 +66,10 @@ namespace TuneMates_Backend.Utils
                 CreatedAt = DateTime.UtcNow,
                 ExpiresAt = DateTime.UtcNow.AddSeconds(int.Parse(content?["expires_in"]?.ToString() ?? "3600")),
             };
+
+            // Encrypt the refresh token before storing it in the database
+            newAccessToken.RefreshToken = encryptionService.Encrypt(newAccessToken.RefreshToken);
+
             _db.Tokens.Add(newAccessToken);
             await _db.SaveChangesAsync();
             return contentToken;
