@@ -44,7 +44,7 @@
             }
             catch (OperationCanceledException)
             {
-                _logger.LogInformation("{Service} stopping at {CurrentTime}", GetType().Name, DateTime.UtcNow);
+                _logger.LogInformation("{Service} stopping at {Time}", GetType().Name, DateTime.UtcNow);
             }
         }
 
