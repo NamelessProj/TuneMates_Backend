@@ -29,7 +29,7 @@
         /// <returns>A task that represents the background service execution.</returns>
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation("{Service} started. Interval: {Interval}", GetType().Name, _interval);
+            _logger.LogInformation("{Service} started | Interval: {Interval}", GetType().Name, _interval);
 
             await ExecuteJobAsync(stoppingToken); // Initial run
 
