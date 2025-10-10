@@ -53,11 +53,14 @@ Example:
     "Issuer": "TuneMates",
     "Audience": "TuneMatesUsers"
   },
+  "CleanupService": {
+    "TokenIntervalHours": 3
+  },
   "Spotify": {
     "ClientId": "your_spotify_client_id",
     "ClientSecret": "your_spotify_client_secret",
     "RedirectUri": "your_redirect_uri"
-  }
+  },
 }
 ```
 
@@ -68,6 +71,8 @@ The `Secrets:EncryptKey64` should be a base64-encoded string of 64 characters.
 The `Jwt:Key` should be a strong secret key used for signing JWT tokens.
 
 The `Jwt:Issuer` and `Jwt:Audience` should be set to appropriate values for your application.
+
+The `CleanupService:TokenIntervalHours` defines an interval in hours for cleaning up expired tokens.
 
 The `Spotify` section should contain your Spotify API credentials.
 
