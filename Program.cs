@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using TuneMates_Backend.BackgroundServices;
 using TuneMates_Backend.DataBase;
 using TuneMates_Backend.Route;
 using TuneMates_Backend.Utils;
@@ -33,6 +34,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddAuthorization();
 
 builder.Services.AddDbContext<AppDbContext>(opts => opts.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Add Cron Jobs as background services
+builder.Services.AddHostedService<TokenCleanupService>();
 
 var app = builder.Build();
 
