@@ -61,7 +61,7 @@ Example:
     "ClientId": "your_spotify_client_id",
     "ClientSecret": "your_spotify_client_secret",
     "RedirectUri": "your_redirect_uri"
-  },
+  }
 }
 ```
 
