@@ -37,6 +37,7 @@ builder.Services.AddDbContext<AppDbContext>(opts => opts.UseNpgsql(builder.Confi
 
 // Add Cron Jobs as background services
 builder.Services.AddHostedService<TokenCleanupService>();
+builder.Services.AddHostedService<ProposalCleanupService>();
 
 var app = builder.Build();
 
