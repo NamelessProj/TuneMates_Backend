@@ -24,21 +24,12 @@ namespace TuneMates_Backend.BackgroundServices
             var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
             DateTime cutoff = DateTime.UtcNow.AddHours(-6); // Tokens older than 6 hours
-            var oldTokens = await db.Tokens
-                .Where(t => t.CreatedAt < cutoff)
-                .ToListAsync(stoppingToken);
 
-            if (oldTokens.Count == 0)
-            {
-                _logger.LogInformation("No old tokens to clean up at {Time}", DateTime.UtcNow);
-                return;
-            }
-
-            await db.Tokens
+            int oldTokens = await db.Tokens
                 .Where(t => t.CreatedAt < cutoff)
                 .ExecuteDeleteAsync(stoppingToken);
 
-            _logger.LogInformation("Cleaned up {Count} old tokens at {Time}", oldTokens.Count, DateTime.UtcNow);
+            _logger.LogInformation("Cleaned up {Count} old tokens at {Time}", oldTokens, DateTime.UtcNow);
         }
     }
 }
