@@ -54,7 +54,8 @@ Example:
     "Audience": "TuneMatesUsers"
   },
   "CleanupService": {
-    "TokenIntervalHours": 3
+    "TokenIntervalHours": 3,
+    "ProposalIntervalHours": 3
   },
   "Spotify": {
     "ClientId": "your_spotify_client_id",
@@ -72,7 +73,7 @@ The `Jwt:Key` should be a strong secret key used for signing JWT tokens.
 
 The `Jwt:Issuer` and `Jwt:Audience` should be set to appropriate values for your application.
 
-The `CleanupService:TokenIntervalHours` defines an interval in hours for cleaning up expired tokens.
+The `CleanupService` section contains settings for background services that clean up expired tokens and proposals. You can adjust the intervals as needed (in hours).
 
 The `Spotify` section should contain your Spotify API credentials.
 
