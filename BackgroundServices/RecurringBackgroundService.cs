@@ -1,5 +1,8 @@
 ﻿namespace TuneMates_Backend.BackgroundServices
 {
+    /// <summary>
+    /// A base class for creating recurring background services that execute a job at specified intervals.
+    /// </summary>
     public abstract class RecurringBackgroundService : BackgroundService
     {
         protected readonly IServiceScopeFactory _scopeFactory;
