@@ -5,6 +5,7 @@ namespace TuneMates_Backend.BackgroundServices
 {
     /// <summary>
     /// A background service that periodically cleans up old song proposals from the database.
+    /// <seealso cref="RecurringBackgroundService"/>
     /// </summary>
     public class ProposalCleanupService : RecurringBackgroundService
     {
