@@ -3,6 +3,9 @@ using TuneMates_Backend.DataBase;
 
 namespace TuneMates_Backend.BackgroundServices
 {
+    /// <summary>
+    /// A background service that periodically cleans up old tokens from the database.
+    /// </summary>
     public class TokenCleanupService : RecurringBackgroundService
     {
         /// <summary>
@@ -18,6 +21,11 @@ namespace TuneMates_Backend.BackgroundServices
             IConfiguration config) : base(scopeFactory, logger, TimeSpan.FromHours(config.GetValue<double>("CleanupService:TokenIntervalHours", 3)))
         { }
 
+        /// <summary>
+        /// Executes the job to clean up old tokens from the database.
+        /// </summary>
+        /// <param name="stoppingToken">The cancellation token to stop the job.</param>
+        /// <returns>A task that represents the job execution.</returns>
         protected override async Task ExecuteJobAsync(CancellationToken stoppingToken)
         {
             using var scope = _scopeFactory.CreateScope();
