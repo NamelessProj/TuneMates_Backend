@@ -24,7 +24,7 @@ where they can share and enjoy music together in real-time. The backend is built
    git clone https://github.com/NamelessProj/TuneMates_Backend.git 
    dotnet run
    ```
-1. Navigate to `http://localhost:7016` in your web browser.
+1. Navigate to `https://localhost:7016` in your web browser.
 1. Use a tool like Postman to interact with the API endpoints.
 
 ### Appsettings
@@ -103,6 +103,7 @@ The application uses JWT (JSON Web Tokens) for authentication. After a user logs
 - 🔒 `DELETE /api/rooms/{id}`: Delete a room by its id.
 
 ### Songs
+- `GET /api/songs/{q}/p/{offset}/{market}`: Search for songs on Spotify by a query string, with pagination and market specification.
 - `POST /api/songs/room/{roomId}/{songId}`: Add a new song to a room using a Spotify song ID. The song will be in "Pending" status by default.
 - 🔒 `GET /api/songs/room/{roomId}`: Get all songs in a specific room.
 - 🔒 `GET /api/songs/room/{roomId}/status/{status}`: Get songs in a specific room by their status ([SongStatus](/DataBase/SongStatus.cs) Pending, Approved, Refused).
