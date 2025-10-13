@@ -6,6 +6,7 @@
         public string Name { get; set; } = string.Empty;
         public string Slug { get; set; } = string.Empty;
         public bool IsActive { get; set; } = true;
+        public string Market { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public RoomResponse() { }
@@ -20,6 +21,7 @@
             Name = r.Name;
             Slug = r.Slug;
             IsActive = r.IsActive;
+            Market = r.Market;
             CreatedAt = r.CreatedAt;
         }
     }
