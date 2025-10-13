@@ -1,9 +1,9 @@
 ﻿namespace TuneMates_Backend.DataBase
 {
-    public enum SongStatus
+    public enum SongStatus: int
     {
-        Pending,
-        Refused,
-        Approved
+        Pending = 0,
+        Refused = 1,
+        Approved = 2
     }
 }
