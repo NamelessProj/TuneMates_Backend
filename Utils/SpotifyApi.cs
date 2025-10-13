@@ -174,6 +174,24 @@ namespace TuneMates_Backend.Utils
             );
         }
 
+        public async Task<bool> AddSongToPlaylistAsync(string playlistId, string songId)
+        {
+            if (string.IsNullOrWhiteSpace(playlistId) || string.IsNullOrWhiteSpace(songId))
+                return false;
+
+            songId = songId.StartsWith("spotify:track:") ? songId : $"spotify:track:{songId}";
+
+            string accessToken = await GetAccessTokenAsync();
+            HttpRequestMessage req = new(HttpMethod.Post, $"https://api.spotify.com/v1/playlists/{playlistId}/tracks");
+            req.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            req.Content = JsonContent.Create(new { uris = new[] { songId } });
+
+            HttpResponseMessage res = await _http.SendAsync(req);
+
+            return res.IsSuccessStatusCode;
+        }
+
         /// <summary>
         /// Calculate the next offset from the Spotify "next" URL
         /// </summary>
