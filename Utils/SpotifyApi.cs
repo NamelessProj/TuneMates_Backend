@@ -139,6 +139,7 @@ namespace TuneMates_Backend.Utils
 
             string accessToken = await GetAccessTokenAsync();
 
+            // Building the search URL with query parameters
             StringBuilder url = new("https://api.spotify.com/v1/search?type=track");
             url.Append("&q=").Append(Uri.EscapeDataString(query));
             url.Append("&limit=").Append(limit);
@@ -146,9 +147,11 @@ namespace TuneMates_Backend.Utils
             if (!string.IsNullOrWhiteSpace(market))
                 url.Append("&market=").Append(Uri.EscapeDataString(market));
 
+            // Creating the HTTP request with the access token in the Authorization header (Bearer token)
             using HttpRequestMessage req = new(HttpMethod.Get, url.ToString());
             req.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
+            // Sending the request and processing the response
             using HttpResponseMessage res = await _http.SendAsync(req, ct);
             res.EnsureSuccessStatusCode();
 
