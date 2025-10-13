@@ -84,7 +84,7 @@ namespace TuneMates_Backend.Controller
                 return TypedResults.NotFound("Song not found on Spotify");
 
             // Check if the song already exists in the room
-            var existingSong = await db.Songs.FirstOrDefaultAsync(s => s.RoomId == roomId && s.SongId == songId);
+            var existingSong = await db.Songs.Where(s => s.RoomId == roomId && s.SongId == songId).FirstOrDefaultAsync();
             if (existingSong != null)
                 return TypedResults.Conflict("Song already exists in the room");
 
@@ -92,6 +92,18 @@ namespace TuneMates_Backend.Controller
             db.Songs.Add(spotifySong);
             await db.SaveChangesAsync();
             return TypedResults.Ok(spotifySong);
+        }
+
+        public static async Task<IResult> SearchSongs(IConfiguration cfg, AppDbContext db, string q, int page)
+        {
+            if (string.IsNullOrWhiteSpace(q) || page < 1)
+                return TypedResults.BadRequest("Invalid query or page number");
+
+            HttpClient httpClient = new();
+            SpotifyApi spotifyApi = new(httpClient, db, cfg);
+            //var results = await spotifyApi.SearchSongsAsync(q, page);
+
+            return TypedResults.Ok(new { });
         }
     }
 }
