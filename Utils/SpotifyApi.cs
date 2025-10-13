@@ -2,6 +2,7 @@
 using TuneMates_Backend.DataBase;
 using System.Net.Http.Headers;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace TuneMates_Backend.Utils
 {
@@ -47,7 +48,6 @@ namespace TuneMates_Backend.Utils
 
             // Requesting a new token from Spotify API using Client Credentials Flow
             HttpRequestMessage request = new(HttpMethod.Post, "https://accounts.spotify.com/api/token");
-            request.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
             request.Content = new FormUrlEncodedContent(new Dictionary<string, string>
             {
                 { "grant_type", "client_credentials" },
@@ -94,17 +94,22 @@ namespace TuneMates_Backend.Utils
                 return null;
 
             // Parsing the response content to extract song details
-            var content = await response.Content.ReadFromJsonAsync<Dictionary<string, object>>();
+            var content = await response.Content.ReadFromJsonAsync<Dictionary<string, JsonElement>>();
             if (content == null)
                 return null;
+
+            var album = content["album"];
+            var artists = content["artists"];
+            var images = album.GetProperty("images");
+
             Song song = new()
             {
-                Album = ((Dictionary<string, object>)content["album"])["name"].ToString() ?? string.Empty,
-                Artist = string.Join(", ", ((List<object>)content["artists"]).Select(a => ((Dictionary<string, object>)a)["name"].ToString())),
-                DurationMs = int.Parse(content["duration_ms"].ToString() ?? "0"),
-                SongId = content["id"].ToString() ?? string.Empty,
-                Title = content["name"].ToString() ?? string.Empty,
-                AlbumArtUrl = ((List<object>)((Dictionary<string, object>)content["album"])["images"]).FirstOrDefault() is Dictionary<string, object> img ? img["url"].ToString() ?? string.Empty : string.Empty
+                Album = album.GetProperty("name").GetString() ?? string.Empty,
+                Artist = string.Join(", ", artists.EnumerateArray().Select(a => a.GetProperty("name").GetString())),
+                DurationMs = content["duration_ms"].GetInt32(),
+                SongId = content["id"].GetString() ?? string.Empty,
+                Title = content["name"].GetString() ?? string.Empty,
+                AlbumArtUrl = images.GetArrayLength() > 0 ? images[0].GetProperty("url").GetString() ?? string.Empty : string.Empty
             };
             return song;
         }
