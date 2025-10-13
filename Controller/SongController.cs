@@ -92,16 +92,16 @@ namespace TuneMates_Backend.Controller
             return TypedResults.Ok(spotifySong);
         }
 
-        public static async Task<IResult> SearchSongs(IConfiguration cfg, AppDbContext db, string q, int page)
+        public static async Task<IResult> SearchSongs(IConfiguration cfg, AppDbContext db, string q, int offset)
         {
-            if (string.IsNullOrWhiteSpace(q) || page < 1)
+            if (string.IsNullOrWhiteSpace(q) || offset < 0)
                 return TypedResults.BadRequest("Invalid query or page number");
 
             HttpClient httpClient = new();
             SpotifyApi spotifyApi = new(httpClient, db, cfg);
-            //var results = await spotifyApi.SearchSongsAsync(q, page);
+            var results = await spotifyApi.SearchTracksAsync(q, offset: offset <= 0 ? 0 : offset);
 
-            return TypedResults.Ok(new { });
+            return TypedResults.Ok(results);
         }
     }
 }
