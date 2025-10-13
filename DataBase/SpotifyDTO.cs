@@ -1,4 +1,6 @@
-﻿namespace TuneMates_Backend.DataBase
+﻿using System.Text.Json.Serialization;
+
+namespace TuneMates_Backend.DataBase
 {
     public static class SpotifyDTO
     {
@@ -44,8 +46,10 @@
         {
             public string? Id { get; set; }
             public string? Name { get; set; }
+            [JsonPropertyName("duration_ms")]
             public int DurationMs { get; set; }
             public string? Uri { get; set; }
+            [JsonPropertyName("external_urls")]
             public Dictionary<string, string>? ExternalUrls { get; set; }
             public SpotifyAlbum? Album { get; set; }
             public List<SpotifyArtist>? Artists { get; set; }
