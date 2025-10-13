@@ -115,6 +115,20 @@ namespace TuneMates_Backend.Utils
             return song;
         }
 
+        /// <summary>
+        /// Search for tracks on Spotify matching the given query
+        /// </summary>
+        /// <param name="query">The search query</param>
+        /// <param name="limit">The maximum number of results to return (1-50)</param>
+        /// <param name="offset">The index of the first result to return (for pagination)</param>
+        /// <param name="market">The market (country code) to search in (optional)</param>
+        /// <param name="ct">The cancellation token</param>
+        /// <returns>
+        /// A <see cref="Task"/> that represents the asynchronous operation.
+        /// The task result contains a paginated list of tracks (<see cref="SpotifyDTO.PageResult{T}"/>.<see cref="SpotifyDTO.TrackDTO"/>) matching the search query.
+        /// </returns>
+        /// <exception cref="ArgumentException">Thrown if the query is null or empty.</exception>
+        /// <exception cref="Exception">Thrown if the Spotify response cannot be parsed.</exception>
         public async Task<SpotifyDTO.PageResult<SpotifyDTO.TrackDTO>> SearchTracksAsync(string query, int limit = 10, int offset = 0, string? market = null, CancellationToken ct = default)
         {
             if (string.IsNullOrWhiteSpace(query))
@@ -157,6 +171,11 @@ namespace TuneMates_Backend.Utils
             );
         }
 
+        /// <summary>
+        /// Calculate the next offset from the Spotify "next" URL
+        /// </summary>
+        /// <param name="nextUrl">The "next" URL from Spotify API response</param>
+        /// <returns>An integer representing the next offset, or null if not available</returns>
         private static int? CalculateNextOffset(string? nextUrl)
         {
             if (string.IsNullOrWhiteSpace(nextUrl))
@@ -169,6 +188,11 @@ namespace TuneMates_Backend.Utils
             return null;
         }
 
+        /// <summary>
+        /// Map a SpotifyTrack to a TrackDTO
+        /// </summary>
+        /// <param name="t">The SpotifyTrack to map</param>
+        /// <returns>A TrackDTO representing the track</returns>
         private static SpotifyDTO.TrackDTO MapTrack(SpotifyDTO.SpotifyTrack t)
         {
             var albumImg = t.Album?.Images?
