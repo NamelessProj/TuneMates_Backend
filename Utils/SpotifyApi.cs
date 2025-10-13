@@ -3,6 +3,7 @@ using TuneMates_Backend.DataBase;
 using System.Net.Http.Headers;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
+using System.Web;
 
 namespace TuneMates_Backend.Utils
 {
@@ -112,6 +113,78 @@ namespace TuneMates_Backend.Utils
                 AlbumArtUrl = images.GetArrayLength() > 0 ? images[0].GetProperty("url").GetString() ?? string.Empty : string.Empty
             };
             return song;
+        }
+
+        public async Task<SpotifyDTO.PageResult<SpotifyDTO.TrackDTO>> SearchTracksAsync(string query, int limit = 10, int offset = 0, string? market = null, CancellationToken ct = default)
+        {
+            if (string.IsNullOrWhiteSpace(query))
+                throw new ArgumentException("Query cannot be null or empty.", nameof(query));
+
+            limit = Math.Clamp(limit, 1, 50);
+            offset = Math.Max(0, offset);
+
+            string accessToken = await GetAccessTokenAsync();
+
+            StringBuilder url = new("https://api.spotify.com/v1/search?type=track");
+            url.Append("&q=").Append(Uri.EscapeDataString(query));
+            url.Append("&limit=").Append(limit);
+            url.Append("&offset=").Append(offset);
+            if (!string.IsNullOrWhiteSpace(market))
+                url.Append("&market=").Append(Uri.EscapeDataString(market));
+
+            using HttpRequestMessage req = new(HttpMethod.Get, url.ToString());
+            req.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            using HttpResponseMessage res = await _http.SendAsync(req, ct);
+            res.EnsureSuccessStatusCode();
+
+            var root = await res.Content.ReadFromJsonAsync<SpotifyDTO.SearchResponse>(cancellationToken: ct);
+            if (root?.Tracks is null)
+                throw new Exception("Failed to parse Spotify response.");
+
+            var tracks = root.Tracks.Items?.Select(MapTrack).ToList() ?? new List<SpotifyDTO.TrackDTO>();
+
+            bool hasNext = !string.IsNullOrWhiteSpace(root.Tracks.Next);
+            int? nextOffset = CalculateNextOffset(root.Tracks.Next);
+
+            return new SpotifyDTO.PageResult<SpotifyDTO.TrackDTO>(
+                Items: tracks,
+                Limit: root.Tracks.Limit,
+                Offset: root.Tracks.Offset,
+                Total: root.Tracks.Total,
+                HasNext: hasNext,
+                NextOffset: nextOffset
+            );
+        }
+
+        private static int? CalculateNextOffset(string? nextUrl)
+        {
+            if (string.IsNullOrWhiteSpace(nextUrl))
+                return null;
+
+            Uri uri = new(nextUrl);
+            var query = HttpUtility.ParseQueryString(uri.Query);
+            if (int.TryParse(query.Get("offset"), out var next))
+                return next;
+            return null;
+        }
+
+        private static SpotifyDTO.TrackDTO MapTrack(SpotifyDTO.SpotifyTrack t)
+        {
+            var albumImg = t.Album?.Images?
+                .OrderByDescending(i => i.Height)
+                .FirstOrDefault()?.Url ?? string.Empty;
+
+            return new SpotifyDTO.TrackDTO(
+                Id: t.Id!,
+                Name: t.Name!,
+                Artist: string.Join(", ", t.Artists?.Select(a => a.Name) ?? Enumerable.Empty<string>()),
+                Album: t.Album?.Name ?? string.Empty,
+                AlbumImageUrl: albumImg,
+                DurationMs: t.DurationMs,
+                Uri: t.Uri ?? string.Empty,
+                ExternalUri: t.ExternalUrls?["spotify"] ?? string.Empty
+            );
         }
     }
 }
