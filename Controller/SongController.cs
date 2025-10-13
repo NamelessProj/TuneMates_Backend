@@ -37,9 +37,9 @@ namespace TuneMates_Backend.Controller
         /// <param name="http">The HTTP context</param>
         /// <param name="db">The database context</param>
         /// <param name="roomId">The ID of the room</param>
-        /// <param name="status">The status to filter songs by (<see cref="SongStatus"/>: "Pending", "Approved", "Refused")</param>
+        /// <param name="statusCode">The status to filter songs by (<see cref="SongStatus"/>: "Pending": 0, "Approved": 1, "Refused": 2)</param>
         /// <returns>A list of songs with the specified status in the room or an error result</returns>
-        public static async Task<IResult> GetSongsFromRoomWithStatus(HttpContext http, AppDbContext db, int roomId, string status)
+        public static async Task<IResult> GetSongsFromRoomWithStatus(HttpContext http, AppDbContext db, int roomId, int statusCode)
         {
             var userId = HelpMethods.GetUserIdFromJwtClaims(http);
             if (userId == null)
@@ -52,9 +52,7 @@ namespace TuneMates_Backend.Controller
             if (room.UserId != userId)
                 return TypedResults.Forbid();
 
-            string normalizedStatus = status.Trim().ToLower();
-
-            var songs = await db.Songs.Where(s => s.RoomId == roomId && s.Status.ToString().ToLower() == normalizedStatus).ToListAsync();
+            var songs = await db.Songs.Where(s => s.RoomId == roomId && (int)s.Status == statusCode).ToListAsync();
             return TypedResults.Ok(songs);
         }
 
