@@ -66,7 +66,7 @@ namespace TuneMates_Backend.Controller
         /// <param name="cfg">The configuration containing Spotify settings</param>
         /// <param name="db">The database context</param>
         /// <param name="roomId">The ID of the room</param>
-        /// <param name="song">The song object containing the Spotify ID</param>
+        /// <param name="songId">The song object containing the Spotify ID</param>
         /// <returns>The added song details or an error result</returns>
         public static async Task<IResult> AddSongToRoom(IConfiguration cfg, AppDbContext db, int roomId, string songId)
         {
