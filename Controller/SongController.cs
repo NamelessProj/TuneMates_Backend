@@ -56,8 +56,31 @@ namespace TuneMates_Backend.Controller
             return TypedResults.Ok(songs);
         }
 
-        //public static async Task<IResult> AddSongToPlaylist(int roomId)
-        //{ }
+        public static async Task<IResult> AddSongToPlaylist(IConfiguration cfg, AppDbContext db, int roomId, int songId)
+        {
+            var room = await db.Rooms.FindAsync(roomId);
+            if (room is null)
+                return TypedResults.NotFound("Room not found");
+
+            if (string.IsNullOrWhiteSpace(room.SpotifyPlaylistId))
+                return TypedResults.BadRequest("Room does not have a linked Spotify playlist");
+
+            var song = await db.Songs.FindAsync(songId);
+            if (song is null || song.RoomId != roomId)
+                return TypedResults.NotFound("Song not found in the specified room");
+
+            if (song.Status != SongStatus.Pending)
+                return TypedResults.Conflict("Song is not in a pending state");
+
+            song.Status = SongStatus.Approved;
+            await db.SaveChangesAsync();
+
+            HttpClient http = new();
+            SpotifyApi spotifyApi = new(http, db, cfg);
+            bool res = await spotifyApi.AddSongToPlaylistAsync(room.SpotifyPlaylistId, song.SongId);
+
+            return res ? TypedResults.Ok(song) : TypedResults.StatusCode(500);
+        }
 
         /// <summary>
         /// Add a new song to a specific room by its Spotify ID.
