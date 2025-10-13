@@ -32,10 +32,8 @@ namespace TuneMates_Backend.BackgroundServices
             using var scope = _scopeFactory.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-            DateTime cutoff = DateTime.UtcNow.AddHours(-6); // Tokens older than 6 hours
-
             int oldTokens = await db.Tokens
-                .Where(t => t.CreatedAt < cutoff)
+                .Where(t => t.ExpiresAt < DateTime.UtcNow)
                 .ExecuteDeleteAsync(stoppingToken);
 
             _logger.LogInformation("Cleaned up {Count} old tokens at {Time}", oldTokens, DateTime.UtcNow);
