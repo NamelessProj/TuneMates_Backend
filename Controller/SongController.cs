@@ -55,6 +55,14 @@ namespace TuneMates_Backend.Controller
             return TypedResults.Ok(songs);
         }
 
+        /// <summary>
+        /// Add a song from a room's pending list to the linked Spotify playlist.
+        /// </summary>
+        /// <param name="cfg">The configuration containing Spotify settings</param>
+        /// <param name="db">The database context</param>
+        /// <param name="roomId">The ID of the room</param>
+        /// <param name="songId">The ID of the song to add</param>
+        /// <returns>A result indicating success or failure</returns>
         public static async Task<IResult> AddSongToPlaylist(IConfiguration cfg, AppDbContext db, int roomId, int songId)
         {
             var room = await db.Rooms.FindAsync(roomId);
