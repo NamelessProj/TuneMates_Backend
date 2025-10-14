@@ -16,12 +16,11 @@ namespace TuneMates_Backend.Utils
         /// <summary>
         /// Constructor for SpotifyApi
         /// </summary>
-        /// <param name="http">The HttpClient to use for requests</param>
         /// <param name="db">The database context</param>
         /// <param name="cfg">The configuration to use for settings</param>
-        public SpotifyApi(HttpClient http, AppDbContext db, IConfiguration cfg)
+        public SpotifyApi(AppDbContext db, IConfiguration cfg)
         {
-            _http = http;
+            _http = new HttpClient();
             _db = db;
             _cfg = cfg;
         }

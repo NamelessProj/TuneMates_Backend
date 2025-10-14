@@ -82,8 +82,7 @@ namespace TuneMates_Backend.Controller
             song.Status = SongStatus.Approved;
             await db.SaveChangesAsync();
 
-            HttpClient http = new();
-            SpotifyApi spotifyApi = new(http, db, cfg);
+            SpotifyApi spotifyApi = new(db, cfg);
             bool res = await spotifyApi.AddSongToPlaylistAsync(room.SpotifyPlaylistId, song.SongId);
 
             return res ? TypedResults.Ok(song) : TypedResults.StatusCode(500);
@@ -105,8 +104,7 @@ namespace TuneMates_Backend.Controller
                 return TypedResults.NotFound("Room not found");
 
             // Getting the song details from Spotify API
-            HttpClient httpClient = new();
-            SpotifyApi spotifyApi = new(httpClient, db, cfg);
+            SpotifyApi spotifyApi = new(db, cfg);
             var spotifySong = await spotifyApi.GetSongDetailsAsync(songId);
             if (spotifySong == null)
                 return TypedResults.NotFound("Song not found on Spotify");
@@ -127,8 +125,7 @@ namespace TuneMates_Backend.Controller
             if (string.IsNullOrWhiteSpace(q) || offset < 0)
                 return TypedResults.BadRequest("Invalid query or page number");
 
-            HttpClient httpClient = new();
-            SpotifyApi spotifyApi = new(httpClient, db, cfg);
+            SpotifyApi spotifyApi = new(db, cfg);
             var results = await spotifyApi.SearchTracksAsync(q,
                 offset: offset <= 0 ? 0 : offset,
                 market: market);
