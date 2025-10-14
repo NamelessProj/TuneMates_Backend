@@ -39,6 +39,8 @@ builder.Services.AddDbContext<AppDbContext>(opts => opts.UseNpgsql(builder.Confi
 builder.Services.AddHostedService<TokenCleanupService>();
 builder.Services.AddHostedService<ProposalCleanupService>();
 
+builder.Services.AddMemoryCache();
+
 var app = builder.Build();
 
 app.UseAuthentication();
