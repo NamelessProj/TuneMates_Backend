@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TuneMates_Backend.DataBase;
+using TuneMates_Backend.Utils;
 
 namespace TuneMates_Backend.BackgroundServices
 {
@@ -19,7 +20,7 @@ namespace TuneMates_Backend.BackgroundServices
         public TokenCleanupService(
             IServiceScopeFactory scopeFactory,
             ILogger<TokenCleanupService> logger,
-            IConfiguration config) : base(scopeFactory, logger, TimeSpan.FromHours(config.GetValue<double>("CleanupService:TokenIntervalHours", 3)))
+            IConfiguration config) : base(scopeFactory, logger, TimeSpan.FromHours(config.GetValue<double>("CleanupService:TokenIntervalHours", Constants.DefaultBackgroundServiceIntervalHours)))
         { }
 
         /// <summary>

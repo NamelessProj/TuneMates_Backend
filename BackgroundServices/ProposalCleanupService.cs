@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TuneMates_Backend.DataBase;
+using TuneMates_Backend.Utils;
 
 namespace TuneMates_Backend.BackgroundServices
 {
@@ -18,7 +19,7 @@ namespace TuneMates_Backend.BackgroundServices
         public ProposalCleanupService(
             IServiceScopeFactory scopeFactory,
             ILogger<ProposalCleanupService> logger,
-            IConfiguration config) : base(scopeFactory, logger, TimeSpan.FromHours(config.GetValue<double>("CleanupService:ProposalIntervalHours", 3)))
+            IConfiguration config) : base(scopeFactory, logger, TimeSpan.FromHours(config.GetValue<double>("CleanupService:ProposalIntervalHours", Constants.DefaultBackgroundServiceIntervalHours)))
         { }
 
         /// <summary>
