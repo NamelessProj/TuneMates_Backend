@@ -7,6 +7,9 @@ using System.Web;
 
 namespace TuneMates_Backend.Utils
 {
+    /// <summary>
+    /// A service for interacting with the Spotify API, including obtaining access tokens, searching for tracks, and managing playlists.
+    /// </summary>
     public class SpotifyApi
     {
         private readonly HttpClient _http;
