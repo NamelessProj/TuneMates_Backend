@@ -32,7 +32,7 @@ namespace TuneMates_Backend.BackgroundServices
             using var scope = _scopeFactory.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-            DateTime cutoff = DateTime.UtcNow.AddHours(-5); // Proposals older than 5 hours
+            DateTime cutoff = DateTime.UtcNow.AddHours(-Constants.MaxHoursForAProposalBeforeCleanup); // Proposals older than 5 hours
 
             int deleted = await db.Songs
                 .Where(s => s.AddedAt < cutoff)
