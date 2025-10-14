@@ -147,6 +147,19 @@ Authorization: Bearer {{JwtToken}}
 #### SONGS ####
 
 
+@q=string
+@offset=0
+@market=string
+GET {{HostAddress}}/{{Songs}}/{{q}}/p/{{offset}}/{{market}}
+
+###
+
+@roomId=0
+@songId=0
+POST {{HostAddress}}/{{Songs}}/playlist/{{roomId}}/{{songId}}
+
+###
+
 @roomId=0
 GET {{HostAddress}}/{{Songs}}/room/{{roomId}}
 Authorization: Bearer {{JwtToken}}
