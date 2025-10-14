@@ -108,7 +108,7 @@ There has to be a space between `Bearer` and the token.
 ### Rooms
 - 🔒 `POST /api/rooms`: Create a new room.
 - 🔒 `GET /api/rooms`: Get a list of all rooms from the authenticated user.
-- `GET /api/rooms/{slug:string}`: Get details of a specific room by its slug. _Requires room password_
+- `GET /api/rooms/slug/{slug:string}`: Get details of a specific room by its slug. _Requires room password_
 - 🔒 `PUT /api/rooms/{id:int}`: Update a room by its id.
 - 🔒 `PUT /api/rooms/password/{id:int}`: Update a room's password by its id.
 - 🔒 `DELETE /api/rooms/{id:int}`: Delete a room by its id.
