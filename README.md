@@ -10,6 +10,10 @@ where they can share and enjoy music together in real-time. The backend is built
 - User authentication and authorization
 - Create and join rooms to add songs to a shared Spotify playlist
 - JWT token generation for secure communication
+- Integration with Spotify API for song search and playlist management
+- Background services for cleaning up expired tokens and proposals
+- Database management using Entity Framework Core with Supabase as the backend service
+- Password-protected rooms for added security
 
 ## Libraries and Tools
 - [.NET 9](https://dotnet.microsoft.com/en-us/download/dotnet/9.0): The framework used to build the backend.
@@ -24,8 +28,7 @@ where they can share and enjoy music together in real-time. The backend is built
    git clone https://github.com/NamelessProj/TuneMates_Backend.git 
    dotnet run
    ```
-1. Navigate to `https://localhost:7016` in your web browser.
-1. Use a tool like Postman to interact with the API endpoints.
+1. Use a tool like Postman to interact with the API endpoints at `https://localhost:7016`.
 
 ### Appsettings
 Make sure to configure _(maybe even create)_ your `appsettings.json` file with the necessary settings, such as database connection strings and JWT secret keys.
@@ -82,7 +85,15 @@ The `Spotify` section should contain your Spotify API credentials.
 > To use Spotify's API, you need to create a Spotify Developer account and register your application to obtain the `ClientId` and `ClientSecret`. You can do this at [Spotify for Developers](https://developer.spotify.com/dashboard/applications).
 
 ## JWT Authentication
-The application uses JWT (JSON Web Tokens) for authentication. After a user logs in, they will receive a JWT token that must be included in the `Authorization` header of subsequent requests to protected endpoints. The token should be prefixed with `Bearer `.
+The application uses JWT (JSON Web Tokens) for authentication.
+After a user logs in, they will receive a JWT token that must be included in the `Authorization` header of subsequent requests to protected endpoints.
+The token should be prefixed with `Bearer `.
+
+### Example:
+```
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+There has to be a space between `Bearer` and the token.
 
 ## API Endpoints
 > 🔒: Endpoints that require authentication.
