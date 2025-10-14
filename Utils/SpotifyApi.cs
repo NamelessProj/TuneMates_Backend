@@ -174,6 +174,12 @@ namespace TuneMates_Backend.Utils
             );
         }
 
+        /// <summary>
+        /// Add a song to a Spotify playlist by song ID
+        /// </summary>
+        /// <param name="playlistId">The Spotify ID of the playlist</param>
+        /// <param name="songId">The Spotify ID of the song to add</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. The task result contains <c>true</c> if the song was added successfully, otherwise <c>false</c>.</returns>
         public async Task<bool> AddSongToPlaylistAsync(string playlistId, string songId)
         {
             if (string.IsNullOrWhiteSpace(playlistId) || string.IsNullOrWhiteSpace(songId))
