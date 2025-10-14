@@ -65,7 +65,7 @@ namespace TuneMates_Backend.Controller
             if (string.IsNullOrWhiteSpace(room.SpotifyPlaylistId))
                 return TypedResults.BadRequest("Room does not have a linked Spotify playlist");
 
-            var song = await db.Songs.FindAsync(songId);
+            var song = await db.Songs.FindAsync(songId); 
             if (song is null || song.RoomId != roomId)
                 return TypedResults.NotFound("Song not found in the specified room");
 
