@@ -25,7 +25,7 @@ namespace TuneMates_Backend.Utils
         public EncryptionService(IConfiguration cfg)
         {
             var base64Key = cfg["Secrets:EncryptKey64"];
-            if (string.IsNullOrEmpty(base64Key))
+            if (string.IsNullOrWhiteSpace(base64Key))
                 throw new ArgumentNullException("Encryption key is not configured.");
             _key = Convert.FromBase64String(base64Key);
             int actualBytes = _key.Length;
