@@ -277,6 +277,11 @@ namespace TuneMates_Backend.Utils
             );
         }
 
+        /// <summary>
+        /// Cache the access token with an expiration time
+        /// </summary>
+        /// <param name="token">The access token to cache</param>
+        /// <param name="expiresAtUtc">The UTC expiration time of the token</param>
         private void CacheToken(string token, DateTime expiresAtUtc)
         {
             // Safe margin of 1 minute before actual expiry
