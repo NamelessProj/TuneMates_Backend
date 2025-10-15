@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using TuneMates_Backend.DataBase;
 using TuneMates_Backend.Utils;
 
@@ -63,7 +64,7 @@ namespace TuneMates_Backend.Controller
         /// <param name="roomId">The ID of the room</param>
         /// <param name="songId">The ID of the song to add</param>
         /// <returns>A result indicating success or failure</returns>
-        public static async Task<IResult> AddSongToPlaylist(IConfiguration cfg, AppDbContext db, int roomId, int songId)
+        public static async Task<IResult> AddSongToPlaylist(IConfiguration cfg, IMemoryCache cache, AppDbContext db, int roomId, int songId)
         {
             var room = await db.Rooms.FindAsync(roomId);
             if (room is null)
@@ -82,7 +83,7 @@ namespace TuneMates_Backend.Controller
             song.Status = SongStatus.Approved;
             await db.SaveChangesAsync();
 
-            SpotifyApi spotifyApi = new(db, cfg);
+            SpotifyApi spotifyApi = new(db, cfg, cache);
             bool res = await spotifyApi.AddSongToPlaylistAsync(room.SpotifyPlaylistId, song.SongId);
 
             return res ? TypedResults.Ok(song) : TypedResults.StatusCode(500);
@@ -97,14 +98,14 @@ namespace TuneMates_Backend.Controller
         /// <param name="roomId">The ID of the room</param>
         /// <param name="songId">The song object containing the Spotify ID</param>
         /// <returns>The added song details or an error result</returns>
-        public static async Task<IResult> AddSongToRoom(IConfiguration cfg, AppDbContext db, int roomId, string songId)
+        public static async Task<IResult> AddSongToRoom(IConfiguration cfg, IMemoryCache cache, AppDbContext db, int roomId, string songId)
         {
             var room = await db.Rooms.FindAsync(roomId);
             if (room == null)
                 return TypedResults.NotFound("Room not found");
 
             // Getting the song details from Spotify API
-            SpotifyApi spotifyApi = new(db, cfg);
+            SpotifyApi spotifyApi = new(db, cfg, cache);
             var spotifySong = await spotifyApi.GetSongDetailsAsync(songId);
             if (spotifySong == null)
                 return TypedResults.NotFound("Song not found on Spotify");
@@ -120,12 +121,12 @@ namespace TuneMates_Backend.Controller
             return TypedResults.Ok(spotifySong);
         }
 
-        public static async Task<IResult> SearchSongs(IConfiguration cfg, AppDbContext db, string q, int offset, string market)
+        public static async Task<IResult> SearchSongs(IConfiguration cfg, IMemoryCache cache, AppDbContext db, string q, int offset, string market)
         {
             if (string.IsNullOrWhiteSpace(q) || offset < 0)
                 return TypedResults.BadRequest("Invalid query or page number");
 
-            SpotifyApi spotifyApi = new(db, cfg);
+            SpotifyApi spotifyApi = new(db, cfg, cache);
             var results = await spotifyApi.SearchTracksAsync(q,
                 offset: offset <= 0 ? 0 : offset,
                 market: market);
