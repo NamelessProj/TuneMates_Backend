@@ -4,6 +4,7 @@ using System.Net.Http.Headers;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 using System.Web;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace TuneMates_Backend.Utils
 {
@@ -15,17 +16,23 @@ namespace TuneMates_Backend.Utils
         private readonly HttpClient _http;
         private readonly AppDbContext _db;
         private readonly IConfiguration _cfg;
+        private readonly IMemoryCache _cache;
+
+        private const string TokenCacheKey = "Spotify:AccessToken";
+        private static readonly SemaphoreSlim _tokenLock = new(1, 1);
 
         /// <summary>
         /// Constructor for SpotifyApi
         /// </summary>
         /// <param name="db">The database context</param>
         /// <param name="cfg">The configuration to use for settings</param>
-        public SpotifyApi(AppDbContext db, IConfiguration cfg)
+        /// <param name="cache">The memory cache for caching tokens</param>
+        public SpotifyApi(AppDbContext db, IConfiguration cfg, IMemoryCache cache)
         {
             _http = new HttpClient();
             _db = db;
             _cfg = cfg;
+            _cache = cache;
         }
 
         /// <summary>
@@ -35,47 +42,77 @@ namespace TuneMates_Backend.Utils
         /// <exception cref="Exception">Thrown when the Spotify client ID or secret is not configured, or when the access token cannot be retrieved from Spotify.</exception>
         public async Task<string> GetAccessTokenAsync()
         {
-            // Check if we have a valid token in the database
-            var token = await _db.Tokens.OrderByDescending(t => t.CreatedAt).FirstOrDefaultAsync();
-            EncryptionService encryptionService = new(_cfg);
-            if (token != null && token.ExpiresAt > DateTime.UtcNow.AddMinutes(1))
-                return encryptionService.Decrypt(token.RefreshToken);
+            // First, check if we have a valid token in the cache
+            if (_cache.TryGetValue<string>(TokenCacheKey, out var cachedToken) && !string.IsNullOrWhiteSpace(cachedToken))
+                return cachedToken;
 
-            // If not, request a new one from Spotify
+            await _tokenLock.WaitAsync();
 
-            var clientId = _cfg["Spotify:ClientId"];
-            var clientSecret = _cfg["Spotify:ClientSecret"];
-
-            if (string.IsNullOrWhiteSpace(clientId) || string.IsNullOrWhiteSpace(clientSecret))
-                throw new Exception("Spotify client ID or secret is not configured.");
-
-            // Requesting a new token from Spotify API using Client Credentials Flow
-            HttpRequestMessage request = new(HttpMethod.Post, "https://accounts.spotify.com/api/token");
-            request.Content = new FormUrlEncodedContent(new Dictionary<string, string>
+            try
             {
-                { "grant_type", "client_credentials" },
-                { "client_id", clientId },
-                { "client_secret", clientSecret }
-            });
+                // Double-check the cache after acquiring the lock
+                if (_cache.TryGetValue<string>(TokenCacheKey, out cachedToken) && !string.IsNullOrWhiteSpace(cachedToken))
+                    return cachedToken;
 
-            // Sending the request and processing the response to extract the access token
-            HttpResponseMessage response = await _http.SendAsync(request);
-            response.EnsureSuccessStatusCode();
-            var content = await response.Content.ReadFromJsonAsync<Dictionary<string, object>>();
-            var contentToken = content?["access_token"]?.ToString() ?? throw new Exception("Failed to retrieve access token from Spotify.");
-            Token newAccessToken = new()
+                // Cache miss, proceed to check the database
+                // Check if we have a valid token in the database
+                var token = await _db.Tokens.OrderByDescending(t => t.CreatedAt).FirstOrDefaultAsync();
+                EncryptionService encryptionService = new(_cfg);
+                if (token != null && token.ExpiresAt > DateTime.UtcNow.AddMinutes(1))
+                {
+                    string decryptedToken = encryptionService.Decrypt(token.RefreshToken);
+                    CacheToken(decryptedToken, token.ExpiresAt);
+                    return decryptedToken;
+                }
+
+                // If not, request a new one from Spotify
+
+                var clientId = _cfg["Spotify:ClientId"];
+                var clientSecret = _cfg["Spotify:ClientSecret"];
+
+                if (string.IsNullOrWhiteSpace(clientId) || string.IsNullOrWhiteSpace(clientSecret))
+                    throw new Exception("Spotify client ID or secret is not configured.");
+
+                // Requesting a new token from Spotify API using Client Credentials Flow
+                HttpRequestMessage request = new(HttpMethod.Post, "https://accounts.spotify.com/api/token");
+                request.Content = new FormUrlEncodedContent(new Dictionary<string, string>
+                {
+                    { "grant_type", "client_credentials" },
+                    { "client_id", clientId },
+                    { "client_secret", clientSecret }
+                });
+
+                // Sending the request and processing the response to extract the access token
+                using HttpResponseMessage response = await _http.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+
+                var content = await response.Content.ReadFromJsonAsync<Dictionary<string, object>>();
+                var contentToken = content?["access_token"]?.ToString() ?? throw new Exception("Failed to retrieve access token from Spotify.");
+                int expiresInSeconds = int.Parse(content?["expires_in"]?.ToString() ?? "3600");
+                DateTime expiresAt = DateTime.UtcNow.AddSeconds(expiresInSeconds);
+
+                Token newAccessToken = new()
+                {
+                    RefreshToken = contentToken,
+                    CreatedAt = DateTime.UtcNow,
+                    ExpiresAt = expiresAt,
+                };
+
+                // Encrypt the refresh token before storing it in the database
+                newAccessToken.RefreshToken = encryptionService.Encrypt(newAccessToken.RefreshToken);
+
+                _db.Tokens.Add(newAccessToken);
+                await _db.SaveChangesAsync();
+
+                // Cache the new token
+                CacheToken(contentToken, expiresAt);
+
+                return contentToken;
+            }
+            finally
             {
-                RefreshToken = contentToken,
-                CreatedAt = DateTime.UtcNow,
-                ExpiresAt = DateTime.UtcNow.AddSeconds(int.Parse(content?["expires_in"]?.ToString() ?? "3600")),
-            };
-
-            // Encrypt the refresh token before storing it in the database
-            newAccessToken.RefreshToken = encryptionService.Encrypt(newAccessToken.RefreshToken);
-
-            _db.Tokens.Add(newAccessToken);
-            await _db.SaveChangesAsync();
-            return contentToken;
+                _tokenLock.Release();
+            }
         }
 
         /// <summary>
@@ -238,6 +275,20 @@ namespace TuneMates_Backend.Utils
                 Uri: t.Uri ?? string.Empty,
                 ExternalUri: t.ExternalUrls?["spotify"] ?? string.Empty
             );
+        }
+
+        private void CacheToken(string token, DateTime expiresAtUtc)
+        {
+            // Safe margin of 1 minute before actual expiry
+            var ttl = expiresAtUtc - DateTime.UtcNow - TimeSpan.FromMinutes(1);
+            if (ttl <= TimeSpan.Zero)
+                return;
+
+            _cache.Set(TokenCacheKey, token, new MemoryCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = ttl,
+                Priority = CacheItemPriority.High
+            });
         }
     }
 }
