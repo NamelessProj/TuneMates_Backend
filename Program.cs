@@ -13,7 +13,7 @@ var jwtKey = builder.Configuration.GetValue<string>("Jwt:Key");
 var jwtIssuer = builder.Configuration.GetValue<string>("Jwt:Issuer");
 var jwtAudience = builder.Configuration.GetValue<string>("Jwt:Audience");
 
-if (string.IsNullOrEmpty(jwtKey) || string.IsNullOrEmpty(jwtIssuer) || string.IsNullOrEmpty(jwtAudience))
+if (string.IsNullOrWhiteSpace(jwtKey) || string.IsNullOrWhiteSpace(jwtIssuer) || string.IsNullOrWhiteSpace(jwtAudience))
     throw new ArgumentNullException("JWT configuration is missing or incomplete.");
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
