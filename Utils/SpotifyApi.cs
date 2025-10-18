@@ -227,7 +227,11 @@ namespace TuneMates_Backend.Utils
             HttpRequestMessage req = new(HttpMethod.Post, $"https://api.spotify.com/v1/playlists/{playlistId}/tracks");
             req.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
-            req.Content = JsonContent.Create(new { uris = new[] { songId } });
+            // Request body to add the song at position 0
+            req.Content = JsonContent.Create(new {
+                uris = new[] { songId },
+                position = 0
+            });
 
             HttpResponseMessage res = await _http.SendAsync(req);
 
