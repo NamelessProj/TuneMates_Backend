@@ -93,13 +93,10 @@ namespace TuneMates_Backend.Utils
 
                 Token newAccessToken = new()
                 {
-                    RefreshToken = contentToken,
+                    RefreshToken = encryptionService.Encrypt(contentToken),
                     CreatedAt = DateTime.UtcNow,
                     ExpiresAt = expiresAt,
                 };
-
-                // Encrypt the refresh token before storing it in the database
-                newAccessToken.RefreshToken = encryptionService.Encrypt(newAccessToken.RefreshToken);
 
                 _db.Tokens.Add(newAccessToken);
                 await _db.SaveChangesAsync();
