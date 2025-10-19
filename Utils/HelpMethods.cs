@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Mail;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using TuneMates_Backend.DataBase;
@@ -79,6 +80,29 @@ namespace TuneMates_Backend.Utils
             // Trim hyphens from start and end
             s = s.Trim('-');
             return s;
+        }
+
+        /// <summary>
+        /// Generate a random hexadecimal string of the specified <paramref name="length"/>
+        /// </summary>
+        /// <param name="length">The desired length of the random string</param>
+        /// <returns>A random hexadecimal string</returns>
+        public static string GenerateRandomString(int length)
+        {
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                // Generate random bytes (60 bytes to ensure enough length after hex conversion)
+                byte[] randomBytes = new byte[60];
+                rng.GetBytes(randomBytes);
+
+                // Convert bytes to hexadecimal string
+                StringBuilder hex = new(randomBytes.Length * 2);
+                foreach (byte b in randomBytes)
+                    hex.AppendFormat("{0:x2}", b);
+
+                // Return the string truncated to the desired length
+                return hex.ToString().Substring(0, Math.Min(length, hex.Length));
+            }
         }
 
         /// <summary>
