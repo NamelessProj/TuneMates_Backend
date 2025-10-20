@@ -13,9 +13,6 @@ namespace TuneMates_Backend.Route
         {
             var songGroup = group.MapGroup("/songs");
 
-            songGroup.MapGet("/{q}/p/{offset:int}/{market}", SongController.SearchSongs);
-            songGroup.MapPost("/playlist/{roomId:int}/{songId:int}", SongController.AddSongToPlaylist).RequireAuthorization();
-
             var songRoomGroup = songGroup.MapGroup("/room");
             songRoomGroup.MapGet("/{roomId:int}", SongController.GetAllSongsFromRoom).RequireAuthorization();
             songRoomGroup.MapGet("/{roomId:int}/status/{statusCode:int}", SongController.GetSongsFromRoomWithStatus).RequireAuthorization();
