@@ -114,8 +114,10 @@ There has to be a space between `Bearer` and the token.
 - 🔒 `DELETE /api/rooms/{id:int}`: Delete a room by its id.
 
 ### Songs
-- `GET /api/songs/{q:string}/p/{offset:int}/{market:string}`: Search for songs on Spotify by a query string, with pagination and market specification.
-- 🔒 `POST /api/songs/playlist/{roomId:int}/{songId:int}`: Add a new song directly to the room's Spotify playlist using the songId from the database. The song will be in "Approved" status after being added to the playlist.
 - `POST /api/songs/room/{roomId:int}/{songId:string}`: Add a new song to a room using a Spotify song ID. The song will be in "Pending" status by default.
 - 🔒 `GET /api/songs/room/{roomId:int}`: Get all songs in a specific room.
 - 🔒 `GET /api/songs/room/{roomId:int}/status/{status:int}`: Get songs in a specific room by their status ([SongStatus](/DataBase/SongStatus.cs) Pending: `0`, Approved: `1`, Refused: `2`).
+
+### Spotify
+- `GET /api/spotify/search/{q:string}/{offset:int}/{market:string}`: Search for songs on Spotify by a query string, with pagination and market specification.
+- 🔒 `POST /api/spotify/playlist/{roomId:int}/{songId:int}`: Add a new song directly to the room's Spotify playlist using the songId from the database. The song will be in "Approved" status after being added to the playlist.
