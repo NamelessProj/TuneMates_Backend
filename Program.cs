@@ -51,6 +51,7 @@ var api = app.MapGroup("/api");
 api.MapUserRoutes();
 api.MapRoomRoutes();
 api.MapSongRoutes();
+api.MapSpotifyRoutes();
 
 api.MapPost("/test/{text}", TestEndpoint).RequireAuthorization();
 
