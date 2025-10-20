@@ -163,6 +163,15 @@ namespace TuneMates_Backend.Controller
                 user.Email = userDto.Email;
             }
 
+            if (!string.IsNullOrEmpty(userDto.Token))
+                user.Token = userDto.Token;
+
+            if (!string.IsNullOrEmpty(userDto.RefreshToken))
+                user.RefreshToken = userDto.RefreshToken;
+
+            if (userDto.ExpiresIn > 0)
+                user.TokenExpiresAt = DateTime.UtcNow.AddSeconds(userDto.ExpiresIn);
+
             await db.SaveChangesAsync();
             return TypedResults.Ok(new UserResponse(user));
         }
