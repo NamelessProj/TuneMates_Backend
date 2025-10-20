@@ -1,10 +1,12 @@
-﻿using System.Text;
-using TuneMates_Backend.DataBase;
-using System.Net.Http.Headers;
-using Microsoft.EntityFrameworkCore;
-using System.Text.Json;
-using System.Web;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using System.Net;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
+using System.Text.RegularExpressions;
+using System.Web;
+using TuneMates_Backend.DataBase;
 
 namespace TuneMates_Backend.Utils
 {
@@ -113,6 +115,64 @@ namespace TuneMates_Backend.Utils
         }
 
         /// <summary>
+        /// Get a valid user access token, refreshing it if necessary
+        /// </summary>
+        /// <param name="owner">The user whose token to retrieve</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. The task result contains the user access token as a string.</returns>
+        /// <exception cref="Exception">Thrown when the Spotify client ID or secret is not configured, or when the access token cannot be retrieved from Spotify.</exception>
+        public async Task<string> GetUserAccessTokenAsync(User owner, CancellationToken ct = default)
+        {
+            // If the owner's token is still valid, return it
+            if (owner.TokenExpiresAt > DateTime.UtcNow.AddMinutes(1) && !string.IsNullOrWhiteSpace(owner.Token))
+                return owner.Token;
+
+            // Otherwise, refresh the token using the refresh token
+
+            var clientId = _cfg["Spotify:ClientId"];
+            var clientSecret = _cfg["Spotify:ClientSecret"];
+            if (string.IsNullOrWhiteSpace(clientId) || string.IsNullOrWhiteSpace(clientSecret))
+                throw new Exception("Spotify client ID or secret is not configured.");
+
+            if (string.IsNullOrWhiteSpace(owner.RefreshToken))
+                throw new Exception("User does not have a refresh token.");
+
+            using HttpRequestMessage req = new(HttpMethod.Post, "https://accounts.spotify.com/api/token");
+
+            req.Headers.Authorization = new AuthenticationHeaderValue(
+                "Basic",
+                Convert.ToBase64String(Encoding.UTF8.GetBytes($"{clientId}:{clientSecret}"))
+             );
+            req.Headers.Add("content-type", "application/x-www-form-urlencoded");
+
+            req.Content = new FormUrlEncodedContent(new Dictionary<string, string>
+            {
+                { "grant_type", "refresh_token" },
+                { "refresh_token", owner.RefreshToken }
+            });
+
+            using HttpResponseMessage res = await _http.SendAsync(req, ct);
+            
+            var body = await res.Content.ReadAsStringAsync(ct);
+            if (!res.IsSuccessStatusCode)
+                throw new Exception($"Failed to refresh Spotify access token. Status: {(int)res.StatusCode}, Body: {body}");
+
+            using var doc = JsonDocument.Parse(body);
+            var root = doc.RootElement;
+
+            var newToken = root.GetProperty("access_token").GetString();
+            int expiresInSeconds = root.TryGetProperty("expires_in", out var ei) ? ei.GetInt32() : 3600;
+
+            if (string.IsNullOrWhiteSpace(newToken))
+                throw new Exception("Failed to retrieve new access token from Spotify.");
+
+            owner.Token = newToken;
+            owner.TokenExpiresAt = DateTime.UtcNow.AddSeconds(expiresInSeconds);
+            await _db.SaveChangesAsync();
+
+            return newToken;
+        }
+
+        /// <summary>
         /// Get song details from Spotify by song ID
         /// </summary>
         /// <param name="songId">The Spotify ID of the song</param>
@@ -213,29 +273,46 @@ namespace TuneMates_Backend.Utils
         /// <summary>
         /// Add a song to a Spotify playlist by song ID
         /// </summary>
-        /// <param name="playlistId">The Spotify ID of the playlist</param>
-        /// <param name="songId">The Spotify ID of the song to add</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. The task result contains <c>true</c> if the song was added successfully, otherwise <c>false</c>.</returns>
-        public async Task<bool> AddSongToPlaylistAsync(string playlistId, string songId)
+        /// <param name="token">The user's Spotify access token</param>
+        /// <param name="playlistInput">The Spotify ID of the playlist</param>
+        /// <param name="trackInput">The Spotify ID of the song to add</param>
+        /// <param name="ct">The cancellation token</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. The task result contains the snapshot ID of the playlist after adding the song, or null if unsuccessful.</returns>
+        public async Task<string?> AddSongToPlaylistAsync(string token, string playlistInput, string trackInput, CancellationToken ct = default)
         {
-            if (string.IsNullOrWhiteSpace(playlistId) || string.IsNullOrWhiteSpace(songId))
-                return false;
+            var plaqylistId = NormalizePlaylistId(playlistInput);
+            var trackUri = NormalizeTrackUri(trackInput);
+            if (plaqylistId is null || trackUri is null)
+                throw new ArgumentException("Invalid playlist ID or track ID.");
 
-            songId = songId.StartsWith("spotify:track:") ? songId : $"spotify:track:{songId}";
+            async Task<HttpResponseMessage> SendAsync()
+            {
+                string url = $"https://api.spotify.com/v1/playlists/{plaqylistId}/tracks";
+                using HttpRequestMessage req = new(HttpMethod.Post, url);
+                req.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                req.Content = JsonContent.Create(new
+                {
+                    uris = new[] { trackUri },
+                    position = 0
+                });
+                return await _http.SendAsync(req, ct);
+            }
 
-            string accessToken = await GetAccessTokenAsync();
-            HttpRequestMessage req = new(HttpMethod.Post, $"https://api.spotify.com/v1/playlists/{playlistId}/tracks");
-            req.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            using HttpResponseMessage res1 = await SendAsync();
 
-            // Request body to add the song at position 0
-            req.Content = JsonContent.Create(new {
-                uris = new[] { songId },
-                position = 0
-            });
+            if (res1.StatusCode == (HttpStatusCode)429 &&
+                res1.Headers.RetryAfter?.Delta is TimeSpan wait &&
+                wait <= TimeSpan.FromSeconds(10))
+            {
+                await Task.Delay(wait, ct);
+                using HttpResponseMessage resRetry429 = await SendAsync();
+                return await ParseSnapshotOrThrow(resRetry429, ct);
+            }
 
-            HttpResponseMessage res = await _http.SendAsync(req);
+            if (res1.StatusCode == HttpStatusCode.Unauthorized)
+                return await ParseSnapshotOrThrow(res1, ct);
 
-            return res.IsSuccessStatusCode;
+            return await ParseSnapshotOrThrow(res1, ct);
         }
 
         /// <summary>
@@ -295,6 +372,59 @@ namespace TuneMates_Backend.Utils
                 AbsoluteExpirationRelativeToNow = ttl,
                 Priority = CacheItemPriority.High
             });
+        }
+
+        /// <summary>
+        /// Parse the snapshot ID from the HTTP response or throw an exception if the request failed
+        /// </summary>
+        /// <param name="res">The HTTP response message</param>
+        /// <param name="ct">The cancellation token</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. The task result contains the snapshot ID as a <c>string</c>, or <c>null</c> if not found.</returns>
+        /// <exception cref="HttpRequestException">Thrown if the Spotify API request failed.</exception>
+        private static async Task<string?> ParseSnapshotOrThrow(HttpResponseMessage res, CancellationToken ct)
+        {
+            var body = await res.Content.ReadAsStringAsync(ct);
+            if (!res.IsSuccessStatusCode)
+                throw new HttpRequestException($"Spotify API request failed. Status: {(int)res.StatusCode}, Body: {body}");
+
+            using var doc = JsonDocument.Parse(body);
+            return doc.RootElement.TryGetProperty("snapshot_id", out var snap) ? snap.GetString() : null;
+        }
+
+        /// <summary>
+        /// Normalize a Spotify playlist ID from various input formats
+        /// </summary>
+        /// <param name="input">The input string containing the playlist ID or URL</param>
+        /// <returns>A normalized playlist ID as a <c>string</c>, or <c>null</c> if the input is invalid.</returns>
+        private static string? NormalizePlaylistId(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+                return null;
+            var mUrl = Regex.Match(input, @"open\.spotify\.com/playlist/([A-Za-z0-9]+)");
+            if (mUrl.Success)
+                return mUrl.Groups[1].Value;
+            var mUri = Regex.Match(input, @"^spotify:playlist:([A-Za-z0-9]+)$");
+            if (mUri.Success)
+                return mUri.Groups[1].Value;
+            return Regex.IsMatch(input, @"^[A-Za-z0-9]+$") ? input : null;
+        }
+
+        /// <summary>
+        /// Normalize a Spotify track URI from various input formats
+        /// </summary>
+        /// <param name="input">The input string containing the track ID, URI, or URL</param>
+        /// <returns>A normalized track URI as a <c>string</c>, or <c>null</c> if the input is invalid.</returns>
+        private static string? NormalizeTrackUri(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+                return null;
+            var mUrl = Regex.Match(input, @"open\.spotify\.com/track/([A-Za-z0-9]+)");
+            if (mUrl.Success)
+                return $"spotify:track:{mUrl.Groups[1].Value}";
+            var mUri = Regex.Match(input, @"^spotify:track:([A-Za-z0-9]+)$");
+            if (mUri.Success)
+                return $"spotify:track:{mUri.Groups[1].Value}";
+            return Regex.IsMatch(input, @"^[A-Za-z0-9]+$") ? $"spotify:track:{input}" : null;
         }
     }
 }
