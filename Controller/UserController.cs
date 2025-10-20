@@ -152,25 +152,25 @@ namespace TuneMates_Backend.Controller
                 return TypedResults.NotFound("User not found.");
 
             // Update fields if they are provided
-            if (!string.IsNullOrEmpty(userDto.Username))
+            if (!string.IsNullOrWhiteSpace(userDto.Username))
                 user.Username = userDto.Username;
 
-            if (!string.IsNullOrEmpty(userDto.Email) &&
-                !userDto.Email.Equals(user.Email) &&
-                HelpMethods.IsEmailValid(userDto.Email) &&
-                !await HelpMethods.IsEmailInUseAsync(db, userDto.Email))
+            if (!string.IsNullOrWhiteSpace(userDto.Email) && // Check if email is provided
+                !userDto.Email.Equals(user.Email) && // Check if email is different from current
+                HelpMethods.IsEmailValid(userDto.Email) && // Validate email format
+                !await HelpMethods.IsEmailInUseAsync(db, userDto.Email)) // Check if email is not already in use
             {
                 user.Email = userDto.Email;
             }
 
-            if (!string.IsNullOrEmpty(userDto.Token))
+            if (!string.IsNullOrWhiteSpace(userDto.Token))
                 user.Token = userDto.Token;
 
-            if (!string.IsNullOrEmpty(userDto.RefreshToken))
+            if (!string.IsNullOrWhiteSpace(userDto.RefreshToken))
                 user.RefreshToken = userDto.RefreshToken;
 
-            if (userDto.ExpiresIn > 0)
-                user.TokenExpiresAt = DateTime.UtcNow.AddSeconds(userDto.ExpiresIn);
+            if (userDto.TokenExpiresIn > 0)
+                user.TokenExpiresAt = DateTime.UtcNow.AddSeconds(userDto.TokenExpiresIn);
 
             await db.SaveChangesAsync();
             return TypedResults.Ok(new UserResponse(user));
