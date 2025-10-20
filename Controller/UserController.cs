@@ -194,7 +194,7 @@ namespace TuneMates_Backend.Controller
             if (user == null)
                 return TypedResults.NotFound("User not found.");
 
-            if (string.IsNullOrEmpty(userDto.Password) || string.IsNullOrEmpty(userDto.PasswordConfirm))
+            if (string.IsNullOrWhiteSpace(userDto.Password) || string.IsNullOrWhiteSpace(userDto.PasswordConfirm))
                 return TypedResults.BadRequest("Password and PasswordConfirm are required.");
 
             if (!HelpMethods.IsPasswordValid(userDto.Password))
@@ -205,6 +205,7 @@ namespace TuneMates_Backend.Controller
 
             user.PasswordHash = Argon2.Hash(userDto.Password);
             await db.SaveChangesAsync();
+
             return TypedResults.Ok("Password updated successfully.");
         }
 
@@ -226,7 +227,7 @@ namespace TuneMates_Backend.Controller
             if (user == null)
                 return TypedResults.NotFound("User not found.");
 
-            if (string.IsNullOrEmpty(userDto.Password))
+            if (string.IsNullOrWhiteSpace(userDto.Password))
                 return TypedResults.BadRequest("Password is required to delete the account.");
 
             if (!Argon2.Verify(user.PasswordHash, userDto.Password))
@@ -234,6 +235,7 @@ namespace TuneMates_Backend.Controller
 
             db.Users.Remove(user);
             await db.SaveChangesAsync();
+
             return TypedResults.Ok("User deleted successfully.");
         }
     }
