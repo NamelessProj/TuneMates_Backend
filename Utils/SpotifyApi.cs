@@ -300,6 +300,7 @@ namespace TuneMates_Backend.Utils
 
             using HttpResponseMessage res1 = await SendAsync();
 
+            // Handle rate limiting (HTTP 429) by retrying after the specified wait time
             if (res1.StatusCode == (HttpStatusCode)429 &&
                 res1.Headers.RetryAfter?.Delta is TimeSpan wait &&
                 wait <= TimeSpan.FromSeconds(10))
