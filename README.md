@@ -90,7 +90,7 @@ After a user logs in, they will receive a JWT token that must be included in the
 The token should be prefixed with `Bearer `.
 
 #### Example
-```
+```http
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 There has to be a space between `Bearer` and the token.
