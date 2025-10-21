@@ -86,7 +86,7 @@ namespace TuneMates_Backend.Controller
 
             Room room = new()
             {
-                Name = roomDto.Name,
+                Name = roomDto.Name.Trim(),
                 IsActive = roomDto.IsActive,
                 UserId = userId.Value,
             };
@@ -144,10 +144,10 @@ namespace TuneMates_Backend.Controller
                 room.SpotifyPlaylistId = roomDto.SpotifyPlaylistId;
 
             // If a new Name is provided, update it and regenerate the Slug
-            if (!string.IsNullOrWhiteSpace(roomDto.Name) && !roomDto.Name.Equals(room.Name))
+            if (!string.IsNullOrWhiteSpace(roomDto.Name) && !roomDto.Name.Trim().Equals(room.Name))
             {
                 string oldName = room.Name;
-                room.Name = roomDto.Name;
+                room.Name = roomDto.Name.Trim();
 
                 // Check if the user already has a room with the same name
                 if (await db.Rooms.AnyAsync(r => r.Name == room.Name && r.UserId == room.UserId && r.Id != room.Id))
