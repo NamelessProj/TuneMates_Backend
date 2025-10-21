@@ -140,7 +140,7 @@ namespace TuneMates_Backend.Controller
         /// <param name="db">The database context</param>
         /// <param name="userDto">The user data transfer object containing updated user details</param>
         /// <returns>The updated user in the form of <see cref="UserResponse"/></returns>
-        public static async Task<IResult> EditUser(HttpContext http, AppDbContext db, [FromBody] UserDTO userDto)
+        public static async Task<IResult> EditUser(IConfiguration cfg, HttpContext http, AppDbContext db, [FromBody] UserDTO userDto)
         {
             var id = HelpMethods.GetUserIdFromJwtClaims(http);
             if (id == null)
@@ -163,11 +163,13 @@ namespace TuneMates_Backend.Controller
                 user.Email = userDto.Email.Trim();
             }
 
+            EncryptionService encryptionService = new(cfg);
+
             if (!string.IsNullOrWhiteSpace(userDto.Token))
-                user.Token = userDto.Token.Trim();
+                user.Token = encryptionService.Encrypt(userDto.Token.Trim());
 
             if (!string.IsNullOrWhiteSpace(userDto.RefreshToken))
-                user.RefreshToken = userDto.RefreshToken.Trim();
+                user.RefreshToken = encryptionService.Encrypt(userDto.RefreshToken.Trim());
 
             if (userDto.TokenExpiresIn > 0)
                 user.TokenExpiresAt = DateTime.UtcNow.AddSeconds(userDto.TokenExpiresIn);
