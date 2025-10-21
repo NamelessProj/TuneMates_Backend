@@ -87,15 +87,27 @@ namespace TuneMates_Backend.Controller
             });
         }
 
+        /// <summary>
+        /// Search for songs on Spotify based on a query string.
+        /// </summary>
+        /// <param name="cfg">The configuration containing Spotify settings</param>
+        /// <param name="cache">The memory cache for caching Spotify tokens</param>
+        /// <param name="db">The database context</param>
+        /// <param name="q">The search query string</param>
+        /// <param name="offset">The offset for pagination</param>
+        /// <param name="market">The market code (e.g., "US")</param>
+        /// <returns>A result containing the search results or an error message</returns>
         public static async Task<IResult> SearchSongs(IConfiguration cfg, IMemoryCache cache, AppDbContext db, string q, int offset, string market)
         {
             if (string.IsNullOrWhiteSpace(q) || offset < 0)
                 return TypedResults.BadRequest("Invalid query or page number");
 
             SpotifyApi spotifyApi = new(db, cfg, cache);
-            var results = await spotifyApi.SearchTracksAsync(q,
+            var results = await spotifyApi.SearchTracksAsync(
+                q,
                 offset: offset <= 0 ? 0 : offset,
-                market: market);
+                market: market
+             );
 
             return TypedResults.Ok(results);
         }
