@@ -90,8 +90,8 @@ namespace TuneMates_Backend.Controller
 
             User user = new()
             {
-                Username = userDto.Username,
-                Email = userDto.Email,
+                Username = userDto.Username.Trim(),
+                Email = userDto.Email.Trim(),
                 PasswordHash = Argon2.Hash(userDto.Password)
             };
 
@@ -153,21 +153,21 @@ namespace TuneMates_Backend.Controller
 
             // Update fields if they are provided
             if (!string.IsNullOrWhiteSpace(userDto.Username))
-                user.Username = userDto.Username;
+                user.Username = userDto.Username.Trim();
 
             if (!string.IsNullOrWhiteSpace(userDto.Email) && // Check if email is provided
                 !userDto.Email.Equals(user.Email) && // Check if email is different from current
                 HelpMethods.IsEmailValid(userDto.Email) && // Validate email format
                 !await HelpMethods.IsEmailInUseAsync(db, userDto.Email)) // Check if email is not already in use
             {
-                user.Email = userDto.Email;
+                user.Email = userDto.Email.Trim();
             }
 
             if (!string.IsNullOrWhiteSpace(userDto.Token))
-                user.Token = userDto.Token;
+                user.Token = userDto.Token.Trim();
 
             if (!string.IsNullOrWhiteSpace(userDto.RefreshToken))
-                user.RefreshToken = userDto.RefreshToken;
+                user.RefreshToken = userDto.RefreshToken.Trim();
 
             if (userDto.TokenExpiresIn > 0)
                 user.TokenExpiresAt = DateTime.UtcNow.AddSeconds(userDto.TokenExpiresIn);
