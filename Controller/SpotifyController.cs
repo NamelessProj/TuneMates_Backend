@@ -111,5 +111,30 @@ namespace TuneMates_Backend.Controller
 
             return TypedResults.Ok(results);
         }
+
+        /// <summary>
+        /// Get the Spotify access token for the currently authenticated user (owner of the room).
+        /// </summary>
+        /// <param name="cfg">The configuration containing Spotify settings</param>
+        /// <param name="cache">The memory cache for caching Spotify tokens</param>
+        /// <param name="http">The current HTTP context</param>
+        /// <param name="db">The database context</param>
+        /// <param name="ct">The cancellation token</param>
+        /// <returns>A result containing the access token or an error message</returns>
+        public static async Task<IResult> GetOwnerToken(IConfiguration cfg, IMemoryCache cache, HttpContext http, AppDbContext db, CancellationToken ct)
+        {
+            var userId = HelpMethods.GetUserIdFromJwtClaims(http);
+            if (userId is null)
+                return TypedResults.Unauthorized();
+
+            var owner = await db.Users.FindAsync(userId);
+            if (owner is null)
+                return TypedResults.NotFound("User not found");
+
+            SpotifyApi spotifyApi = new(db, cfg, cache);
+            string ownerToken = await spotifyApi.GetUserAccessTokenAsync(owner, ct);
+
+            return TypedResults.Ok(new { token = ownerToken } );
+        }
     }
 }
