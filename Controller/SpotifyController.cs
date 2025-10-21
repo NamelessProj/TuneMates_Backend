@@ -81,7 +81,10 @@ namespace TuneMates_Backend.Controller
             song.Status = SongStatus.Approved;
             await db.SaveChangesAsync();
 
-            return TypedResults.Ok(new { song, snapshotId });
+            return TypedResults.Ok(new {
+                song,
+                snapshotId
+            });
         }
 
         public static async Task<IResult> SearchSongs(IConfiguration cfg, IMemoryCache cache, AppDbContext db, string q, int offset, string market)
