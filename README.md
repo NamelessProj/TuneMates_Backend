@@ -35,7 +35,7 @@ Make sure to configure _(maybe even create)_ your `appsettings.json` file with t
 
 You can find a sample configuration in [`appsettings.sample.json`](/appsettings.sample.json).
 
-#### Example:
+#### Example
 ```json
 {
   "Logging": {
@@ -89,7 +89,7 @@ The application uses JWT (JSON Web Tokens) for authentication.
 After a user logs in, they will receive a JWT token that must be included in the `Authorization` header of subsequent requests to protected endpoints.
 The token should be prefixed with `Bearer `.
 
-#### Example:
+#### Example
 ```
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
