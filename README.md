@@ -119,6 +119,7 @@ There has to be a space between `Bearer` and the token.
 - 🔒 `GET /api/songs/room/{roomId:int}/status/{status:int}`: Get songs in a specific room by their status ([SongStatus](/DataBase/SongStatus.cs) Pending: `0`, Approved: `1`, Refused: `2`).
 
 ### Spotify
+- 🔒 `GET /api/spotify/token`: Get the Spotify access token for the authenticated user.
 - `GET /api/spotify/oathlink`: Get the Spotify OAuth link to authorize the application.
 - `GET /api/spotify/search/{q:string}/{offset:int}/{market:string}`: Search for songs on Spotify by a query string, with pagination and market specification.
 - 🔒 `POST /api/spotify/playlist/{roomId:int}/{songId:int}`: Add a new song directly to the room's Spotify playlist using the songId from the database. The song will be in "Approved" status after being added to the playlist.
