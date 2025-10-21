@@ -122,9 +122,11 @@ namespace TuneMates_Backend.Utils
         /// <exception cref="Exception">Thrown when the Spotify client ID or secret is not configured, or when the access token cannot be retrieved from Spotify.</exception>
         public async Task<string> GetUserAccessTokenAsync(User owner, CancellationToken ct = default)
         {
+            EncryptionService encryptionService = new(_cfg);
+
             // If the owner's token is still valid, return it
             if (owner.TokenExpiresAt > DateTime.UtcNow.AddMinutes(1) && !string.IsNullOrWhiteSpace(owner.Token))
-                return owner.Token;
+                return encryptionService.Decrypt(owner.Token);
 
             // Otherwise, refresh the token using the refresh token
 
@@ -147,7 +149,7 @@ namespace TuneMates_Backend.Utils
             req.Content = new FormUrlEncodedContent(new Dictionary<string, string>
             {
                 { "grant_type", "refresh_token" },
-                { "refresh_token", owner.RefreshToken }
+                { "refresh_token", encryptionService.Decrypt(owner.RefreshToken) }
             });
 
             using HttpResponseMessage res = await _http.SendAsync(req, ct);
@@ -165,7 +167,7 @@ namespace TuneMates_Backend.Utils
             if (string.IsNullOrWhiteSpace(newToken))
                 throw new Exception("Failed to retrieve new access token from Spotify.");
 
-            owner.Token = newToken;
+            owner.Token = encryptionService.Encrypt(newToken);
             owner.TokenExpiresAt = DateTime.UtcNow.AddSeconds(expiresInSeconds);
             await _db.SaveChangesAsync();
 
