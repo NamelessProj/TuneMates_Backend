@@ -51,6 +51,9 @@ namespace TuneMates_Backend.Controller
             if (room is null)
                 return TypedResults.NotFound("Room not found");
 
+            if (!room.IsActive)
+                return TypedResults.Conflict("Room is not active");
+
             if (string.IsNullOrWhiteSpace(room.SpotifyPlaylistId))
                 return TypedResults.BadRequest("Room does not have a linked Spotify playlist");
 
@@ -79,6 +82,9 @@ namespace TuneMates_Backend.Controller
                 return TypedResults.Problem("Failed to add song to Spotify playlist");
 
             song.Status = SongStatus.Approved;
+
+            room.LastUpdate = DateTime.UtcNow;
+
             await db.SaveChangesAsync();
 
             return TypedResults.Ok(new {
