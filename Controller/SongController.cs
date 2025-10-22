@@ -71,6 +71,10 @@ namespace TuneMates_Backend.Controller
             if (room == null)
                 return TypedResults.NotFound("Room not found");
 
+            // Check if the room is active
+            if (!room.IsActive)
+                return TypedResults.BadRequest("Cannot add songs to an inactive room");
+
             // Getting the song details from Spotify API
             SpotifyApi spotifyApi = new(db, cfg, cache);
             var spotifySong = await spotifyApi.GetSongDetailsAsync(songId);
@@ -84,7 +88,10 @@ namespace TuneMates_Backend.Controller
 
             spotifySong.RoomId = roomId;
             db.Songs.Add(spotifySong);
+            room.LastUpdate = DateTime.UtcNow;
+
             await db.SaveChangesAsync();
+
             return TypedResults.Ok(spotifySong);
         }
     }
