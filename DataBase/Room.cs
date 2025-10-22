@@ -11,6 +11,7 @@
         public bool IsActive { get; set; } = true;
         public string Market { get; set; } = "CH";
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime LastUpdate { get; set; } = DateTime.UtcNow;
         public string SpotifyPlaylistId { get; set; } = string.Empty;
     }
 }
