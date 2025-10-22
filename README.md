@@ -58,7 +58,8 @@ You can find a sample configuration in [`appsettings.sample.json`](/appsettings.
   },
   "CleanupService": {
     "TokenIntervalHours": 3,
-    "ProposalIntervalHours": 3
+    "ProposalIntervalHours": 3,
+    "RoomIntervalHours": 24
   },
   "Spotify": {
     "ClientId": "your_spotify_client_id",
