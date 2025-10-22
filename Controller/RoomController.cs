@@ -171,6 +171,8 @@ namespace TuneMates_Backend.Controller
             if (roomDto.IsActive != room.IsActive)
                 room.IsActive = roomDto.IsActive;
 
+            room.LastUpdate = DateTime.UtcNow;
+
             await db.SaveChangesAsync();
             return TypedResults.Ok(new RoomResponse(room));
         }
@@ -203,6 +205,9 @@ namespace TuneMates_Backend.Controller
 
             // Hash the new password before storing it
             room.PasswordHash = Argon2.Hash(roomDto.Password);
+
+            room.LastUpdate = DateTime.UtcNow;
+
             await db.SaveChangesAsync();
             return TypedResults.Ok(new RoomResponse(room));
         }
