@@ -6,5 +6,7 @@
         public const int DefaultBackgroundServiceIntervalHours = 3;
         public const int MaxHoursForAProposalBeforeCleanup = 5;
         public const int JwtTokenValidityHours = 3;
+        public const int MaxHoursForARoomBeforeInactive = 24;
+        public const int MaxDaysForARoomBeforeCleanup = 32;
     }
 }
