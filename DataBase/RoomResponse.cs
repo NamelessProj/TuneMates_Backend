@@ -8,6 +8,7 @@
         public bool IsActive { get; set; } = true;
         public string Market { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime LastUpdate { get; set; } = DateTime.UtcNow;
 
         public RoomResponse() { }
 
@@ -23,6 +24,7 @@
             IsActive = r.IsActive;
             Market = r.Market;
             CreatedAt = r.CreatedAt;
+            LastUpdate = r.LastUpdate;
         }
     }
 }
