@@ -29,7 +29,7 @@ namespace TuneMates_Backend.BackgroundServices
         protected override async Task ExecuteJobAsync(CancellationToken stoppingToken)
         {
             using var scope = _scopeFactory.CreateScope();
-            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            AppDbContext db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
             // Change status of rooms inactive for more than the defined hours to inactive
             DateTime cutoff = DateTime.UtcNow.AddHours(-Constants.MaxHoursForARoomBeforeInactive); // Rooms inactive for more than defined hours

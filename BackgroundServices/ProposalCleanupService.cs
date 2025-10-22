@@ -30,7 +30,7 @@ namespace TuneMates_Backend.BackgroundServices
         protected override async Task ExecuteJobAsync(CancellationToken stoppingToken)
         {
             using var scope = _scopeFactory.CreateScope();
-            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            AppDbContext db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
             DateTime cutoff = DateTime.UtcNow.AddHours(-Constants.MaxHoursForAProposalBeforeCleanup); // Proposals older than 5 hours
 
