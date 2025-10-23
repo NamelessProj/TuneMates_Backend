@@ -39,7 +39,7 @@ namespace TuneMates_Backend.Controller
             if (user == null)
                 return TypedResults.NotFound("User not found.");
 
-            return TypedResults.Ok(new UserResponse(user));
+            return TypedResults.Ok(new { user = new UserResponse(user) });
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace TuneMates_Backend.Controller
             if (user == null)
                 return TypedResults.NotFound("User not found.");
 
-            return TypedResults.Ok(new UserResponse(user));
+            return TypedResults.Ok( new { user = new UserResponse(user) });
         }
 
         /// <summary>
@@ -102,8 +102,8 @@ namespace TuneMates_Backend.Controller
             string token = HelpMethods.GenerateJwtToken(cfg, user.Id);
 
             return TypedResults.Ok(new {
-                User = new UserResponse(user),
-                Token = token
+                user = new UserResponse(user),
+                token = token
             });
         }
 
@@ -128,8 +128,8 @@ namespace TuneMates_Backend.Controller
             string token = HelpMethods.GenerateJwtToken(cfg, user.Id);
 
             return TypedResults.Ok(new {
-                User = new UserResponse(user),
-                Token = token
+                user = new UserResponse(user),
+                token = token
             });
         }
 
@@ -175,7 +175,7 @@ namespace TuneMates_Backend.Controller
                 user.TokenExpiresAt = DateTime.UtcNow.AddSeconds(userDto.TokenExpiresIn);
 
             await db.SaveChangesAsync();
-            return TypedResults.Ok(new UserResponse(user));
+            return TypedResults.Ok(new { user = new UserResponse(user) });
         }
 
         /// <summary>
