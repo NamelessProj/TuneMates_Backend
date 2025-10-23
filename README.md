@@ -101,7 +101,7 @@ The application uses Entity Framework Core for database management.
 
 The database schema includes tables for Users, Rooms, Songs, and Tokens.
 
-You can find the queries to create the necessary tables in the [`database.sql`](.database.sql) file.
+You can find the queries to create the necessary tables in the [`database.sql`](/database.sql) file.
 
 ## API Endpoints
 > 🔒: Endpoints that require authentication.
