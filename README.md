@@ -103,6 +103,11 @@ The database schema includes tables for Users, Rooms, Songs, and Tokens.
 
 You can find the queries to create the necessary tables in the [`database.sql`](/database.sql) file.
 
+>[!WARNING]
+> ### PostgreSQL and Supabase
+> The provided SQL queries are designed for PostgreSQL, which is the database system used by Supabase. If you are using a different database system, you may need to adjust the queries accordingly.
+
+
 ## API Endpoints
 > 🔒: Endpoints that require authentication.
 ### Users
