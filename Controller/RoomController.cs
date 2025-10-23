@@ -40,7 +40,7 @@ namespace TuneMates_Backend.Controller
             if (userId == null || room.UserId != userId)
                 return TypedResults.Unauthorized();
 
-            return TypedResults.Ok(new RoomResponse(room));
+            return TypedResults.Ok(new { room = new RoomResponse(room) });
         }
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace TuneMates_Backend.Controller
             if (!Argon2.Verify(room.PasswordHash, password))
                 return TypedResults.Unauthorized();
 
-            return TypedResults.Ok(new RoomResponse(room));
+            return TypedResults.Ok(new { room = new RoomResponse(room) });
         }
 
         /// <summary>
@@ -114,7 +114,7 @@ namespace TuneMates_Backend.Controller
 
             db.Rooms.Add(room);
             await db.SaveChangesAsync();
-            return TypedResults.Created($"/room/{room.Id}", new RoomResponse(room));
+            return TypedResults.Created($"/room/{room.Id}", new { room = new RoomResponse(room) });
         }
 
         /// <summary>
@@ -174,7 +174,7 @@ namespace TuneMates_Backend.Controller
             room.LastUpdate = DateTime.UtcNow;
 
             await db.SaveChangesAsync();
-            return TypedResults.Ok(new RoomResponse(room));
+            return TypedResults.Ok(new { room = new RoomResponse(room) });
         }
 
         /// <summary>
@@ -209,7 +209,7 @@ namespace TuneMates_Backend.Controller
             room.LastUpdate = DateTime.UtcNow;
 
             await db.SaveChangesAsync();
-            return TypedResults.Ok(new RoomResponse(room));
+            return TypedResults.Ok(new { room = new RoomResponse(room) });
         }
 
         /// <summary>
