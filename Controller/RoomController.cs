@@ -100,7 +100,7 @@ namespace TuneMates_Backend.Controller
                 return TypedResults.Conflict("You already have a room with this name. Please choose a different name.");
 
             // Create a URL-friendly slug from the room name
-            room.Slug = HelpMethods.GenerateSlug(room.Name);
+            room.Slug = HelpMethods.GenerateSlug(room.Name.RemoveNonAscii());
 
             if (string.IsNullOrWhiteSpace(room.Slug))
                 return TypedResults.BadRequest("The provided Name results in an invalid Slug. Please choose a different Name.");
@@ -156,7 +156,7 @@ namespace TuneMates_Backend.Controller
                 // Regenerate the slug only if the name has changed (case-insensitive)
                 if (!oldName.ToLowerInvariant().Equals(room.Name.ToLowerInvariant()))
                 {
-                    string newSlug = HelpMethods.GenerateSlug(room.Name);
+                    string newSlug = HelpMethods.GenerateSlug(room.Name.RemoveNonAscii());
 
                     // Ensure the new slug is valid or keep the old one
                     if (!string.IsNullOrWhiteSpace(newSlug))
