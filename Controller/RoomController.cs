@@ -100,7 +100,7 @@ namespace TuneMates_Backend.Controller
                 return TypedResults.Conflict("You already have a room with this name. Please choose a different name.");
 
             // Create a URL-friendly slug from the room name
-            room.Slug = HelpMethods.GenerateSlug(room.Name.RemoveNonAscii());
+            room.Slug = HelpMethods.GenerateSlug(room.Name.RemoveNonAscii().Trim());
 
             if (string.IsNullOrWhiteSpace(room.Slug))
                 return TypedResults.BadRequest("The provided Name results in an invalid Slug. Please choose a different Name.");
@@ -153,10 +153,13 @@ namespace TuneMates_Backend.Controller
                 if (await db.Rooms.AnyAsync(r => r.Name == room.Name && r.UserId == room.UserId && r.Id != room.Id))
                     room.Name = oldName; // Revert to old name if duplicate found
 
+                // Helper function to normalize names for comparison
+                string GetNameString(string s) => s.ToLowerInvariant().RemoveNonAscii().Trim();
+
                 // Regenerate the slug only if the name has changed (case-insensitive)
-                if (!oldName.ToLowerInvariant().Equals(room.Name.ToLowerInvariant()))
+                if (!GetNameString(oldName).Equals(GetNameString(room.Name)))
                 {
-                    string newSlug = HelpMethods.GenerateSlug(room.Name.RemoveNonAscii());
+                    string newSlug = HelpMethods.GenerateSlug(room.Name.RemoveNonAscii().Trim());
 
                     // Ensure the new slug is valid or keep the old one
                     if (!string.IsNullOrWhiteSpace(newSlug))
