@@ -42,7 +42,26 @@ builder.Services.AddHostedService<RoomCleanupService>();
 
 builder.Services.AddMemoryCache();
 
+// Configure CORS to allow requests from the frontend application
+builder.Services.AddCors(opts =>
+{
+    opts.AddPolicy("Frontend", policy =>
+    {
+        policy.WithOrigins(
+            "http://localhost:5173",
+            "https://localhost:5173",
+            "http://127.0.0.1:5173",
+            "https://127.0.0.1:5173")
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials();
+    });
+});
+
 var app = builder.Build();
+
+// Activate CORS middleware
+app.UseCors("Frontend");
 
 app.UseAuthentication();
 app.UseAuthorization();
