@@ -15,7 +15,7 @@ namespace TuneMates_Backend.Route
 
             roomGroup.MapGet("/", RoomController.GetAllRoomsFromUser).RequireAuthorization();
             roomGroup.MapGet("/{id:int}", RoomController.GetRoomById).RequireAuthorization();
-            roomGroup.MapGet("/slug/{slug}", RoomController.GetRoomBySlug);
+            roomGroup.MapPost("/slug/{slug}", RoomController.GetRoomBySlug);
             roomGroup.MapPost("/", RoomController.CreateRoom).RequireAuthorization();
             roomGroup.MapPut("/{roomId:int}", RoomController.EditRoom).RequireAuthorization();
             roomGroup.MapPut("/password/{id:int}", RoomController.EditRoomPassword).RequireAuthorization();
