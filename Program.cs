@@ -43,18 +43,39 @@ builder.Services.AddHostedService<RoomCleanupService>();
 builder.Services.AddMemoryCache();
 
 // Configure CORS to allow requests from the frontend application
+string[] allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? Array.Empty<string>();
+bool allowCredentials = builder.Configuration.GetValue<bool?>("Cors:AllowCrendentials") ?? false;
+
 builder.Services.AddCors(opts =>
 {
     opts.AddPolicy("Frontend", policy =>
     {
-        policy.WithOrigins(
-            "http://localhost:5173",
-            "https://localhost:5173",
-            "http://127.0.0.1:5173",
-            "https://127.0.0.1:5173")
-        .AllowAnyHeader()
-        .AllowAnyMethod()
-        .AllowCredentials();
+        if (allowCredentials)
+        {
+            if (allowedOrigins.Length == 0)
+                throw new InvalidOperationException("CORS is configured to allow credentials, but no allowed origins are specified.");
+
+            policy.WithOrigins(allowedOrigins)
+                  .AllowCredentials()
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        }
+        else
+        {
+            if (allowedOrigins.Length == 0)
+            {
+                // No credentials -> allow any origin
+                policy.AllowAnyOrigin()
+                      .AllowAnyHeader()
+                      .AllowAnyMethod();
+            }
+            else
+            {
+                policy.WithOrigins(allowedOrigins)
+                      .AllowAnyHeader()
+                      .AllowAnyMethod();
+            }
+        }
     });
 });
 
