@@ -1,4 +1,5 @@
 ﻿using TuneMates_Backend.Controller;
+using TuneMates_Backend.Infrastructure.RateLimiting;
 
 namespace TuneMates_Backend.Route
 {
@@ -19,8 +20,8 @@ namespace TuneMates_Backend.Route
             userGroup.MapPost("/register", UserController.Register);
             userGroup.MapPost("/login", UserController.Login);
             userGroup.MapPost("/delete/me", UserController.DeleteUser).RequireAuthorization();
-            userGroup.MapPut("/me", UserController.EditUser).RequireAuthorization();
-            userGroup.MapPut("/me/password", UserController.EditUserPassword).RequireAuthorization();
+            userGroup.MapPut("/me", UserController.EditUser).RequireRateLimiting(RateLimitPolicies.Mutations).RequireAuthorization();
+            userGroup.MapPut("/me/password", UserController.EditUserPassword).RequireRateLimiting(RateLimitPolicies.Mutations).RequireAuthorization();
 
             return userGroup;
         }
