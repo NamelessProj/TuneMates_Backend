@@ -1,4 +1,5 @@
 ﻿using TuneMates_Backend.Controller;
+using TuneMates_Backend.Infrastructure.RateLimiting;
 
 namespace TuneMates_Backend.Route
 {
@@ -13,12 +14,12 @@ namespace TuneMates_Backend.Route
         {
             var roomGroup = group.MapGroup("/rooms");
 
-            roomGroup.MapGet("/", RoomController.GetAllRoomsFromUser).RequireAuthorization();
-            roomGroup.MapGet("/{id:int}", RoomController.GetRoomById).RequireAuthorization();
-            roomGroup.MapPost("/slug/{slug}", RoomController.GetRoomBySlug);
+            roomGroup.MapGet("/", RoomController.GetAllRoomsFromUser).RequireRateLimiting(RateLimitPolicies.SearchTight).RequireAuthorization();
+            roomGroup.MapGet("/{id:int}", RoomController.GetRoomById).RequireRateLimiting(RateLimitPolicies.SearchTight).RequireAuthorization();
+            roomGroup.MapPost("/slug/{slug}", RoomController.GetRoomBySlug).RequireRateLimiting(RateLimitPolicies.SearchTight);
             roomGroup.MapPost("/", RoomController.CreateRoom).RequireAuthorization();
-            roomGroup.MapPut("/{roomId:int}", RoomController.EditRoom).RequireAuthorization();
-            roomGroup.MapPut("/password/{id:int}", RoomController.EditRoomPassword).RequireAuthorization();
+            roomGroup.MapPut("/{roomId:int}", RoomController.EditRoom).RequireRateLimiting(RateLimitPolicies.Mutations).RequireAuthorization();
+            roomGroup.MapPut("/password/{id:int}", RoomController.EditRoomPassword).RequireRateLimiting(RateLimitPolicies.Mutations).RequireAuthorization();
             roomGroup.MapDelete("/{id:int}", RoomController.DeleteRoom).RequireAuthorization();
 
             return roomGroup;
