@@ -1,4 +1,5 @@
 ﻿using TuneMates_Backend.Controller;
+using TuneMates_Backend.Infrastructure.RateLimiting;
 
 namespace TuneMates_Backend.Route
 {
@@ -16,7 +17,7 @@ namespace TuneMates_Backend.Route
             var songRoomGroup = songGroup.MapGroup("/room");
             songRoomGroup.MapGet("/{roomId:int}", SongController.GetAllSongsFromRoom).RequireAuthorization();
             songRoomGroup.MapGet("/{roomId:int}/status/{statusCode:int}", SongController.GetSongsFromRoomWithStatus).RequireAuthorization();
-            songRoomGroup.MapPost("/{roomId:int}/{songId}", SongController.AddSongToRoom);
+            songRoomGroup.MapPost("/{roomId:int}/{songId}", SongController.AddSongToRoom).RequireRateLimiting(RateLimitPolicies.Mutations);
 
             return songGroup;
         }
