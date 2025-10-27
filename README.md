@@ -68,6 +68,11 @@ You can find a sample configuration in [`appsettings.sample.json`](/appsettings.
     ],
     "AllowCrendentials": true
   },
+  "RateLimiting": {
+    "GlobalPerMinute": 0,
+    "SearchPerMinute": 30,
+    "MutationPerMinute":  10
+  },
   "Spotify": {
     "ClientId": "your_spotify_client_id",
     "ClientSecret": "your_spotify_client_secret",
@@ -87,6 +92,8 @@ The `Jwt:Issuer` and `Jwt:Audience` should be set to appropriate values for your
 The `CleanupService` section contains settings for background services that clean up expired tokens and proposals. You can adjust the intervals as needed (in hours).
 
 The `Cors` section contains settings for Cross-Origin Resource Sharing (CORS). You can specify the allowed origins and whether to allow credentials.
+
+The `RateLimiting` section contains settings for rate limiting API requests. You can specify the number of allowed requests per minute for different categories (global, search, mutation).
 
 The `Spotify` section should contain your Spotify API credentials.
 
