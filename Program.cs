@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using TuneMates_Backend.BackgroundServices;
 using TuneMates_Backend.DataBase;
+using TuneMates_Backend.Infrastructure.RateLimiting;
 using TuneMates_Backend.Route;
 using TuneMates_Backend.Utils;
 
@@ -79,10 +80,16 @@ builder.Services.AddCors(opts =>
     });
 });
 
+// Configure Rate Limiting
+builder.Services.AddAppRateLimiting(builder.Configuration);
+
 var app = builder.Build();
 
 // Activate CORS middleware
 app.UseCors("Frontend");
+
+// Activate Rate Limiting middleware
+app.UseAppRateLimiting();
 
 app.UseAuthentication();
 app.UseAuthorization();
