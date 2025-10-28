@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using TuneMates_Backend.BackgroundServices;
 using TuneMates_Backend.DataBase;
+using TuneMates_Backend.Infrastructure.Cors;
 using TuneMates_Backend.Infrastructure.RateLimiting;
 using TuneMates_Backend.Route;
 using TuneMates_Backend.Utils;
@@ -43,42 +44,8 @@ builder.Services.AddHostedService<RoomCleanupService>();
 
 builder.Services.AddMemoryCache();
 
-// Configure CORS to allow requests from the frontend application
-string[] allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? Array.Empty<string>();
-bool allowCredentials = builder.Configuration.GetValue<bool?>("Cors:AllowCrendentials") ?? false;
-
-builder.Services.AddCors(opts =>
-{
-    opts.AddPolicy("Frontend", policy =>
-    {
-        if (allowCredentials)
-        {
-            if (allowedOrigins.Length == 0)
-                throw new InvalidOperationException("CORS is configured to allow credentials, but no allowed origins are specified.");
-
-            policy.WithOrigins(allowedOrigins)
-                  .AllowCredentials()
-                  .AllowAnyHeader()
-                  .AllowAnyMethod();
-        }
-        else
-        {
-            if (allowedOrigins.Length == 0)
-            {
-                // No credentials -> allow any origin
-                policy.AllowAnyOrigin()
-                      .AllowAnyHeader()
-                      .AllowAnyMethod();
-            }
-            else
-            {
-                policy.WithOrigins(allowedOrigins)
-                      .AllowAnyHeader()
-                      .AllowAnyMethod();
-            }
-        }
-    });
-});
+// Configure CORS
+builder.Services.AddAppCors(builder.Configuration);
 
 // Configure Rate Limiting
 builder.Services.AddAppRateLimiting(builder.Configuration);
@@ -86,7 +53,7 @@ builder.Services.AddAppRateLimiting(builder.Configuration);
 var app = builder.Build();
 
 // Activate CORS middleware
-app.UseCors("Frontend");
+app.UseAppCors();
 
 // Activate Rate Limiting middleware
 app.UseAppRateLimiting();
