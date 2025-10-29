@@ -1,9 +1,7 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
 using TuneMates_Backend.BackgroundServices;
 using TuneMates_Backend.DataBase;
+using TuneMates_Backend.Infrastructure.Auth;
 using TuneMates_Backend.Infrastructure.Cors;
 using TuneMates_Backend.Infrastructure.RateLimiting;
 using TuneMates_Backend.Route;
@@ -11,29 +9,7 @@ using TuneMates_Backend.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var jwtKey = builder.Configuration.GetValue<string>("Jwt:Key");
-var jwtIssuer = builder.Configuration.GetValue<string>("Jwt:Issuer");
-var jwtAudience = builder.Configuration.GetValue<string>("Jwt:Audience");
-
-if (string.IsNullOrWhiteSpace(jwtKey) || string.IsNullOrWhiteSpace(jwtIssuer) || string.IsNullOrWhiteSpace(jwtAudience))
-    throw new ArgumentNullException("JWT configuration is missing or incomplete.");
-
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(opts =>
-    {
-        opts.TokenValidationParameters = new()
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = jwtIssuer,
-            ValidAudience = jwtAudience,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
-        };
-    });
-
-builder.Services.AddAuthorization();
+builder.Services.AddAppJwtAuthentication(builder.Configuration);
 
 builder.Services.AddDbContext<AppDbContext>(opts => opts.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -58,8 +34,8 @@ app.UseAppCors();
 // Activate Rate Limiting middleware
 app.UseAppRateLimiting();
 
-app.UseAuthentication();
-app.UseAuthorization();
+// Activate JWT Authentication middleware
+app.UseAppJwtAuthentication();
 
 var api = app.MapGroup("/api");
 
