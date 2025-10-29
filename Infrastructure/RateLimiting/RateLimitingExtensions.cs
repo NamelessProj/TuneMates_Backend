@@ -24,7 +24,7 @@ namespace TuneMates_Backend.Infrastructure.RateLimiting
                     ctx.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
 
                     // Try to get the Retry-After metadata if available
-                    int? retryAfterSeconds = null;
+                    int retryAfterSeconds = 15;
                     if (ctx.Lease.TryGetMetadata(MetadataName.RetryAfter, out var ts) && ts is TimeSpan timeSpan)
                         retryAfterSeconds = (int)timeSpan.TotalSeconds;
 
