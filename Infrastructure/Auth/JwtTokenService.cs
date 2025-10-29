@@ -10,8 +10,19 @@ namespace TuneMates_Backend.Infrastructure.Auth
     {
         private readonly JwtSettings _settings;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="JwtTokenService"/> class.
+        /// </summary>
+        /// <param name="options">The JWT settings options.</param>
         public JwtTokenService(IOptions<JwtSettings> options) => _settings = options.Value;
 
+        /// <summary>
+        /// Generates a JWT token for the specified user ID with optional extra claims and lifetime.
+        /// </summary>
+        /// <param name="userId">The user ID to include in the token.</param>
+        /// <param name="extraClaims">The extra claims to include in the token.</param>
+        /// <param name="lifetime">The lifetime of the token. If null, the default from settings is used.</param>
+        /// <returns>A JWT token as a string.</returns>
         public string GenerateToken(int userId, IEnumerable<Claim>? extraClaims = null, TimeSpan? lifetime = null)
         {
             List<Claim> claims = new()
