@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TuneMates_Backend.DataBase;
+using TuneMates_Backend.Infrastructure.Auth;
 using TuneMates_Backend.Utils;
 
 namespace TuneMates_Backend.Controller
@@ -64,11 +65,11 @@ namespace TuneMates_Backend.Controller
         /// <summary>
         /// Register a new user
         /// </summary>
-        /// <param name="http">The current HTTP context</param>
+        /// <param name="jwt">JWT token service</param>
         /// <param name="db">Database context</param>
         /// <param name="userDto">User data transfer object containing registration details</param>
         /// <returns>The registered user in the form of <see cref="UserResponse"/> and a JWT token</returns>
-        public static async Task<IResult> Register(HttpContext http, AppDbContext db, [FromBody] UserDTO userDto)
+        public static async Task<IResult> Register(JwtTokenService jwt, AppDbContext db, [FromBody] UserDTO userDto)
         {
             if (string.IsNullOrWhiteSpace(userDto.Username) ||
                 string.IsNullOrWhiteSpace(userDto.Email) ||
@@ -98,8 +99,7 @@ namespace TuneMates_Backend.Controller
             db.Users.Add(user);
             await db.SaveChangesAsync();
 
-            IConfiguration cfg = http.RequestServices.GetRequiredService<IConfiguration>();
-            string token = HelpMethods.GenerateJwtToken(cfg, user.Id);
+            string token = jwt.GenerateToken(user.Id);
 
             return TypedResults.Ok(new {
                 user = new UserResponse(user),
@@ -110,11 +110,11 @@ namespace TuneMates_Backend.Controller
         /// <summary>
         /// Authenticate a user and provide a JWT token
         /// </summary>
-        /// <param name="http">The current HTTP context</param>
+        /// <param name="jwt">The JWT token service</param>
         /// <param name="db">The database context</param>
         /// <param name="userDto">User data transfer object containing login details</param>
         /// <returns>The authenticated user in the form of <see cref="UserResponse"/> and a JWT token</returns>
-        public static async Task<IResult> Login(HttpContext http, AppDbContext db, [FromBody] UserDTO userDto)
+        public static async Task<IResult> Login(JwtTokenService jwt, AppDbContext db, [FromBody] UserDTO userDto)
         {
             if (string.IsNullOrEmpty(userDto.Email) || string.IsNullOrEmpty(userDto.Password))
                 return TypedResults.BadRequest("Email and Password are required.");
@@ -124,8 +124,7 @@ namespace TuneMates_Backend.Controller
             if (user == null || !Argon2.Verify(user.PasswordHash, userDto.Password))
                 return TypedResults.Unauthorized();
 
-            IConfiguration cfg = http.RequestServices.GetRequiredService<IConfiguration>();
-            string token = HelpMethods.GenerateJwtToken(cfg, user.Id);
+            string token = jwt.GenerateToken(user.Id);
 
             return TypedResults.Ok(new {
                 user = new UserResponse(user),
