@@ -20,6 +20,10 @@ builder.Services.AddHostedService<RoomCleanupService>();
 
 builder.Services.AddMemoryCache();
 
+// Register JwtTokenService
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
+builder.Services.AddSingleton<JwtTokenService>();
+
 // Configure CORS
 builder.Services.AddAppCors(builder.Configuration);
 
