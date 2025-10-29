@@ -66,7 +66,7 @@ You can find a sample configuration in [`appsettings.sample.json`](/appsettings.
       "http://localhost:5173",
       "https://localhost:5173"
     ],
-    "AllowCrendentials": true
+    "AllowCredentials": true
   },
   "RateLimiting": {
     "GlobalPerMinute": 0,
