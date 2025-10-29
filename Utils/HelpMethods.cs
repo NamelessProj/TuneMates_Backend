@@ -106,42 +106,6 @@ namespace TuneMates_Backend.Utils
         }
 
         /// <summary>
-        /// Generate a JWT token for a user with the given <paramref name="id"/>
-        /// </summary>
-        /// <param name="cfg">The configuration containing JWT settings</param>
-        /// <param name="id">The user ID</param>
-        /// <returns>A JWT token as a <c>string</c></returns>
-        /// <exception cref="ArgumentNullException">Thrown if JWT configuration is missing or incomplete</exception>
-        public static string GenerateJwtToken(IConfiguration cfg, int id)
-        {
-            var jwtKey = cfg["Jwt:Key"];
-            var jwtIssuer = cfg["Jwt:Issuer"];
-            var jwtAudience = cfg["Jwt:Audience"];
-
-            if (string.IsNullOrEmpty(jwtKey) || string.IsNullOrEmpty(jwtIssuer) || string.IsNullOrEmpty(jwtAudience))
-                throw new ArgumentNullException("JWT configuration is missing or incomplete.");
-
-            Claim[] claims = new[]
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, id.ToString()),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-            };
-
-            SymmetricSecurityKey key = new(Encoding.UTF8.GetBytes(jwtKey));
-            SigningCredentials creds = new(key, SecurityAlgorithms.HmacSha256);
-
-            JwtSecurityToken token = new(
-                issuer: jwtIssuer,
-                audience: jwtAudience,
-                claims: claims,
-                expires: DateTime.Now.AddHours(Constants.JwtTokenValidityHours),
-                signingCredentials: creds
-            );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
-
-        /// <summary>
         /// Extract the user ID from JWT claims in the given <paramref name="http"/> context
         /// </summary>
         /// <param name="http">The current HTTP context</param>
