@@ -54,7 +54,8 @@ You can find a sample configuration in [`appsettings.sample.json`](/appsettings.
   "Jwt": {
     "Key": "don't worry about it, this is a good key at least i hope so",
     "Issuer": "TuneMates",
-    "Audience": "TuneMatesUsers"
+    "Audience": "TuneMatesUsers",
+    "ExpiresInMinutes": 180 // 3 hours
   },
   "CleanupService": {
     "TokenIntervalHours": 3,
