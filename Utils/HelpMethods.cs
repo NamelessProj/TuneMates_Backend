@@ -19,7 +19,8 @@ namespace TuneMates_Backend.Utils
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. The task result contains true if the email is in use, otherwise false.</returns>
         public static async Task<bool> IsEmailInUseAsync(AppDbContext db, string email)
         {
-            return await db.Users.AnyAsync(u => u.Email == email);
+            string normalizedEmail = email.Trim().ToLowerInvariant();
+            return await db.Users.AnyAsync(u => u.Email == normalizedEmail);
         }
 
         /// <summary>
