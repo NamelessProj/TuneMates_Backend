@@ -92,7 +92,7 @@ namespace TuneMates_Backend.Controller
             User user = new()
             {
                 Username = userDto.Username.Trim(),
-                Email = userDto.Email.Trim(),
+                Email = userDto.Email.Trim().ToLowerInvariant(),
                 PasswordHash = Argon2.Hash(userDto.Password)
             };
 
@@ -119,7 +119,8 @@ namespace TuneMates_Backend.Controller
             if (string.IsNullOrEmpty(userDto.Email) || string.IsNullOrEmpty(userDto.Password))
                 return TypedResults.BadRequest("Email and Password are required.");
 
-            var user = await db.Users.FirstOrDefaultAsync(u => u.Email == userDto.Email);
+            string email = userDto.Email.Trim().ToLowerInvariant();
+            var user = await db.Users.FirstOrDefaultAsync(u => u.Email == email);
 
             if (user == null || !Argon2.Verify(user.PasswordHash, userDto.Password))
                 return TypedResults.Unauthorized();
