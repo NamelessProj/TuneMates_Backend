@@ -23,7 +23,7 @@ Authorization: Bearer {{JwtToken}}
 ###
 
 @slug=string
-GET {{HostAddress}}/{{Rooms}}/slug/{{slug}}
+POST {{HostAddress}}/{{Rooms}}/slug/{{slug}}
 
 ###
 
@@ -129,7 +129,7 @@ Authorization: Bearer {{JwtToken}}
 
 ###
 
-DELETE {{HostAddress}}/{{Users}}/me
+POST {{HostAddress}}/{{Users}}/delete/me
 Authorization: Bearer {{JwtToken}}
 
 ###
