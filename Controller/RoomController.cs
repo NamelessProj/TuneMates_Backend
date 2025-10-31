@@ -107,7 +107,7 @@ namespace TuneMates_Backend.Controller
 
             // Check if the slug is already in use, if so, append the user ID to make it unique
             await room.Slug.IsSlugAlreadyInUse(db, userId.Value);
-            if (room.Slug.Equals(""))
+            if (room.Slug == null)
                 return TypedResults.BadRequest("Could not generate a unique Slug for the room. Please choose a different Name.");
 
             // Hash the password before storing it2
@@ -169,7 +169,7 @@ namespace TuneMates_Backend.Controller
 
                     // Check if the slug is already in use, if so, append the user ID to make it unique
                     await room.Slug.IsSlugAlreadyInUse(db, room.UserId);
-                    if (room.Slug.Equals(""))
+                    if (room.Slug == null)
                         room.Slug = oldSlug; // Revert to old slug if unique generation fails
                 }
             }
