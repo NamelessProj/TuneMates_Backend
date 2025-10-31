@@ -132,13 +132,15 @@ namespace TuneMates_Backend.Utils
         /// <param name="db">The database context</param>
         /// <param name="userId">The user ID to append if the slug is taken</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. The task result contains the available slug, or an empty string if no unique slug could be generated.</returns>
-        public static async Task<string> IsSlugAlreadyInUse(this string slug, AppDbContext db, int userId)
+        public static async Task<string?> IsSlugAlreadyInUse(this string slug, AppDbContext db, int userId)
         {
-            if (!await db.Rooms.AnyAsync(r => r.Slug == slug))
+            async Task<bool> checkSlug(string s) => await db.Rooms.AnyAsync(r => r.Slug == s);
+
+            if (!await checkSlug(slug))
                 return slug;
             
             slug += $"-{userId}";
-            return await db.Rooms.AnyAsync(r => r.Slug == slug) ? slug : "";
+            return await checkSlug(slug) ? slug : null;
         }
     }
 }
