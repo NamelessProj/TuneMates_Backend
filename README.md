@@ -130,18 +130,18 @@ You can find the queries to create the necessary tables in the [`database.sql`](
 ### Users
 - `POST /api/users/register`: Register a new user.
 - `POST /api/users/login`: Login and receive a JWT token.
+- 🔒 `POST /api/users/delete/me`: Delete the current user's account.
 - 🔒 `GET /api/users/me`: Get the current user's information.
 - 🔒 `PUT /api/users/me`: Update the current user's information.
 - 🔒 `PUT /api/users/me/password`: Update the current user's password.
-- 🔒 `DELETE /api/users/me`: Delete the current user's account.
 
 ### Rooms
 - 🔒 `POST /api/rooms`: Create a new room.
+- 🔒 `POST /api/rooms/{id:int}`: Delete a room by its id.
 - 🔒 `GET /api/rooms`: Get a list of all rooms from the authenticated user.
 - `GET /api/rooms/slug/{slug:string}`: Get details of a specific room by its slug. _Requires room password_
 - 🔒 `PUT /api/rooms/{id:int}`: Update a room by its id.
 - 🔒 `PUT /api/rooms/password/{id:int}`: Update a room's password by its id.
-- 🔒 `DELETE /api/rooms/{id:int}`: Delete a room by its id.
 
 ### Songs
 - `POST /api/songs/room/{roomId:int}/{songId:string}`: Add a new song to a room using a Spotify song ID. The song will be in "Pending" status by default.
