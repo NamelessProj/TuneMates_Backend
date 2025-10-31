@@ -5,16 +5,7 @@
 @Rooms = api/rooms
 @Users = api/users
 @Songs = api/songs
-
-
-#### TEST ####
-
-
-@text=string
-POST {{HostAddress}}/api/test/{{text}}
-Authorization: Bearer {{JwtToken}}
-
-###
+@Spotify = api/spotify
 
 
 #### ROOMS ####
@@ -147,26 +138,13 @@ Authorization: Bearer {{JwtToken}}
 #### SONGS ####
 
 
-@q=string
-@offset=0
-@market=string
-GET {{HostAddress}}/{{Songs}}/{{q}}/p/{{offset}}/{{market}}
-
-###
-
-@roomId=0
-@songId=0
-POST {{HostAddress}}/{{Songs}}/playlist/{{roomId}}/{{songId}}
-
-###
-
 @roomId=0
 GET {{HostAddress}}/{{Songs}}/room/{{roomId}}
 Authorization: Bearer {{JwtToken}}
 
 ###
 
-@status=string
+@status=0
 GET {{HostAddress}}/{{Songs}}/room/{{roomId}}/status/{{status}}
 Authorization: Bearer {{JwtToken}}
 
@@ -174,5 +152,32 @@ Authorization: Bearer {{JwtToken}}
 
 @songId=string
 POST {{HostAddress}}/{{Songs}}/room/{{roomId}}/{{songId}}
+
+###
+
+
+#### SPOTIFY ####
+
+
+GET {{HostAddress}}/{{Spotify}}/token
+Authorization: Bearer {{JwtToken}}
+
+###
+
+GET {{HostAddress}}/{{Spotify}}/oathlink
+
+###
+
+@q=string
+@offset=0
+@market=string
+GET {{HostAddress}}/{{Spotify}}/search/{{q}}/{{offset}}/{{market}}
+
+###
+
+@roomId=0
+@songId=0
+POST {{HostAddress}}/{{Spotify}}/playlist/{{roomId}}/{{songId}}
+Authorization: Bearer {{JwtToken}}
 
 ###
