@@ -106,10 +106,11 @@ namespace TuneMates_Backend.Controller
                 return TypedResults.BadRequest("The provided Name results in an invalid Slug. Please choose a different Name.");
 
             // Check if the slug is already in use, if so, append the user ID to make it unique
-            if (await db.Rooms.AnyAsync(r => r.Slug == room.Slug))
-                room.Slug += $"-{room.UserId}";
+            await room.Slug.IsSlugAlreadyInUse(db, userId.Value);
+            if (room.Slug.Equals(""))
+                return TypedResults.BadRequest("Could not generate a unique Slug for the room. Please choose a different Name.");
 
-            // Hash the password before storing it
+            // Hash the password before storing it2
             room.PasswordHash = Argon2.Hash(roomDto.Password);
 
             db.Rooms.Add(room);
@@ -160,14 +161,16 @@ namespace TuneMates_Backend.Controller
                 if (!GetNameString(oldName).Equals(GetNameString(room.Name)))
                 {
                     string newSlug = HelpMethods.GenerateSlug(room.Name.RemoveNonAscii().Trim());
+                    string oldSlug = room.Slug;
 
                     // Ensure the new slug is valid or keep the old one
                     if (!string.IsNullOrWhiteSpace(newSlug))
                         room.Slug = newSlug;
 
                     // Check if the slug is already in use, if so, append the user ID to make it unique
-                    if (!newSlug.Equals(room.Slug) && await db.Rooms.AnyAsync(r => r.Slug == room.Slug))
-                        room.Slug += $"-{room.UserId}";
+                    await room.Slug.IsSlugAlreadyInUse(db, room.UserId);
+                    if (room.Slug.Equals(""))
+                        room.Slug = oldSlug; // Revert to old slug if unique generation fails
                 }
             }
 
