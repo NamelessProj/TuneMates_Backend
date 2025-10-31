@@ -1,4 +1,4 @@
-﻿using Isopoh.Cryptography.Argon2;
+using Isopoh.Cryptography.Argon2;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TuneMates_Backend.DataBase;
@@ -110,7 +110,7 @@ namespace TuneMates_Backend.Controller
             if (room.Slug == null)
                 return TypedResults.BadRequest("Could not generate a unique Slug for the room. Please choose a different Name.");
 
-            // Hash the password before storing it2
+            // Hash the password before storing it
             room.PasswordHash = Argon2.Hash(roomDto.Password);
 
             db.Rooms.Add(room);
