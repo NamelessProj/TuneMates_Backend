@@ -95,6 +95,10 @@ namespace TuneMates_Backend.Controller
             if (string.IsNullOrWhiteSpace(room.Name) || string.IsNullOrWhiteSpace(roomDto.Password))
                 return TypedResults.BadRequest("Name and Password are required.");
 
+            // Validate room name length
+            if (room.Name.Length > Constants.Forms.MaxRoomNameLength)
+                return TypedResults.BadRequest($"Name cannot exceed {Constants.Forms.MaxRoomNameLength} characters.");
+
             // Check if the user already has a room with the same name
             if (await db.Rooms.AnyAsync(r => r.Name == room.Name && r.UserId == userId))
                 return TypedResults.Conflict("You already have a room with this name. Please choose a different name.");
@@ -144,8 +148,11 @@ namespace TuneMates_Backend.Controller
             if (!string.IsNullOrWhiteSpace(roomDto.SpotifyPlaylistId))
                 room.SpotifyPlaylistId = roomDto.SpotifyPlaylistId;
 
-            // If a new Name is provided, update it and regenerate the Slug
-            if (!string.IsNullOrWhiteSpace(roomDto.Name) && !roomDto.Name.Trim().Equals(room.Name))
+            // If a new Name is provided, update it and regenerate the Slug if necessary
+            // (Check if: not null/empty, different from current, within length limit)
+            if (!string.IsNullOrWhiteSpace(roomDto.Name) &&
+                !roomDto.Name.Trim().Equals(room.Name) &&
+                roomDto.Name.Length < Constants.Forms.MaxRoomNameLength)
             {
                 string oldName = room.Name;
                 room.Name = roomDto.Name.Trim();
