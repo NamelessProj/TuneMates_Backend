@@ -18,7 +18,7 @@ namespace TuneMates_Backend.BackgroundServices
         public RoomCleanupService(
             IServiceScopeFactory scopeFactory,
             ILogger<ProposalCleanupService> logger,
-            IConfiguration config) : base(scopeFactory, logger, TimeSpan.FromHours(config.GetValue<double>("CleanupService:RoomIntervalHours", Constants.DefaultBackgroundServiceIntervalHours)))
+            IConfiguration config) : base(scopeFactory, logger, TimeSpan.FromHours(config.GetValue<double>("CleanupService:RoomIntervalHours", Constants.Cleanup.DefaultBackgroundServiceIntervalHours)))
         { }
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace TuneMates_Backend.BackgroundServices
             AppDbContext db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
             // Change status of rooms inactive for more than the defined hours to inactive
-            DateTime cutoff = DateTime.UtcNow.AddHours(-Constants.MaxHoursForARoomBeforeInactive); // Rooms inactive for more than defined hours
+            DateTime cutoff = DateTime.UtcNow.AddHours(-Constants.Cleanup.MaxHoursForARoomBeforeInactive); // Rooms inactive for more than defined hours
             int updated = await db.Rooms
                 .Where(r => r.IsActive && r.LastUpdate < cutoff)
                 .ExecuteUpdateAsync(r => r.SetProperty(room => room.IsActive, false), stoppingToken);
@@ -40,7 +40,7 @@ namespace TuneMates_Backend.BackgroundServices
             _logger.LogInformation("Marked {Count} rooms as inactive at {Time}", updated, DateTime.UtcNow);
 
             // Delete rooms that have been inactive for more than the defined days
-            DateTime deleteCutoff = DateTime.UtcNow.AddDays(-Constants.MaxDaysForARoomBeforeCleanup); // Rooms inactive for more than defined days
+            DateTime deleteCutoff = DateTime.UtcNow.AddDays(-Constants.Cleanup.MaxDaysForARoomBeforeCleanup); // Rooms inactive for more than defined days
             int deleted = await db.Rooms
                 .Where(r => !r.IsActive && r.LastUpdate < deleteCutoff)
                 .ExecuteDeleteAsync(stoppingToken);
