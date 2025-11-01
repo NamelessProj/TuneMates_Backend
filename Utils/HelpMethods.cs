@@ -31,6 +31,8 @@ namespace TuneMates_Backend.Utils
         /// <returns>A <c>bool</c> indicating whether the email format is valid</returns>
         public static bool IsEmailValid(string email)
         {
+            if (email.Length > Constants.Forms.MaxEmailLength)
+                return false;
             try
             {
                 var addr = new MailAddress(email);
@@ -49,8 +51,10 @@ namespace TuneMates_Backend.Utils
         /// <returns>A <c>bool</c> indicating whether the password meets complexity requirements</returns>
         public static bool IsPasswordValid(string password)
         {
-            // At least 8 characters, at least one uppercase letter, one lowercase letter, one digit, and one special character
-            if (password.Length < 8)
+            // At least 8 characters and max 20, at least one uppercase letter, one lowercase letter, one digit, and one special character
+            if (password.Length < Constants.Forms.MinPasswordLength)
+                return false;
+            if (password.Length > Constants.Forms.MaxPasswordLength)
                 return false;
             if (!Regex.IsMatch(password, @"[A-Z]"))
                 return false;
