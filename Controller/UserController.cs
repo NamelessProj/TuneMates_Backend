@@ -77,7 +77,10 @@ namespace TuneMates_Backend.Controller
                 string.IsNullOrWhiteSpace(userDto.PasswordConfirm))
                 return TypedResults.BadRequest("Username, Email, Password, and PasswordConfirm are required.");
 
-            if (!HelpMethods.IsEmailValid(userDto.Email))
+            if (userDto.Username.Trim().Length > Constants.Forms.MaxUsernameLength)
+                return TypedResults.BadRequest($"Username cannot exceed {Constants.Forms.MaxUsernameLength} characters.");
+
+            if (!HelpMethods.IsEmailValid(userDto.Email.Trim()))
                 return TypedResults.BadRequest("Invalid email format.");
 
             if (!HelpMethods.IsPasswordValid(userDto.Password))
@@ -152,7 +155,7 @@ namespace TuneMates_Backend.Controller
                 return TypedResults.NotFound("User not found.");
 
             // Update fields if they are provided
-            if (!string.IsNullOrWhiteSpace(userDto.Username))
+            if (!string.IsNullOrWhiteSpace(userDto.Username) && userDto.Username.Trim().Length < Constants.Forms.MaxUsernameLength)
                 user.Username = userDto.Username.Trim();
 
             if (!string.IsNullOrWhiteSpace(userDto.Email) && // Check if email is provided
