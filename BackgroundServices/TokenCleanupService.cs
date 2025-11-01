@@ -20,7 +20,7 @@ namespace TuneMates_Backend.BackgroundServices
         public TokenCleanupService(
             IServiceScopeFactory scopeFactory,
             ILogger<TokenCleanupService> logger,
-            IConfiguration config) : base(scopeFactory, logger, TimeSpan.FromHours(config.GetValue<double>("CleanupService:TokenIntervalHours", Constants.DefaultBackgroundServiceIntervalHours)))
+            IConfiguration config) : base(scopeFactory, logger, TimeSpan.FromHours(config.GetValue<double>("CleanupService:TokenIntervalHours", Constants.Cleanup.DefaultBackgroundServiceIntervalHours)))
         { }
 
         /// <summary>
