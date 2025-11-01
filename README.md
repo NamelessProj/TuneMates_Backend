@@ -6,6 +6,9 @@
 TuneMates is a web application that allows users to create and join music listening rooms, 
 where they can share and enjoy music together in real-time. The backend is built using .NET 9 in C#.
 
+This repository contains the backend code for the TuneMates application, which handles user authentication, room management, song proposals, and integration with the Spotify API.
+You can find the frontend part [here](https://github.com/NamelessProj/TuneMates_Frontend).
+
 ## Features
 - User authentication and authorization
 - Create and join rooms to add songs to a shared Spotify playlist
