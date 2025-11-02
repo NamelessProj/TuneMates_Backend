@@ -21,7 +21,8 @@ namespace TuneMates_Backend.Controller
                 Id = u.Id,
                 Username = u.Username,
                 Email = u.Email,
-                CreatedAt = u.CreatedAt
+                CreatedAt = u.CreatedAt,
+                SpotifyId = u.SpotifyId
             }).ToListAsync();
 
             return TypedResults.Ok(users);
