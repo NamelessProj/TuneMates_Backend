@@ -45,7 +45,7 @@ namespace TuneMates_Backend.BackgroundServices
                 .Where(r => !r.IsActive && r.LastUpdate < deleteCutoff)
                 .ExecuteDeleteAsync(stoppingToken);
 
-            _logger.LogInformation("Cleaned up {Count} old inactive (inactive for >= {Days} days) rooms at {Time}", deleted, Constants.MaxDaysForARoomBeforeCleanup, DateTime.UtcNow);
+            _logger.LogInformation("Cleaned up {Count} old inactive (inactive for >= {Days} days) rooms at {Time}", deleted, Constants.Cleanup.MaxDaysForARoomBeforeCleanup, DateTime.UtcNow);
         }
     }
 }
