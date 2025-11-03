@@ -200,16 +200,19 @@ namespace TuneMates_Backend.Controller
             if (user == null)
                 return TypedResults.NotFound("User not found.");
 
-            if (string.IsNullOrWhiteSpace(userDto.Password) || string.IsNullOrWhiteSpace(userDto.PasswordConfirm))
-                return TypedResults.BadRequest("Password and PasswordConfirm are required.");
+            if (string.IsNullOrWhiteSpace(userDto.Password) || string.IsNullOrWhiteSpace(userDto.PasswordConfirm) || string.IsNullOrWhiteSpace(userDto.NewPassword))
+                return TypedResults.BadRequest("NewPassword, Password and PasswordConfirm are required.");
 
-            if (!HelpMethods.IsPasswordValid(userDto.Password))
+            if (!Argon2.Verify(user.PasswordHash, userDto.Password))
+                return TypedResults.Unauthorized();
+
+            if (!HelpMethods.IsPasswordValid(userDto.NewPassword))
                 return TypedResults.BadRequest("Password must be at least 8 characters long and include uppercase, lowercase, digit, and special character.");
 
             if (!userDto.Password.Equals(userDto.PasswordConfirm))
                 return TypedResults.BadRequest("Password and PasswordConfirm do not match.");
 
-            user.PasswordHash = Argon2.Hash(userDto.Password);
+            user.PasswordHash = Argon2.Hash(userDto.NewPassword);
             await db.SaveChangesAsync();
 
             return TypedResults.Ok("Password updated successfully.");
