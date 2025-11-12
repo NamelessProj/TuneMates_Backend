@@ -319,6 +319,62 @@ namespace TuneMates_Backend.Utils
         }
 
         /// <summary>
+        /// Get a user access token from an authorization code
+        /// </summary>
+        /// <param name="code">The authorization code received from Spotify</param>
+        /// <returns>The user access token as an <see cref="AccessToken"/> object</returns>
+        /// <exception cref="Exception">Send when the Spotify client ID or secret is not configured, or when the access token cannot be retrieved from Spotify.</exception>
+        public async Task<AccessToken> GetUserAccessTokenFromCode(string code)
+        {
+            var clientId = _cfg["Spotify:ClientId"];
+            var clientSecret = _cfg["Spotify:ClientSecret"];
+            var redirectUri = _cfg["Spotify:RedirectUri"];
+
+            if (string.IsNullOrWhiteSpace(clientId) || string.IsNullOrWhiteSpace(clientSecret) || string.IsNullOrWhiteSpace(redirectUri))
+                throw new Exception("Spotify client ID or secret is not configured.");
+
+            string authHeader = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{clientId}:{clientSecret}"));
+
+            using HttpRequestMessage req = new(HttpMethod.Post, "https://accounts.spotify.com/api/token");
+
+            req.Headers.Authorization = new AuthenticationHeaderValue("Basic", authHeader);
+            req.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
+
+            req.Content = new FormUrlEncodedContent(new Dictionary<string, string>
+            {
+                { "grant_type", "authorization_code" },
+                { "code", code },
+                { "redirect_uri", redirectUri }
+            });
+
+            using HttpResponseMessage res = await _http.SendAsync(req);
+
+            var body = await res.Content.ReadAsStringAsync();
+
+            if (!res.IsSuccessStatusCode)
+                throw new Exception($"Failed to get Spotify user access token. Status: {(int)res.StatusCode}, Body: {body}");
+
+            using var doc = JsonDocument.Parse(body);
+            var root = doc.RootElement;
+
+            var accessToken = root.GetProperty("access_token").GetString();
+            var refreshToken = root.GetProperty("refresh_token").GetString();
+            int expiresInSeconds = root.GetProperty("expires_in").GetInt32();
+
+            if (string.IsNullOrWhiteSpace(accessToken) || string.IsNullOrWhiteSpace(refreshToken))
+                throw new Exception("Failed to retrieve user access token or refresh token from Spotify.");
+
+            AccessToken token = new()
+            {
+                Token = accessToken,
+                RefreshToken = refreshToken,
+                ExpiresIn = expiresInSeconds,
+            };
+
+            return token;
+        }
+
+        /// <summary>
         /// Calculate the next offset from the Spotify "next" URL
         /// </summary>
         /// <param name="nextUrl">The "next" URL from Spotify API response</param>
