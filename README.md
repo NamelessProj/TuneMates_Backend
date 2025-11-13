@@ -133,6 +133,7 @@ You can find the queries to create the necessary tables in the [`database.sql`](
 ### Users
 - `POST /api/users/register`: Register a new user.
 - `POST /api/users/login`: Login and receive a JWT token.
+- 🔒 `POST /api/users/spotify/connect/{code:string}/{state:string}`: Connect the user's Spotify account using the provided authorization code and state.
 - 🔒 `POST /api/users/delete/me`: Delete the current user's account.
 - 🔒 `GET /api/users/me`: Get the current user's information.
 - 🔒 `PUT /api/users/me`: Update the current user's information.
