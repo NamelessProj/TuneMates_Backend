@@ -19,6 +19,7 @@ namespace TuneMates_Backend.Route
             userGroup.MapGet("/{id:int}", UserController.GetUserById);
             userGroup.MapPost("/register", UserController.Register);
             userGroup.MapPost("/login", UserController.Login);
+            userGroup.MapPost("/connect/spotify/{code}/{state}", UserController.GetUserSpotifyAccessToken).RequireRateLimiting(RateLimitPolicies.Mutations).RequireAuthorization();
             userGroup.MapPost("/delete/me", UserController.DeleteUser).RequireAuthorization();
             userGroup.MapPut("/me", UserController.EditUser).RequireRateLimiting(RateLimitPolicies.Mutations).RequireAuthorization();
             userGroup.MapPut("/me/password", UserController.EditUserPassword).RequireRateLimiting(RateLimitPolicies.Mutations).RequireAuthorization();
