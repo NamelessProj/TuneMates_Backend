@@ -1,6 +1,7 @@
 ﻿using Isopoh.Cryptography.Argon2;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using TuneMates_Backend.DataBase;
 using TuneMates_Backend.Infrastructure.Auth;
 using TuneMates_Backend.Utils;
@@ -216,6 +217,42 @@ namespace TuneMates_Backend.Controller
             await db.SaveChangesAsync();
 
             return TypedResults.Ok("Password updated successfully.");
+        }
+
+        /// <summary>
+        /// Get Spotify access token for the authenticated user
+        /// </summary>
+        /// <param name="cfg">The application configuration</param>
+        /// <param name="cache">The memory cache</param>
+        /// <param name="http">The current HTTP context</param>
+        /// <param name="db">The database context</param>
+        /// <param name="code">The authorization code received from Spotify</param>
+        /// <param name="state">The state parameter to prevent CSRF attacks</param>
+        /// <returns>The updated user in the form of <see cref="UserResponse"/></returns>
+        public static async Task<IResult> GetUserSpotifyAccessToken(IConfiguration cfg, IMemoryCache cache, HttpContext http, AppDbContext db, string code, string state)
+        {
+            var id = HelpMethods.GetUserIdFromJwtClaims(http);
+            if (id == null)
+                return TypedResults.Unauthorized();
+
+            var user = await db.Users.FindAsync(id);
+            if (user == null)
+                return TypedResults.NotFound("User not found.");
+
+            if (string.IsNullOrWhiteSpace(code) || string.IsNullOrWhiteSpace(state))
+                return TypedResults.BadRequest("Code and State are required.");
+
+            SpotifyApi spotifyApi = new(db, cfg, cache);
+
+            AccessToken accessToken = await spotifyApi.GetUserAccessTokenFromCode(code);
+
+            user.Token = accessToken.Token;
+            user.RefreshToken = accessToken.RefreshToken;
+            user.TokenExpiresAt = DateTime.UtcNow.AddSeconds(accessToken.ExpiresIn);
+            user.SpotifyId = "spotify_connected"; // Placeholder, ideally fetch the actual Spotify user ID
+            await db.SaveChangesAsync();
+
+            return TypedResults.Ok(new { user = new UserResponse(user) });
         }
 
         /// <summary>
