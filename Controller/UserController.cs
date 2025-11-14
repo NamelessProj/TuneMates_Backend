@@ -246,7 +246,7 @@ namespace TuneMates_Backend.Controller
             if (spotifyState == null)
                 return TypedResults.BadRequest("Invalid State parameter.");
 
-            if (spotifyState.CreatedAt.AddMinutes(Constants.SpotifyStateValidityMinutes) < DateTime.UtcNow)
+            if (spotifyState.CreatedAt.AddMinutes(Constants.Cleanup.MaxMinutesForSpotifyStateBeforeInvalidity) < DateTime.UtcNow)
                 return TypedResults.BadRequest("State parameter has expired.");
 
             db.SpotifyStates.Remove(spotifyState);
