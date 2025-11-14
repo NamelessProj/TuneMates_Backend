@@ -14,6 +14,6 @@ namespace TuneMates_Backend.DataBase
 
         public DbSet<Token> Tokens => Set<Token>();
 
-        public DbSet<AccessToken> AccessTokens => Set<AccessToken>();
+        public DbSet<SpotifyState> SpotifyStates => Set<SpotifyState>();
     }
 }
