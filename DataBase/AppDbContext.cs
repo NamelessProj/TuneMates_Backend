@@ -13,5 +13,7 @@ namespace TuneMates_Backend.DataBase
         public DbSet<Song> Songs => Set<Song>();
 
         public DbSet<Token> Tokens => Set<Token>();
+
+        public DbSet<AccessToken> AccessTokens => Set<AccessToken>();
     }
 }
