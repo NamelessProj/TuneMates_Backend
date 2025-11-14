@@ -242,6 +242,16 @@ namespace TuneMates_Backend.Controller
             if (string.IsNullOrWhiteSpace(code) || string.IsNullOrWhiteSpace(state))
                 return TypedResults.BadRequest("Code and State are required.");
 
+            var spotifyState = await db.SpotifyStates.Where(s => s.State == state).FirstOrDefaultAsync();
+            if (spotifyState == null)
+                return TypedResults.BadRequest("Invalid State parameter.");
+
+            if (spotifyState.CreatedAt.AddMinutes(Constants.SpotifyStateValidityMinutes) < DateTime.UtcNow)
+                return TypedResults.BadRequest("State parameter has expired.");
+
+            db.SpotifyStates.Remove(spotifyState);
+            await db.SaveChangesAsync();
+
             SpotifyApi spotifyApi = new(db, cfg, cache);
 
             AccessToken accessToken = await spotifyApi.GetUserAccessTokenFromCode(code);
