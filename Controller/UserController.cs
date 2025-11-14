@@ -248,9 +248,8 @@ namespace TuneMates_Backend.Controller
 
             if (spotifyState.CreatedAt.AddMinutes(Constants.Cleanup.MaxMinutesForSpotifyStateBeforeInvalidity) < DateTime.UtcNow)
                 return TypedResults.BadRequest("State parameter has expired.");
-
+            
             db.SpotifyStates.Remove(spotifyState);
-            await db.SaveChangesAsync();
 
             SpotifyApi spotifyApi = new(db, cfg, cache);
 
@@ -262,6 +261,7 @@ namespace TuneMates_Backend.Controller
             user.RefreshToken = encryptionService.Encrypt(accessToken.RefreshToken);
             user.TokenExpiresAt = DateTime.UtcNow.AddSeconds(accessToken.ExpiresIn);
             user.SpotifyId = "spotify_connected"; // Placeholder, ideally fetch the actual Spotify user ID
+            
             await db.SaveChangesAsync();
 
             return TypedResults.Ok(new { user = new UserResponse(user) });
