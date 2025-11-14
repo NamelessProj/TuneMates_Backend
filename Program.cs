@@ -18,6 +18,7 @@ builder.Services.AddDbContext<AppDbContext>(opts => opts.UseNpgsql(builder.Confi
 builder.Services.AddHostedService<TokenCleanupService>();
 builder.Services.AddHostedService<ProposalCleanupService>();
 builder.Services.AddHostedService<RoomCleanupService>();
+builder.Services.AddHostedService<SpotifyStateCleanupService>();
 
 // Add Memory Cache
 builder.Services.AddMemoryCache();
