@@ -11,7 +11,7 @@ namespace TuneMates_Backend.Controller
         /// </summary>
         /// <param name="cfg">The configuration containing Spotify settings</param>
         /// <returns>An <see cref="IResult"/> containing the OAuth URL or an error message</returns>
-        public static async Task<IResult> SendUserOathLink(IConfiguration cfg)
+        public static async Task<IResult> SendUserOathLink(IConfiguration cfg, AppDbContext db)
         {
             var clientId = cfg["Spotify:ClientId"];
             var redirectUri = cfg["Spotify:RedirectUri"];
@@ -33,6 +33,15 @@ namespace TuneMates_Backend.Controller
             string queryString = string.Join("&", queryParams.Select(kvp => $"{Uri.EscapeDataString(kvp.Key)}={Uri.EscapeDataString(kvp.Value)}"));
 
             string oauthUrl = $"https://accounts.spotify.com/authorize?{queryString}";
+
+            // Store the state in the database to validate later
+            SpotifyState spotifyState = new()
+            {
+                State = state,
+                CreatedAt = DateTime.UtcNow
+            };
+            db.SpotifyStates.Add(spotifyState);
+            await db.SaveChangesAsync();
 
             return TypedResults.Ok(new { url = oauthUrl });
         }
