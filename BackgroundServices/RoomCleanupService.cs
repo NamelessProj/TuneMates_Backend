@@ -37,7 +37,7 @@ namespace TuneMates_Backend.BackgroundServices
                 .Where(r => r.IsActive && r.LastUpdate < cutoff)
                 .ExecuteUpdateAsync(r => r.SetProperty(room => room.IsActive, false), stoppingToken);
 
-            _logger.LogInformation("Marked {Count} rooms as inactive at {Time}", updated, DateTime.UtcNow);
+            _logger.LogInformation("{Service}: Marked {Count} rooms as inactive at {Time}", GetType().Name, updated, DateTime.UtcNow);
 
             // Delete rooms that have been inactive for more than the defined days
             DateTime deleteCutoff = DateTime.UtcNow.AddDays(-Constants.Cleanup.MaxDaysForARoomBeforeCleanup); // Rooms inactive for more than defined days
@@ -45,7 +45,7 @@ namespace TuneMates_Backend.BackgroundServices
                 .Where(r => !r.IsActive && r.LastUpdate < deleteCutoff)
                 .ExecuteDeleteAsync(stoppingToken);
 
-            _logger.LogInformation("Cleaned up {Count} old inactive (inactive for >= {Days} days) rooms at {Time}", deleted, Constants.Cleanup.MaxDaysForARoomBeforeCleanup, DateTime.UtcNow);
+            _logger.LogInformation("{Service}: Cleaned up {Count} old inactive (inactive for >= {Days} days) rooms at {Time}", GetType().Name, deleted, Constants.Cleanup.MaxDaysForARoomBeforeCleanup, DateTime.UtcNow);
         }
     }
 }
