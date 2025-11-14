@@ -31,7 +31,7 @@ namespace TuneMates_Backend.BackgroundServices
             using var scope = _scopeFactory.CreateScope();
             AppDbContext db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-            DateTime cutoff = DateTime.UtcNow.AddHours(-Constants.Cleanup.MaxHoursForSpotifyStateBeforeCleanup); // Define cutoff time for deletion all SpotifyStates older than this
+            DateTime cutoff = DateTime.UtcNow.AddMinutes(-Constants.Cleanup.MaxMinutesForSpotifyStateBeforeInvalidity); // Define cutoff time for deletion all SpotifyStates older than this
             int deletedCount = await db.SpotifyStates
                 .Where(s => s.CreatedAt < cutoff)
                 .ExecuteDeleteAsync(stoppingToken);
