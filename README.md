@@ -157,8 +157,3 @@ You can find the queries to create the necessary tables in the [`database.sql`](
 - `GET /api/spotify/oathlink`: Get the Spotify OAuth link to authorize the application.
 - `GET /api/spotify/search/{q:string}/{offset:int}/{market:string}`: Search for songs on Spotify by a query string, with pagination and market specification.
 - 🔒 `POST /api/spotify/playlist/{roomId:int}/{songId:int}`: Add a new song directly to the room's Spotify playlist using the songId from the database. The song will be in "Approved" status after being added to the playlist.
-
-
-### Todo
-For the connection with Spotify, this route: `POST /api/users/spotify/connect/{code:string}/{state:string}`, the `state` parameter is currently not being used for validation.
-In the future, a proper way to handle and validate the `state` parameter should be implemented to enhance security during the OAuth flow.
