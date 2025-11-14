@@ -63,7 +63,8 @@ You can find a sample configuration in [`appsettings.sample.json`](/appsettings.
   "CleanupService": {
     "TokenIntervalHours": 3,
     "ProposalIntervalHours": 3,
-    "RoomIntervalHours": 24
+    "RoomIntervalHours": 24,
+    "SpotifyStateIntervalHours": 1
   },
   "Cors": {
     "AllowedOrigins": [
@@ -93,7 +94,7 @@ The `Jwt:Key` should be a strong secret key used for signing JWT tokens.
 
 The `Jwt:Issuer` and `Jwt:Audience` should be set to appropriate values for your application.
 
-The `CleanupService` section contains settings for background services that clean up expired tokens and proposals. You can adjust the intervals as needed (in hours).
+The `CleanupService` section contains settings for background services that clean up expired tokens, proposals, etc. You can adjust the intervals as needed (in hours).
 
 The `Cors` section contains settings for Cross-Origin Resource Sharing (CORS). You can specify the allowed origins and whether to allow credentials.
 
