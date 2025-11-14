@@ -37,7 +37,7 @@ namespace TuneMates_Backend.BackgroundServices
                 .Where(t => t.ExpiresAt < DateTime.UtcNow)
                 .ExecuteDeleteAsync(stoppingToken);
 
-            _logger.LogInformation("Cleaned up {Count} old tokens at {Time}", oldTokens, DateTime.UtcNow);
+            _logger.LogInformation("{Service}: Cleaned up {Count} old tokens at {Time}", GetType().Name, oldTokens, DateTime.UtcNow);
         }
     }
 }
