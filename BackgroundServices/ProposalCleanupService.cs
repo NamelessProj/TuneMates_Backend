@@ -38,7 +38,7 @@ namespace TuneMates_Backend.BackgroundServices
                 .Where(s => s.AddedAt < cutoff)
                 .ExecuteDeleteAsync(stoppingToken);
 
-            _logger.LogInformation("Cleaned up {Count} old proposals at {Time}", deleted, DateTime.UtcNow);
+            _logger.LogInformation("{Service}: Cleaned up {Count} old proposals at {Time}", GetType().Name, deleted, DateTime.UtcNow);
         }
     }
 }
