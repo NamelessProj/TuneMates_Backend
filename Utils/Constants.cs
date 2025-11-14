@@ -8,7 +8,7 @@
             public const int MaxHoursForAProposalBeforeCleanup = 5;
             public const int MaxHoursForARoomBeforeInactive = 24;
             public const int MaxDaysForARoomBeforeCleanup = 32;
-            public const int MaxHoursForSpotifyStateBeforeCleanup = 3;
+            public const int MaxMinutesForSpotifyStateBeforeInvalidity = 10;
         }
 
         public static class Forms
@@ -22,6 +22,5 @@
 
         public const int MaxRoomPerUser = 10;
         public const int JwtTokenValidityHours = 3;
-        public const int SpotifyStateValidityMinutes = 10;
     }
 }
