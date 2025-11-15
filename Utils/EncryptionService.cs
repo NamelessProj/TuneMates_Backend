@@ -40,7 +40,7 @@ namespace TuneMates_Backend.Utils
         /// <returns>A base64-encoded string containing the nonce, tag, and ciphertext.</returns>
         public string Encrypt(string plaintext)
         {
-            using var aes = new AesGcm(_key, TagByteSize);
+            using AesGcm aes = new(_key, TagByteSize);
             byte[] nonce = RandomNumberGenerator.GetBytes(NonceByteSize); // 96-bit nonce
             byte[] plaintextBytes = Encoding.UTF8.GetBytes(plaintext);
             byte[] cyphertext = new byte[plaintextBytes.Length];
@@ -70,7 +70,7 @@ namespace TuneMates_Backend.Utils
             byte[] tag = combined.Skip(NonceByteSize).Take(TagByteSize).ToArray();
             byte[] cyphertext = combined.Skip(NonceByteSize + TagByteSize).ToArray();
 
-            using var aes = new AesGcm(_key, TagByteSize);
+            using AesGcm aes = new(_key, TagByteSize);
             byte[] plaintext = new byte[cyphertext.Length];
             aes.Decrypt(nonce, cyphertext, tag, plaintext);
 
