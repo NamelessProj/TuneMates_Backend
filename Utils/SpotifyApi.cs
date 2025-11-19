@@ -396,6 +396,15 @@ namespace TuneMates_Backend.Utils
             return token;
         }
 
+        /// <summary>
+        /// Get the playlists of a user by their Spotify user ID
+        /// </summary>
+        /// <param name="userAccessToken">The user's Spotify access token</param>
+        /// <param name="userId">The Spotify user ID</param>
+        /// <param name="limit">The maximum number of playlists to return (1-50)</param>
+        /// <param name="offset">The index of the first playlist to return (for pagination)</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. The task result contains the user's playlists as a <see cref="SpotifyDTO.PlaylistResponse"/> object.</returns>
+        /// <exception cref="Exception">Thrown if the Spotify response cannot be parsed.</exception>
         public async Task<SpotifyDTO.PlaylistResponse> GetUserPlaylists(string userAccessToken, string userId, int limit = 50, int offset = 0)
         {
             limit = Math.Clamp(limit, 1, 50);
