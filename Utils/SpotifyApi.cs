@@ -396,6 +396,27 @@ namespace TuneMates_Backend.Utils
             return token;
         }
 
+        public async Task<SpotifyDTO.PlaylistResponse> GetUserPlaylists(string userAccessToken, string userId, int limit = 50, int offset = 0)
+        {
+            limit = Math.Clamp(limit, 1, 50);
+            offset = Math.Max(0, offset);
+
+            string url = $"https://api.spotify.com/v1/users/{userId}/playlists?limit={limit}&offset={offset}";
+            using HttpRequestMessage req = new(HttpMethod.Get, url);
+            req.Headers.Authorization = new AuthenticationHeaderValue("Bearer", userAccessToken);
+
+            using HttpResponseMessage res = await _http.SendAsync(req);
+
+            var body = await res.Content.ReadAsStringAsync();
+            if (!res.IsSuccessStatusCode)
+                throw new Exception($"Failed to get user playlists from Spotify. Status: {(int)res.StatusCode}, Body: {body}");
+
+            SpotifyDTO.PlaylistResponse? playlists = await res.Content.ReadFromJsonAsync<SpotifyDTO.PlaylistResponse>();
+
+            return playlists ?? new SpotifyDTO.PlaylistResponse { Items = new List<SpotifyDTO.Playlist>() };
+
+        }
+
         /// <summary>
         /// Calculate the next offset from the Spotify "next" URL
         /// </summary>
