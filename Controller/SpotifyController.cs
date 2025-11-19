@@ -103,6 +103,32 @@ namespace TuneMates_Backend.Controller
         }
 
         /// <summary>
+        /// Get the Spotify playlists of the currently authenticated user.
+        /// </summary>
+        /// <param name="cfg">The configuration containing Spotify settings</param>
+        /// <param name="cache">The memory cache for caching Spotify tokens</param>
+        /// <param name="http">The current HTTP context</param>
+        /// <param name="db">The database context</param>
+        /// <returns>A result containing the user's Spotify playlists or an error message</returns>
+        public static async Task<IResult> GetUserSpotifyPlaylists(IConfiguration cfg, IMemoryCache cache, HttpContext http, AppDbContext db)
+        {
+            var userId = HelpMethods.GetUserIdFromJwtClaims(http);
+            if (userId is null)
+                return TypedResults.Unauthorized();
+
+            var user = await db.Users.FindAsync(userId);
+            if (user is null)
+                return TypedResults.NotFound("User not found");
+
+            SpotifyApi spotifyApi = new(db, cfg, cache);
+
+            string userToken = await spotifyApi.GetUserAccessTokenAsync(user);
+            SpotifyDTO.PlaylistResponse playlists = await spotifyApi.GetUserPlaylists(userToken, user.SpotifyId);
+
+            return TypedResults.Ok(playlists);
+        }
+
+        /// <summary>
         /// Search for songs on Spotify based on a query string.
         /// </summary>
         /// <param name="cfg">The configuration containing Spotify settings</param>
