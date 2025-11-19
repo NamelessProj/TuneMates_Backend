@@ -12,6 +12,7 @@ namespace TuneMates_Backend.Route
             spotifyGroup.MapGet("/token", SpotifyController.GetOwnerToken).RequireAuthorization();
             spotifyGroup.MapGet("/oathlink", SpotifyController.SendUserOathLink);
             spotifyGroup.MapGet("/search/{q}/{offset:int}/{market}", SpotifyController.SearchSongs).RequireRateLimiting(RateLimitPolicies.SearchTight);
+            spotifyGroup.MapGet("/playlist/me", SpotifyController.GetUserSpotifyPlaylists).RequireRateLimiting(RateLimitPolicies.SearchTight).RequireAuthorization();
             spotifyGroup.MapPost("/playlist/{roomId:int}/{songId:int}", SpotifyController.AddSongToPlaylist).RequireRateLimiting(RateLimitPolicies.Mutations).RequireAuthorization();
 
             return spotifyGroup;
