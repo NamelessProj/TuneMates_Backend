@@ -33,11 +33,11 @@ namespace TuneMates_Backend.BackgroundServices
             using var scope = _scopeFactory.CreateScope();
             AppDbContext db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-            int oldTokens = await db.Tokens
+            int deltedTokens = await db.Tokens
                 .Where(t => t.ExpiresAt < DateTime.UtcNow)
                 .ExecuteDeleteAsync(stoppingToken);
 
-            _logger.LogInformation("{Service}: Cleaned up {Count} old tokens at {Time}", GetType().Name, oldTokens, DateTime.UtcNow);
+            _logger.LogInformation("{Service}: Cleaned up {Count} tokens at {Time}", GetType().Name, deltedTokens, DateTime.UtcNow);
         }
     }
 }
