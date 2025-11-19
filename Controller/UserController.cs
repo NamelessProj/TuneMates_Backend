@@ -260,7 +260,7 @@ namespace TuneMates_Backend.Controller
             user.Token = encryptionService.Encrypt(accessToken.Token);
             user.RefreshToken = encryptionService.Encrypt(accessToken.RefreshToken);
             user.TokenExpiresAt = DateTime.UtcNow.AddSeconds(accessToken.ExpiresIn);
-            user.SpotifyId = "spotify_connected"; // Placeholder, ideally fetch the actual Spotify user ID
+            user.SpotifyId = accessToken.SpotifyUserId;
             
             await db.SaveChangesAsync();
 
