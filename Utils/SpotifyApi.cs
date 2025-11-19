@@ -371,6 +371,28 @@ namespace TuneMates_Backend.Utils
                 ExpiresIn = expiresInSeconds,
             };
 
+            // Try fetching the user's profile to obtain the Spotify user ID
+            try
+            {
+                using HttpRequestMessage profileReq = new(HttpMethod.Get, "https://api.spotify.com/v1/me");
+                profileReq.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                using HttpResponseMessage profileRes = await _http.SendAsync(profileReq);
+
+                if (profileRes.IsSuccessStatusCode)
+                {
+                    var profileBody = await profileRes.Content.ReadAsStringAsync();
+                    using var profileDoc = JsonDocument.Parse(profileBody);
+                    var profileRoot = profileDoc.RootElement;
+                    var spotifyUserId = profileRoot.GetProperty("id").GetString();
+                    if (!string.IsNullOrWhiteSpace(spotifyUserId))
+                        token.SpotifyUserId = spotifyUserId;
+                }
+            }
+            catch
+            {
+                // Ignore errors fetching the user profile
+            }
+
             return token;
         }
 
