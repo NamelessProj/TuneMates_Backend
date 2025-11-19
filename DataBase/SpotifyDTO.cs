@@ -69,5 +69,23 @@ namespace TuneMates_Backend.DataBase
         {
             public TracksContainer? Tracks { get; set; }
         }
+
+        public class Playlist
+        {
+            public string Description { get; set; } = "";
+            public string Href { get; set; } = "";
+            public string Id { get; set; } = "";
+            public List<SpotifyImage>? Images { get; set; }
+            public string Name { get; set; } = "";
+            public bool Public { get; set; }
+            public string Uri { get; set; } = "";
+            [JsonIgnore]
+            public string ImageUrl => Images != null && Images.Count > 0 ? Images[0].Url : "";
+        }
+        
+        public class PlaylistResponse
+        {
+            public List<Playlist>? Items { get; set; }
+        }
     }
 }
