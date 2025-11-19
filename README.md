@@ -156,5 +156,6 @@ You can find the queries to create the necessary tables in the [`database.sql`](
 ### Spotify
 - 🔒 `GET /api/spotify/token`: Get the Spotify access token for the authenticated user.
 - `GET /api/spotify/oathlink`: Get the Spotify OAuth link to authorize the application.
+- 🔒 `GET /api/spotify/me`: Get the authenticated user, all their playlists from Spotify.
 - `GET /api/spotify/search/{q:string}/{offset:int}/{market:string}`: Search for songs on Spotify by a query string, with pagination and market specification.
 - 🔒 `POST /api/spotify/playlist/{roomId:int}/{songId:int}`: Add a new song directly to the room's Spotify playlist using the songId from the database. The song will be in "Approved" status after being added to the playlist.
