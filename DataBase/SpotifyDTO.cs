@@ -37,7 +37,7 @@ namespace TuneMates_Backend.DataBase
 
         public class SpotifyImage
         {
-            public string Url { get; set; } = "";
+            public string Url { get; set; } = string.Empty;
             public int Height { get; set; }
             public int Width { get; set; }
         }
@@ -72,15 +72,15 @@ namespace TuneMates_Backend.DataBase
 
         public class Playlist
         {
-            public string Description { get; set; } = "";
-            public string Href { get; set; } = "";
-            public string Id { get; set; } = "";
+            public string Description { get; set; } = string.Empty;
+            public string Href { get; set; } = string.Empty;
+            public string Id { get; set; } = string.Empty;
             public List<SpotifyImage>? Images { get; set; }
-            public string Name { get; set; } = "";
+            public string Name { get; set; } = string.Empty;
             public bool Public { get; set; }
-            public string Uri { get; set; } = "";
+            public string Uri { get; set; } = string.Empty;
             [JsonIgnore]
-            public string ImageUrl => Images != null && Images.Count > 0 ? Images[0].Url : "";
+            public string ImageUrl => Images != null && Images.Count > 0 ? Images[0].Url : string.Empty;
         }
         
         public class PlaylistResponse
