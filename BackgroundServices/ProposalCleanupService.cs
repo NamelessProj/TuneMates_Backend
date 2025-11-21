@@ -35,10 +35,10 @@ namespace TuneMates_Backend.BackgroundServices
             // Set songs older than 1 hour as inactive
             DateTime refusedCutoff = DateTime.UtcNow.AddHours(-Constants.Cleanup.MaxHoursForProposalBeforeRefused);
             int refused = await db.Songs
-                .Where(s => s.AddedAt < refusedCutoff)
+                .Where(s => s.AddedAt < refusedCutoff && s.Status != SongStatus.Refused)
                 .ExecuteUpdateAsync(s => s.SetProperty(song => song.Status, SongStatus.Refused), stoppingToken);
 
-            _logger.LogInformation("{Service}: set {Count} songs as refused at {TIme}", GetType().Name, refused, DateTime.UtcNow);
+            _logger.LogInformation("{Service}: set {Count} songs as refused at {Time}", GetType().Name, refused, DateTime.UtcNow);
 
             // Deleting songs older than 5 hours
             DateTime deletedCutoff = DateTime.UtcNow.AddHours(-Constants.Cleanup.MaxHoursForAProposalBeforeCleanup); // Proposals older than 5 hours
