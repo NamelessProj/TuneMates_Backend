@@ -32,6 +32,7 @@ namespace TuneMates_Backend.BackgroundServices
             using var scope = _scopeFactory.CreateScope();
             AppDbContext db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
+            // Set songs older than 1 hour as inactive
             DateTime refusedCutoff = DateTime.UtcNow.AddHours(-Constants.Cleanup.MaxHoursForProposalBeforeRefused);
             int refused = await db.Songs
                 .Where(s => s.AddedAt < refusedCutoff)
@@ -39,6 +40,7 @@ namespace TuneMates_Backend.BackgroundServices
 
             _logger.LogInformation("{Service}: set {Count} songs as refused at {TIme}", GetType().Name, refused, DateTime.UtcNow);
 
+            // Deleting songs older than 5 hours
             DateTime deletedCutoff = DateTime.UtcNow.AddHours(-Constants.Cleanup.MaxHoursForAProposalBeforeCleanup); // Proposals older than 5 hours
             int deleted = await db.Songs
                 .Where(s => s.AddedAt < deletedCutoff)
