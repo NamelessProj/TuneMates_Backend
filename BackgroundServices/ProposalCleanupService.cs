@@ -32,10 +32,16 @@ namespace TuneMates_Backend.BackgroundServices
             using var scope = _scopeFactory.CreateScope();
             AppDbContext db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-            DateTime cutoff = DateTime.UtcNow.AddHours(-Constants.Cleanup.MaxHoursForAProposalBeforeCleanup); // Proposals older than 5 hours
+            DateTime refusedCutoff = DateTime.UtcNow.AddHours(-Constants.Cleanup.MaxHoursForProposalBeforeRefused);
+            int refused = await db.Songs
+                .Where(s => s.AddedAt < refusedCutoff)
+                .ExecuteUpdateAsync(s => s.SetProperty(song => song.Status, SongStatus.Refused), stoppingToken);
 
+            _logger.LogInformation("{Service}: set {Count} songs as refused at {TIme}", GetType().Name, refused, DateTime.UtcNow);
+
+            DateTime deletedCutoff = DateTime.UtcNow.AddHours(-Constants.Cleanup.MaxHoursForAProposalBeforeCleanup); // Proposals older than 5 hours
             int deleted = await db.Songs
-                .Where(s => s.AddedAt < cutoff)
+                .Where(s => s.AddedAt < deletedCutoff)
                 .ExecuteDeleteAsync(stoppingToken);
 
             _logger.LogInformation("{Service}: Cleaned up {Count} old proposals at {Time}", GetType().Name, deleted, DateTime.UtcNow);
