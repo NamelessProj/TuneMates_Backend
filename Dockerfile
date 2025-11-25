@@ -17,7 +17,6 @@ COPY --from=build /app/publish .
 
 # Expose the port the app runs on
 EXPOSE 8080
-EXPOSE 8081
 
 # Set environment variables
 ENV ASPNETCORE_URLS=http://+:8080

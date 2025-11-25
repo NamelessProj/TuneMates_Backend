@@ -69,21 +69,9 @@ The project includes a Dockerfile for containerized deployment with .NET 9.0, en
 3. Access the API at `http://localhost:8080/api`
 
 ### Using Docker Compose
-Create a `docker-compose.yml` file:
-```yaml
-version: '3.8'
-services:
-  backend:
-    build: .
-    ports:
-      - "8080:8080"
-    volumes:
-      - ./appsettings.json:/app/appsettings.json:ro
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Production
-```
+A `docker-compose.yml` file is included in the repository for convenient deployment.
 
-Then run:
+Run:
 ```bash
 docker-compose up -d
 ```
