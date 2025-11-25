@@ -38,12 +38,21 @@ You can find the frontend part [here](https://github.com/NamelessProj/TuneMates_
 ### Running with Docker
 The project includes a Dockerfile for containerized deployment with .NET 9.0, ensuring consistent runtime environments across different hosts.
 
+#### Configuration Options
+Docker supports three ways to configure the application:
+
+1. **Mount appsettings.json** - Use an existing configuration file
+2. **Use .NET environment variables** - Override specific settings (e.g., `ConnectionStrings__DefaultConnection`)
+3. **Auto-generate from custom environment variables** - The container automatically creates appsettings.json from environment variables if no file is provided
+
+#### Build and Run
+
 1. Build the Docker image:
    ```bash
    docker build -t tunemates-backend .
    ```
 
-2. Run the container with your appsettings.json:
+2. Run with mounted appsettings.json:
    ```bash
    docker run -d \
      -p 8080:8080 \
@@ -52,29 +61,40 @@ The project includes a Dockerfile for containerized deployment with .NET 9.0, en
      tunemates-backend
    ```
 
-   Or with environment variables:
+3. Or run with auto-generated appsettings.json from environment variables:
    ```bash
    docker run -d \
      -p 8080:8080 \
-     -e ConnectionStrings__DefaultConnection="your_connection_string" \
-     -e Jwt__Key="your_jwt_key" \
-     -e Jwt__Issuer="TuneMates" \
-     -e Jwt__Audience="TuneMatesUsers" \
-     -e Spotify__ClientId="your_spotify_client_id" \
-     -e Spotify__ClientSecret="your_spotify_client_secret" \
+     -e CONNECTION_STRING="your_connection_string" \
+     -e ENCRYPT_KEY="your_base64_key" \
+     -e JWT_KEY="your_jwt_key" \
+     -e JWT_ISSUER="TuneMates" \
+     -e JWT_AUDIENCE="TuneMatesUsers" \
+     -e SPOTIFY_CLIENT_ID="your_spotify_client_id" \
+     -e SPOTIFY_CLIENT_SECRET="your_spotify_client_secret" \
+     -e SPOTIFY_REDIRECT_URI="your_redirect_uri" \
      --name tunemates-backend \
      tunemates-backend
    ```
 
-3. Access the API at `http://localhost:8080/api`
+4. Access the API at `http://localhost:8080/api`
 
 ### Using Docker Compose
 A `docker-compose.yml` file is included in the repository for convenient deployment.
 
-Run:
-```bash
-docker-compose up -d
-```
+1. Copy the environment template:
+   ```bash
+   cp docker-compose.env.example .env
+   ```
+
+2. Edit `.env` with your configuration values
+
+3. Run:
+   ```bash
+   docker-compose up -d
+   ```
+
+See [`docker-compose.env.example`](/docker-compose.env.example) for all available environment variables.
 
 ### Appsettings
 Make sure to configure _(maybe even create)_ your `appsettings.json` file with the necessary settings, such as database connection strings and JWT secret keys.

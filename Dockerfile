@@ -15,11 +15,16 @@ WORKDIR /app
 # Copy the published app from build stage
 COPY --from=build /app/publish .
 
+# Copy entrypoint script
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
 # Expose the port the app runs on
 EXPOSE 8080
 
 # Set environment variables
 ENV ASPNETCORE_URLS=http://+:8080
 
-# Run the application
-ENTRYPOINT ["dotnet", "TuneMates_Backend.dll"]
+# Use entrypoint script
+ENTRYPOINT ["docker-entrypoint.sh"]
+CMD ["dotnet", "TuneMates_Backend.dll"]
