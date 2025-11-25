@@ -5,6 +5,29 @@ set -e
 if [ ! -f /app/appsettings.json ]; then
     echo "Generating appsettings.json from environment variables..."
     
+    # Validate required environment variables
+    if [ -z "$CONNECTION_STRING" ]; then
+        echo "ERROR: CONNECTION_STRING environment variable is required when appsettings.json is not provided"
+        exit 1
+    fi
+    
+    if [ -z "$JWT_KEY" ]; then
+        echo "ERROR: JWT_KEY environment variable is required when appsettings.json is not provided"
+        exit 1
+    fi
+    
+    if [ -z "$ENCRYPT_KEY" ]; then
+        echo "ERROR: ENCRYPT_KEY environment variable is required when appsettings.json is not provided"
+        exit 1
+    fi
+    
+    # Process CORS_ALLOWED_ORIGINS into proper JSON array format
+    CORS_ORIGINS_JSON="${CORS_ALLOWED_ORIGINS:-\"http://localhost:5173\"}"
+    # If CORS_ALLOWED_ORIGINS doesn't start with a quote, wrap each comma-separated value in quotes
+    if [[ ! "$CORS_ORIGINS_JSON" =~ ^\" ]]; then
+        CORS_ORIGINS_JSON=$(echo "$CORS_ORIGINS_JSON" | sed 's/,/","/g' | sed 's/^/"/' | sed 's/$/"/')
+    fi
+    
     cat > /app/appsettings.json <<EOF
 {
   "Logging": {
@@ -15,13 +38,13 @@ if [ ! -f /app/appsettings.json ]; then
   },
   "AllowedHosts": "${ALLOWED_HOSTS:-*}",
   "ConnectionStrings": {
-    "DefaultConnection": "${CONNECTION_STRING:-}"
+    "DefaultConnection": "${CONNECTION_STRING}"
   },
   "Secrets": {
-    "EncryptKey64": "${ENCRYPT_KEY:-}"
+    "EncryptKey64": "${ENCRYPT_KEY}"
   },
   "Jwt": {
-    "Key": "${JWT_KEY:-}",
+    "Key": "${JWT_KEY}",
     "Issuer": "${JWT_ISSUER:-TuneMates}",
     "Audience": "${JWT_AUDIENCE:-TuneMatesUsers}",
     "ExpiresInMinutes": ${JWT_EXPIRES_MINUTES:-180}
@@ -34,7 +57,7 @@ if [ ! -f /app/appsettings.json ]; then
   },
   "Cors": {
     "AllowedOrigins": [
-      ${CORS_ALLOWED_ORIGINS:-"http://localhost:5173"}
+      ${CORS_ORIGINS_JSON}
     ],
     "AllowCredentials": ${CORS_ALLOW_CREDENTIALS:-true}
   },

@@ -61,7 +61,7 @@ Docker supports three ways to configure the application:
      tunemates-backend
    ```
 
-3. Or run with auto-generated appsettings.json from environment variables:
+3. Or run with auto-generated appsettings.json from environment variables (requires `CONNECTION_STRING`, `ENCRYPT_KEY`, and `JWT_KEY`):
    ```bash
    docker run -d \
      -p 8080:8080 \
@@ -76,6 +76,8 @@ Docker supports three ways to configure the application:
      --name tunemates-backend \
      tunemates-backend
    ```
+   
+   > **Note**: When auto-generating appsettings.json, `CONNECTION_STRING`, `ENCRYPT_KEY`, and `JWT_KEY` are required. The container will fail to start if these are not provided.
 
 4. Access the API at `http://localhost:8080/api`
 
