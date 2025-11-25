@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      # Mount your appsettings.json file
+      - ./appsettings.json:/app/appsettings.json:ro
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      # Alternatively, you can set configuration via environment variables:
+      # - ConnectionStrings__DefaultConnection=your_connection_string
+      # - Jwt__Key=your_jwt_key
+      # - Jwt__Issuer=TuneMates
+      # - Jwt__Audience=TuneMatesUsers
+      # - Spotify__ClientId=your_spotify_client_id
+      # - Spotify__ClientSecret=your_spotify_client_secret
+      # - Spotify__RedirectUri=your_redirect_uri
+    restart: unless-stopped
+    networks:
+      - tunemates-network
+
+networks:
+  tunemates-network:
+    driver: bridge

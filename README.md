@@ -26,12 +26,67 @@ You can find the frontend part [here](https://github.com/NamelessProj/TuneMates_
 - [Spotify API](https://developer.spotify.com/documentation/web-api/): For integrating Spotify functionalities.
 
 ## Running the Application
+
+### Running with .NET
 1. Clone the repository:
    ```bash
    git clone https://github.com/NamelessProj/TuneMates_Backend.git 
    dotnet run
    ```
-1. Use a tool like Postman to interact with the API endpoints at `https://localhost:7016`.
+2. Use a tool like Postman to interact with the API endpoints at `https://localhost:7016`.
+
+### Running with Docker
+The project includes a Dockerfile for containerized deployment with .NET 9.0, ensuring consistent runtime environments across different hosts.
+
+1. Build the Docker image:
+   ```bash
+   docker build -t tunemates-backend .
+   ```
+
+2. Run the container with your appsettings.json:
+   ```bash
+   docker run -d \
+     -p 8080:8080 \
+     -v $(pwd)/appsettings.json:/app/appsettings.json:ro \
+     --name tunemates-backend \
+     tunemates-backend
+   ```
+
+   Or with environment variables:
+   ```bash
+   docker run -d \
+     -p 8080:8080 \
+     -e ConnectionStrings__DefaultConnection="your_connection_string" \
+     -e Jwt__Key="your_jwt_key" \
+     -e Jwt__Issuer="TuneMates" \
+     -e Jwt__Audience="TuneMatesUsers" \
+     -e Spotify__ClientId="your_spotify_client_id" \
+     -e Spotify__ClientSecret="your_spotify_client_secret" \
+     --name tunemates-backend \
+     tunemates-backend
+   ```
+
+3. Access the API at `http://localhost:8080/api`
+
+### Using Docker Compose
+Create a `docker-compose.yml` file:
+```yaml
+version: '3.8'
+services:
+  backend:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./appsettings.json:/app/appsettings.json:ro
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+```
+
+Then run:
+```bash
+docker-compose up -d
+```
 
 ### Appsettings
 Make sure to configure _(maybe even create)_ your `appsettings.json` file with the necessary settings, such as database connection strings and JWT secret keys.
