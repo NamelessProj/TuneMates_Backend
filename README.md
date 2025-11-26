@@ -81,6 +81,29 @@ Docker supports three ways to configure the application:
 
 4. Access the API at `http://localhost:8080/api`
 
+#### Custom Port Configuration
+
+The default Docker configuration uses port 8080, but you can customize this using the `ASPNETCORE_URLS` environment variable. For example, to use port 7016 (matching local development):
+
+```bash
+docker run -d \
+  -p 7016:7016 \
+  -e ASPNETCORE_URLS=http://+:7016 \
+  -v $(pwd)/appsettings.json:/app/appsettings.json:ro \
+  --name tunemates-backend \
+  tunemates-backend
+```
+
+Access the API at `http://localhost:7016/api`
+
+Or modify the `docker-compose.yml` ports section:
+```yaml
+ports:
+  - "7016:7016"
+environment:
+  - ASPNETCORE_URLS=http://+:7016
+```
+
 ### Using Docker Compose
 A `docker-compose.yml` file is included in the repository for convenient deployment.
 

@@ -6,9 +6,10 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+      - "8080:8080"  # Change to "7016:7016" to match local development port
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
+      # - ASPNETCORE_URLS=http://+:8080  # Uncomment and change port if needed (e.g., http://+:7016)
       # Option 1: Use .NET environment variables (override appsettings.json)
       # - ConnectionStrings__DefaultConnection=your_connection_string
       # - Jwt__Key=your_jwt_key
