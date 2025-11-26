@@ -96,12 +96,13 @@ docker run -d \
 
 Access the API at `http://localhost:7016/api`
 
-Or modify the `docker-compose.yml` ports section:
+Or modify the `docker-compose.yml` file (update both the ports mapping and environment variable):
 ```yaml
+# In the services.backend section:
 ports:
-  - "7016:7016"
+  - "7016:7016"  # host:container ports must match
 environment:
-  - ASPNETCORE_URLS=http://+:7016
+  - ASPNETCORE_URLS=http://+:7016  # must match container port above
 ```
 
 ### Using Docker Compose
