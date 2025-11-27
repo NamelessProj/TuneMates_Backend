@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"  # Change both ports to match ASPNETCORE_URLS (e.g., "7016:7016" for port 7016)
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      # - ASPNETCORE_URLS=http://+:8080  # Uncomment and change to set custom port (must match ports mapping above)
+      # Option 1: Use .NET environment variables (override appsettings.json)
+      # - ConnectionStrings__DefaultConnection=your_connection_string
+      # - Jwt__Key=your_jwt_key
+      # - Jwt__Issuer=TuneMates
+      # - Jwt__Audience=TuneMatesUsers
+      # - Spotify__ClientId=your_spotify_client_id
+      # - Spotify__ClientSecret=your_spotify_client_secret
+      # - Spotify__RedirectUri=your_redirect_uri
+      
+      # Option 2: Use custom environment variables (generates appsettings.json)
+      # - CONNECTION_STRING=your_connection_string
+      # - ENCRYPT_KEY=your_encrypt_key
+      # - JWT_KEY=your_jwt_key
+      # - JWT_ISSUER=TuneMates
+      # - JWT_AUDIENCE=TuneMatesUsers
+      # - JWT_EXPIRES_MINUTES=180
+      # - SPOTIFY_CLIENT_ID=your_spotify_client_id
+      # - SPOTIFY_CLIENT_SECRET=your_spotify_client_secret
+      # - SPOTIFY_REDIRECT_URI=your_redirect_uri
+      # - CORS_ALLOWED_ORIGINS="http://localhost:5173","https://localhost:5173"
+    # Optional: Mount your own appsettings.json file
+    # volumes:
+    #   - ./appsettings.json:/app/appsettings.json:ro
+    restart: unless-stopped
+    networks:
+      - tunemates-network
+
+networks:
+  tunemates-network:
+    driver: bridge

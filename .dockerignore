@@ -1,0 +1,45 @@
+# Git files
+.git
+.gitignore
+.gitattributes
+
+# Documentation
+README.md
+LICENSE.txt
+*.md
+
+# Build artifacts
+bin/
+obj/
+out/
+publish/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.sln.docstates
+
+# IDEs
+.vscode/
+.idea/
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test files
+*.[Tt]ests/
+*.http
+
+# Database
+*.sql
+
+# Configuration (will be provided via environment/volume)
+appsettings.json
+appsettings.Development.json
+appsettings.sample.json

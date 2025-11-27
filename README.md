@@ -26,12 +26,101 @@ You can find the frontend part [here](https://github.com/NamelessProj/TuneMates_
 - [Spotify API](https://developer.spotify.com/documentation/web-api/): For integrating Spotify functionalities.
 
 ## Running the Application
+
+### Running with .NET
 1. Clone the repository:
    ```bash
    git clone https://github.com/NamelessProj/TuneMates_Backend.git 
    dotnet run
    ```
-1. Use a tool like Postman to interact with the API endpoints at `https://localhost:7016`.
+2. Use a tool like Postman to interact with the API endpoints at `https://localhost:7016`.
+
+### Running with Docker
+The project includes a Dockerfile for containerized deployment with .NET 9.0, ensuring consistent runtime environments across different hosts.
+
+#### Configuration Options
+Docker supports three ways to configure the application:
+
+1. **Mount appsettings.json** - Use an existing configuration file
+2. **Use .NET environment variables** - Override specific settings (e.g., `ConnectionStrings__DefaultConnection`)
+3. **Auto-generate from custom environment variables** - The container automatically creates appsettings.json from environment variables if no file is provided
+
+#### Build and Run
+
+1. Build the Docker image:
+   ```bash
+   docker build -t tunemates-backend .
+   ```
+
+2. Run with mounted appsettings.json:
+   ```bash
+   docker run -d \
+     -p 8080:8080 \
+     -v $(pwd)/appsettings.json:/app/appsettings.json:ro \
+     --name tunemates-backend \
+     tunemates-backend
+   ```
+
+3. Or run with auto-generated appsettings.json from environment variables (requires `CONNECTION_STRING`, `ENCRYPT_KEY`, and `JWT_KEY`):
+   ```bash
+   docker run -d \
+     -p 8080:8080 \
+     -e CONNECTION_STRING="your_connection_string" \
+     -e ENCRYPT_KEY="your_base64_key" \
+     -e JWT_KEY="your_jwt_key" \
+     -e JWT_ISSUER="TuneMates" \
+     -e JWT_AUDIENCE="TuneMatesUsers" \
+     -e SPOTIFY_CLIENT_ID="your_spotify_client_id" \
+     -e SPOTIFY_CLIENT_SECRET="your_spotify_client_secret" \
+     -e SPOTIFY_REDIRECT_URI="your_redirect_uri" \
+     --name tunemates-backend \
+     tunemates-backend
+   ```
+   
+   > **Note**: When auto-generating appsettings.json, `CONNECTION_STRING`, `ENCRYPT_KEY`, and `JWT_KEY` are required. The container will fail to start if these are not provided.
+
+4. Access the API at `http://localhost:8080/api`
+
+#### Custom Port Configuration
+
+The default Docker configuration uses port 8080, but you can customize this using the `ASPNETCORE_URLS` environment variable. For example, to use port 7016 (matching local development):
+
+```bash
+docker run -d \
+  -p 7016:7016 \
+  -e ASPNETCORE_URLS=http://+:7016 \
+  -v $(pwd)/appsettings.json:/app/appsettings.json:ro \
+  --name tunemates-backend \
+  tunemates-backend
+```
+
+Access the API at `http://localhost:7016/api`
+
+Or modify the `docker-compose.yml` file (update both the ports mapping and environment variable):
+```yaml
+# In the services.backend section:
+ports:
+  - "7016:7016"  # host:container ports must match
+environment:
+  - ASPNETCORE_URLS=http://+:7016  # must match container port above
+```
+
+### Using Docker Compose
+A `docker-compose.yml` file is included in the repository for convenient deployment.
+
+1. Copy the environment template:
+   ```bash
+   cp docker-compose.env.example .env
+   ```
+
+2. Edit `.env` with your configuration values
+
+3. Run:
+   ```bash
+   docker-compose up -d
+   ```
+
+See [`docker-compose.env.example`](/docker-compose.env.example) for all available environment variables.
 
 ### Appsettings
 Make sure to configure _(maybe even create)_ your `appsettings.json` file with the necessary settings, such as database connection strings and JWT secret keys.
