@@ -32,13 +32,13 @@ namespace TuneMates_Backend.Controller
         ///<returns>A <see cref="RoomResponse"/> if found and authorized, otherwise an appropriate error response.</returns>
         public static async Task<IResult> GetRoomById(HttpContext http, AppDbContext db, int id)
         {
-            var room = await db.Rooms.FindAsync(id);
+            var userId = HelpMethods.GetUserIdFromJwtClaims(http);
+            if (userId == null)
+                return TypedResults.Unauthorized();
+
+            var room = await db.Rooms.Where(r => r.Id == id && r.UserId == userId).FirstOrDefaultAsync();
             if (room == null)
                 return TypedResults.NotFound("Room not found.");
-
-            var userId = HelpMethods.GetUserIdFromJwtClaims(http);
-            if (userId == null || room.UserId != userId)
-                return TypedResults.Unauthorized();
 
             return TypedResults.Ok(new { room = new RoomResponse(room) });
         }
