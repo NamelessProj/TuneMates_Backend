@@ -146,7 +146,7 @@ namespace TuneMates_Backend.Controller
             SpotifyApi spotifyApi = new(db, cfg, cache);
             var results = await spotifyApi.SearchTracksAsync(
                 q,
-                offset: offset <= 0 ? 0 : offset,
+                offset: Math.Max(0, offset),
                 market: market
              );
 
