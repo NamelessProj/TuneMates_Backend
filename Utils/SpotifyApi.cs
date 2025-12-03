@@ -208,6 +208,8 @@ namespace TuneMates_Backend.Utils
                 DurationMs = content["duration_ms"].GetInt32(),
                 SongId = content["id"].GetString() ?? string.Empty,
                 Title = content["name"].GetString() ?? string.Empty,
+                Uri = content["uri"].GetString() ?? string.Empty,
+                Explicit = content["explicit"].GetBoolean(),
                 AlbumArtUrl = images.GetArrayLength() > 0 ? images[0].GetProperty("url").GetString() ?? string.Empty : string.Empty
             };
             return song;
@@ -482,6 +484,7 @@ namespace TuneMates_Backend.Utils
                 AlbumImageUrl: albumImg,
                 DurationMs: t.DurationMs,
                 Uri: t.Uri ?? string.Empty,
+                Explicit: t.Explicit ?? false,
                 ExternalUri: t.ExternalUrls?["spotify"] ?? string.Empty
             );
         }
