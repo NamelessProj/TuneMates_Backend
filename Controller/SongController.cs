@@ -103,7 +103,7 @@ namespace TuneMates_Backend.Controller
         /// <param name="cache">The memory cache for caching Spotify tokens</param>
         /// <param name="db">The database context</param>
         /// <param name="roomId">The ID of the room</param>
-        /// <param name="input">The Spotify track URI or URL</param>
+        /// <param name="song">The song object containing the Spotify URI or URL</param>
         /// <returns>A result indicating success or failure</returns>
         public static async Task<IResult> AddSongToRoomUsingUriOrUrl(IConfiguration cfg, IMemoryCache cache, AppDbContext db, int roomId, [FromBody] Song song)
         {
