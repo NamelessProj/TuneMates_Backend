@@ -59,6 +59,8 @@ create table public."Songs" (
   "DurationMs" bigint not null,
   "AddedAt" timestamp with time zone not null default now(),
   "Status" integer not null default 0,
+  "Uri" text not null default ''::text,
+  "Explicit" boolean not null default false,
   constraint Songs_pkey primary key ("Id"),
   constraint Songs_RoomId_fkey foreign KEY ("RoomId") references "Rooms" ("Id") on delete CASCADE
 ) TABLESPACE pg_default;
