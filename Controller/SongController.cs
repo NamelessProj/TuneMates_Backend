@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using TuneMates_Backend.DataBase;
 using TuneMates_Backend.Utils;
@@ -104,7 +105,7 @@ namespace TuneMates_Backend.Controller
         /// <param name="roomId">The ID of the room</param>
         /// <param name="input">The Spotify track URI or URL</param>
         /// <returns>A result indicating success or failure</returns>
-        public static async Task<IResult> AddSongToRoomUsingUriOrUrl(IConfiguration cfg, IMemoryCache cache, AppDbContext db, int roomId, string input)
+        public static async Task<IResult> AddSongToRoomUsingUriOrUrl(IConfiguration cfg, IMemoryCache cache, AppDbContext db, int roomId, [FromBody] Song song)
         {
             var room = await db.Rooms.FindAsync(roomId);
             if (room == null)
@@ -113,6 +114,11 @@ namespace TuneMates_Backend.Controller
             // Check if the room is active
             if (!room.IsActive)
                 return TypedResults.BadRequest("Cannot add songs to an inactive room");
+
+            string input = song.Uri.Trim();
+
+            if (string.IsNullOrWhiteSpace(input))
+                return TypedResults.BadRequest("Input cannot be empty");
 
             // Getting the song details from Spotify API
             SpotifyApi spotifyApi = new(db, cfg, cache);
