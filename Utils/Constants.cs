@@ -21,6 +21,14 @@
             public const int MaxRoomNameLength = 50;
         }
 
+        public static class Regex
+        {
+            public const string SpotifyTrackUrl = @"open\.spotify\.com/(?:intl-[A-Za-z-]+/)?track/([A-Za-z0-9]+)";
+            public const string SpotifyTrackUri = @"^spotify:track:([A-Za-z0-9]+)$";
+            public const string SpotifyPlaylistUrl = @"open\.spotify\.com/(?:intl-[A-Za-z-]+/)?playlist/([A-Za-z0-9]+)";
+            public const string SpotifyPlaylistUri = @"^spotify:playlist:([A-Za-z0-9]+)$";
+        }
+
         public const int MaxRoomPerUser = 10;
         public const int JwtTokenValidityHours = 3;
     }
