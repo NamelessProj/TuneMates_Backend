@@ -155,6 +155,11 @@ POST {{HostAddress}}/{{Songs}}/room/{{roomId}}/{{songId}}
 
 ###
 
+@songUrlOrUri=string
+POST {{HostAddress}}/{{Songs}}/room/{{roomId}}/url/{{songUrlOrUri}}
+
+###
+
 
 #### SPOTIFY ####
 
