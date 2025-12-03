@@ -423,7 +423,27 @@ namespace TuneMates_Backend.Utils
             SpotifyDTO.PlaylistResponse? playlists = await res.Content.ReadFromJsonAsync<SpotifyDTO.PlaylistResponse>();
 
             return playlists ?? new SpotifyDTO.PlaylistResponse { Items = new List<SpotifyDTO.Playlist>() };
+        }
 
+        /// <summary>
+        /// Extract the track ID from a Spotify URI or URL
+        /// </summary>
+        /// <param name="input">The Spotify URI or URL</param>
+        /// <returns>A normalized track ID as a <c>string</c>, or <c>null</c> if the input is invalid.</returns>
+        public string? GetTrackIdFromUriOrUrl(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+                return null;
+
+            var mUrl = Regex.Match(input, Constants.Regex.SpotifyTrackUrl);
+            if (mUrl.Success)
+                return mUrl.Groups[1].Value;
+
+            var mUri = Regex.Match(input, Constants.Regex.SpotifyTrackUri);
+            if (mUri.Success)
+                return mUri.Groups[1].Value;
+
+            return Regex.IsMatch(input, @"^[A-Za-z0-9]+$") ? input : null;
         }
 
         /// <summary>
@@ -511,10 +531,10 @@ namespace TuneMates_Backend.Utils
         {
             if (string.IsNullOrWhiteSpace(input))
                 return null;
-            var mUrl = Regex.Match(input, @"open\.spotify\.com/playlist/([A-Za-z0-9]+)");
+            var mUrl = Regex.Match(input, Constants.Regex.SpotifyPlaylistUrl);
             if (mUrl.Success)
                 return mUrl.Groups[1].Value;
-            var mUri = Regex.Match(input, @"^spotify:playlist:([A-Za-z0-9]+)$");
+            var mUri = Regex.Match(input, Constants.Regex.SpotifyPlaylistUri);
             if (mUri.Success)
                 return mUri.Groups[1].Value;
             return Regex.IsMatch(input, @"^[A-Za-z0-9]+$") ? input : null;
@@ -529,10 +549,10 @@ namespace TuneMates_Backend.Utils
         {
             if (string.IsNullOrWhiteSpace(input))
                 return null;
-            var mUrl = Regex.Match(input, @"open\.spotify\.com/track/([A-Za-z0-9]+)");
+            var mUrl = Regex.Match(input, Constants.Regex.SpotifyTrackUrl);
             if (mUrl.Success)
                 return $"spotify:track:{mUrl.Groups[1].Value}";
-            var mUri = Regex.Match(input, @"^spotify:track:([A-Za-z0-9]+)$");
+            var mUri = Regex.Match(input, Constants.Regex.SpotifyTrackUri);
             if (mUri.Success)
                 return $"spotify:track:{mUri.Groups[1].Value}";
             return Regex.IsMatch(input, @"^[A-Za-z0-9]+$") ? $"spotify:track:{input}" : null;
