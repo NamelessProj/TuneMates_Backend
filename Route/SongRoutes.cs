@@ -18,6 +18,7 @@ namespace TuneMates_Backend.Route
             songRoomGroup.MapGet("/{roomId:int}", SongController.GetAllSongsFromRoom).RequireAuthorization();
             songRoomGroup.MapGet("/{roomId:int}/status/{statusCode:int}", SongController.GetSongsFromRoomWithStatus).RequireAuthorization();
             songRoomGroup.MapPost("/{roomId:int}/{songId}", SongController.AddSongToRoom).RequireRateLimiting(RateLimitPolicies.Mutations);
+            songRoomGroup.MapPost("/{roomId:int}/url/{input}", SongController.AddSongToRoomUsingUriOrUrl).RequireRateLimiting(RateLimitPolicies.Mutations);
 
             return songGroup;
         }
