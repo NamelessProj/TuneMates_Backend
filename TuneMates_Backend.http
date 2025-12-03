@@ -151,12 +151,18 @@ Authorization: Bearer {{JwtToken}}
 ###
 
 @songId=string
-POST {{HostAddress}}/{{Songs}}/room/{{roomId}}/{{songId}}
+POST {{HostAddress}}/{{Songs}}/room/{{roomId}}/id/{{songId}}
 
 ###
 
 @songUrlOrUri=string
-POST {{HostAddress}}/{{Songs}}/room/{{roomId}}/url/{{songUrlOrUri}}
+POST {{HostAddress}}/{{Songs}}/room/{{roomId}}/url
+Content-Type: application/json
+
+{
+  "uri": "{{songUrlOrUri}}"
+}
+
 
 ###
 
