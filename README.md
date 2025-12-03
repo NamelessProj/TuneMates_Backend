@@ -239,6 +239,7 @@ You can find the queries to create the necessary tables in the [`database.sql`](
 
 ### Songs
 - `POST /api/songs/room/{roomId:int}/{songId:string}`: Add a new song to a room using a Spotify song ID. The song will be in "Pending" status by default.
+- `POST /api/songs/room/{roomId:int}/url/{songUrlOrUri:string}`: Add a new song to a room using a Spotify song URL or URI. The song will be in "Pending" status by default.
 - 🔒 `GET /api/songs/room/{roomId:int}`: Get all songs in a specific room.
 - 🔒 `GET /api/songs/room/{roomId:int}/status/{status:int}`: Get songs in a specific room by their status ([SongStatus](/DataBase/SongStatus.cs) Pending: `0`, Approved: `1`, Refused: `2`).
 
