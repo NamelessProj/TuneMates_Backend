@@ -21,6 +21,7 @@ namespace TuneMates_Backend.DataBase
             string AlbumImageUrl,
             int DurationMs,
             string Uri,
+            bool Explicit,
             string ExternalUri
         );
 
@@ -48,6 +49,7 @@ namespace TuneMates_Backend.DataBase
             public string? Name { get; set; }
             [JsonPropertyName("duration_ms")]
             public int DurationMs { get; set; }
+            public bool? Explicit { get; set; }
             public string? Uri { get; set; }
             [JsonPropertyName("external_urls")]
             public Dictionary<string, string>? ExternalUrls { get; set; }
