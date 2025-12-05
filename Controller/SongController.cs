@@ -120,12 +120,12 @@ namespace TuneMates_Backend.Controller
             if (string.IsNullOrWhiteSpace(input))
                 return TypedResults.BadRequest("Input cannot be empty");
 
-            // Getting the song details from Spotify API
-            SpotifyApi spotifyApi = new(db, cfg, cache);
-
-            var songId = spotifyApi.GetTrackIdFromUriOrUrl(input);
+            var songId = SpotifyApi.GetTrackIdFromUriOrUrl(input);
             if (songId == null)
                 return TypedResults.BadRequest("Invalid Spotify track URI or URL");
+
+            // Getting the song details from Spotify API
+            SpotifyApi spotifyApi = new(db, cfg, cache);
 
             var spotifySong = await spotifyApi.GetSongDetailsAsync(songId);
             if (spotifySong == null)
