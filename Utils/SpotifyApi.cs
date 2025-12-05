@@ -432,7 +432,7 @@ namespace TuneMates_Backend.Utils
         /// </summary>
         /// <param name="input">The Spotify URI or URL</param>
         /// <returns>A normalized track ID as a <c>string</c>, or <c>null</c> if the input is invalid.</returns>
-        public string? GetTrackIdFromUriOrUrl(string input)
+        public static string? GetTrackIdFromUriOrUrl(string input)
         {
             if (string.IsNullOrWhiteSpace(input))
                 return null;
