@@ -165,7 +165,7 @@ You can find a sample configuration in [`appsettings.sample.json`](/appsettings.
     "AllowCredentials": true
   },
   "RateLimiting": {
-    "GlobalPerMinute": 0,
+    "GlobalPerMinute": 0, // 0 means disabled
     "SearchPerMinute": 30,
     "MutationPerMinute":  10
   },
