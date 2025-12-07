@@ -37,6 +37,13 @@ The frontend is hosted on [Vercel](https://tune-mates-frontend.vercel.app). For 
    ```
 2. Use a tool like Postman to interact with the API endpoints at `https://localhost:7016`.
 
+Don't worry about the dependencies, they will be restored automatically when you run the project.
+So when you'll run the project for the first time, it may take a bit longer becvause it has to download everything.
+But after that, next runs will be faster.
+
+If you don't have .NET 9 installed, you can download it from the [.NET official website](https://dotnet.microsoft.com/en-us/download/dotnet/9.0).
+It's necessary to run the project locally without Docker.
+
 ### Running with Docker
 The project includes a Dockerfile for containerized deployment with .NET 9.0, ensuring consistent runtime environments across different hosts.
 
