@@ -219,38 +219,38 @@ You can find the queries to create the necessary tables in the [`database.sql`](
 > ### PostgreSQL and Supabase
 > The provided SQL queries are designed for PostgreSQL, which is the database system used by Supabase. If you are using a different database system, you may need to adjust the queries accordingly.
 
-
 ## API Endpoints
 > ✔️: Endpoints that require authentication.
 >
 > ❌: Endpoints that do not require authentication.
+
 ### Users
 | Auth | Method | Endpoint                                                  | Description                                                                         | Body                             | Response                                  |
 |:----:|--------|-----------------------------------------------------------|-------------------------------------------------------------------------------------|----------------------------------|-------------------------------------------|
-|  ❌  | POST   | `/api/users/register`                                     | Register a new user.                                                                | None                            | [User](/Database/UserResponse.cs) & token |
-|  ❌  | POST   | `/api/users/login`                                        | Login a user.                                                                       | None                            | [User](/Database/UserResponse.cs) & token |
-|  ✔️  | POST   | `/api/users/spotify/connect/{code:string}/{state:string}` | Connect the user's Spotify account using the provided authorization code and state. | None                             | [User](/Database/UserResponse.cs)         |
+|  ❌  | POST   | `/api/users/register`                                     | Register a new user.                                                                | None                            | [User](/DataBase/UserResponse.cs) & token |
+|  ❌  | POST   | `/api/users/login`                                        | Login a user.                                                                       | None                            | [User](/DataBase/UserResponse.cs) & token |
+|  ✔️  | POST   | `/api/users/spotify/connect/{code:string}/{state:string}` | Connect the user's Spotify account using the provided authorization code and state. | None                             | [User](/DataBase/UserResponse.cs)         |
 |  ✔️  | POST   | `/api/users/delete/me`                                    | Delete the current user's account.                                                  | None                             | string                                    |
-|  ✔️  | GET    | `/api/users/me`                                           | Get the current user's information.                                                 | None                             | [User](/Database/UserResponse.cs)         |
-|  ✔️  | PUT    | `/api/users/me`                                           | Update the current user's information.                                              | [UserDTO](/DataBase/UserDTO.cs)  | [User](/Database/UserResponse.cs)         |
-|  ✔️  | PUT    | `/api/users/me/password`                                  | Update the current user's password.                                                 | [UserDTO](/DataBase/UserDTO.cs)  | [User](/Database/UserResponse.cs)         |
+|  ✔️  | GET    | `/api/users/me`                                           | Get the current user's information.                                                 | None                             | [User](/DataBase/UserResponse.cs)         |
+|  ✔️  | PUT    | `/api/users/me`                                           | Update the current user's information.                                              | [UserDTO](/DataBase/UserDTO.cs)  | [User](/DataBase/UserResponse.cs)         |
+|  ✔️  | PUT    | `/api/users/me/password`                                  | Update the current user's password.                                                 | [UserDTO](/DataBase/UserDTO.cs)  | [User](/DataBase/UserResponse.cs)         |
 
 ### Rooms
 | Auth | Method | Endpoint                        | Description                                                          | Body                            | Response                                   |
 |:----:|--------|---------------------------------|----------------------------------------------------------------------|---------------------------------|--------------------------------------------|
-|  ✔️  | POST   | `/api/rooms`                    | Create a new room.                                                   | None                            | [Room](/Database/RoomResponse.cs)          |
+|  ✔️  | POST   | `/api/rooms`                    | Create a new room.                                                   | None                            | [Room](/DataBase/RoomResponse.cs)          |
 |  ✔️  | POST   | `/api/rooms/{id:int}`           | Delete a room by its id.                                             | None                            | string                                     |
-|  ✔️  | GET    | `/api/rooms`                    | Get a list of all rooms from the authenticated user.                 | None                            | List of [Room](/Database/RoomResponse.cs)  |
-|  ❌  | GET    | `/api/rooms/slug/{slug:string}` | Get details of a specific room by its slug. _Requires room password_ | [RoomDTO](/DataBase/RoomDTO.cs) | [Room](/Database/RoomResponse.cs)          |
-|  ✔️  | PUT    | `/api/rooms/{id:int}`           | Update details of a specific room by its id.                         | [RoomDTO](/DataBase/RoomDTO.cs) | [Room](/Database/RoomResponse.cs)          |
-|  ✔️  | PUT    | `/api/rooms/password/{id:int}`  | Update details of a specific room's password by its id.              | [RoomDTO](/DataBase/RoomDTO.cs) | [Room](/Database/RoomResponse.cs)          |
+|  ✔️  | GET    | `/api/rooms`                    | Get a list of all rooms from the authenticated user.                 | None                            | List of [Room](/DataBase/RoomResponse.cs)  |
+|  ❌  | GET    | `/api/rooms/slug/{slug:string}` | Get details of a specific room by its slug. _Requires room password_ | [RoomDTO](/DataBase/RoomDTO.cs) | [Room](/DataBase/RoomResponse.cs)          |
+|  ✔️  | PUT    | `/api/rooms/{id:int}`           | Update details of a specific room by its id.                         | [RoomDTO](/DataBase/RoomDTO.cs) | [Room](/DataBase/RoomResponse.cs)          |
+|  ✔️  | PUT    | `/api/rooms/password/{id:int}`  | Update details of a specific room's password by its id.              | [RoomDTO](/DataBase/RoomDTO.cs) | [Room](/DataBase/RoomResponse.cs)          |
 
 ### Songs
 | Auth | Method | Endpoint                                           | Description                                                                                                                          | Body                       | Response                          |
 |:----:|--------|----------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------|----------------------------|-----------------------------------|
-|  ❌  | POST   | `/api/songs/room/{roomId:int}/{songId?:string}`    | Add a new song to a room using a Spotify song ID or the Track URI or URL (in body). The song will be in "Pending" status by default. | [Song](/Database/Song.cs)? | [Song](/Database/Song.cs)         |
-|  ✔️  | GET    | `/api/songs/room/{roomId:int}`                     | Get all songs in a specific room.                                                                                                    | None                       | List of [Song](/Database/Song.cs) |
-|  ✔️  | GET    | `/api/songs/room/{roomId:int}/status/{status:int}` | Get songs in a specific room by their status ([SongStatus](/DataBase/SongStatus.cs) Pending: `0`, Approved: `1`, Refused: `2`).      | None                       | List of [Song](/Database/Song.cs) |
+|  ❌  | POST   | `/api/songs/room/{roomId:int}/{songId?:string}`    | Add a new song to a room using a Spotify song ID or the Track URI or URL (in body). The song will be in "Pending" status by default. | [Song](/DataBase/Song.cs)? | [Song](/DataBase/Song.cs)         |
+|  ✔️  | GET    | `/api/songs/room/{roomId:int}`                     | Get all songs in a specific room.                                                                                                    | None                       | List of [Song](/DataBase/Song.cs) |
+|  ✔️  | GET    | `/api/songs/room/{roomId:int}/status/{status:int}` | Get songs in a specific room by their status ([SongStatus](/DataBase/SongStatus.cs) Pending: `0`, Approved: `1`, Refused: `2`).      | None                       | List of [Song](/DataBase/Song.cs) |
 
 ### Spotify
 | Auth | Method | Endpoint                                                      | Description                                                                                                                                                         | Body  | Response                                       |
