@@ -340,7 +340,6 @@ namespace TuneMates_Backend.Utils
             using HttpRequestMessage req = new(HttpMethod.Post, "https://accounts.spotify.com/api/token");
 
             req.Headers.Authorization = new AuthenticationHeaderValue("Basic", authHeader);
-            req.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
 
             req.Content = new FormUrlEncodedContent(new Dictionary<string, string>
             {
@@ -473,7 +472,7 @@ namespace TuneMates_Backend.Utils
         private static SpotifyDTO.TrackDTO MapTrack(SpotifyDTO.SpotifyTrack t)
         {
             var albumImg = t.Album?.Images?
-                .OrderByDescending(i => i.Height)
+                .OrderByDescending(i => i.Height ?? 0)
                 .FirstOrDefault()?.Url ?? string.Empty;
 
             return new SpotifyDTO.TrackDTO(
