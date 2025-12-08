@@ -144,7 +144,6 @@ namespace TuneMates_Backend.Utils
                 "Basic",
                 Convert.ToBase64String(Encoding.UTF8.GetBytes($"{clientId}:{clientSecret}"))
              );
-            req.Headers.Add("content-type", "application/x-www-form-urlencoded");
 
             req.Content = new FormUrlEncodedContent(new Dictionary<string, string>
             {
