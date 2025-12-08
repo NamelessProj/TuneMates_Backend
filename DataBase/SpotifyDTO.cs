@@ -81,7 +81,6 @@ namespace TuneMates_Backend.DataBase
             public string Name { get; set; } = string.Empty;
             public bool? Public { get; set; }
             public string Uri { get; set; } = string.Empty;
-            [JsonIgnore]
             public string ImageUrl => Images != null && Images.Count > 0 ? Images[0].Url : string.Empty;
         }
         
