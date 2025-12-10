@@ -56,7 +56,7 @@ namespace TuneMates_Backend.Controller
             if (string.IsNullOrWhiteSpace(password))
                 return TypedResults.BadRequest("Password is required.");
 
-            var room = await db.Rooms.FirstOrDefaultAsync(r => r.Slug == slug);
+            var room = await db.Rooms.Where(r => r.Slug == slug && r.IsActive).FirstOrDefaultAsync();
             if (room == null)
                 return TypedResults.NotFound("Room not found.");
 
