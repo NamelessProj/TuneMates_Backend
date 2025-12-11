@@ -6,6 +6,7 @@
         public string Name { get; set; } = string.Empty;
         public string Slug { get; set; } = string.Empty;
         public bool IsActive { get; set; } = true;
+        public bool HasPlaylist { get; set; } = false;
         public string Market { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime LastUpdate { get; set; } = DateTime.UtcNow;
@@ -22,6 +23,7 @@
             Name = r.Name;
             Slug = r.Slug;
             IsActive = r.IsActive;
+            HasPlaylist = r.SpotifyPlaylistId != string.Empty;
             Market = r.Market;
             CreatedAt = r.CreatedAt;
             LastUpdate = r.LastUpdate;
