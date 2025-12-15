@@ -125,12 +125,13 @@ namespace TuneMates_Backend.Controller
         /// <summary>
         /// Edit an existing room. Only the owner of the room can edit it.
         /// </summary>
+        /// <param name="cfg">The configuration.</param>
         /// <param name="http">The HTTP context, used to get the user ID from JWT claims.</param>
         /// <param name="db">The database context.</param>
         /// <param name="roomDto">The room data transfer object containing the updated details of the room.</param>
         /// <param name="roomId">The ID of the room to be edited.</param>
         /// <returns>A <see cref="RoomResponse"/> if the room is updated successfully, otherwise an appropriate error response.</returns>
-        public static async Task<IResult> EditRoom(HttpContext http, AppDbContext db, [FromBody] RoomDTO roomDto, int roomId)
+        public static async Task<IResult> EditRoom(IConfiguration cfg, HttpContext http, AppDbContext db, [FromBody] RoomDTO roomDto, int roomId)
         {
             var id = HelpMethods.GetUserIdFromJwtClaims(http);
             if (id == null || !await db.Users.AnyAsync(u => u.Id == id))
@@ -146,7 +147,10 @@ namespace TuneMates_Backend.Controller
 
             // Update only the fields that are provided in the DTO
             if (!string.IsNullOrWhiteSpace(roomDto.SpotifyPlaylistId))
-                room.SpotifyPlaylistId = roomDto.SpotifyPlaylistId;
+            {
+                EncryptionService encryptionService = new(cfg);
+                room.SpotifyPlaylistId = encryptionService.Encrypt(roomDto.SpotifyPlaylistId);
+            }
 
             // If a new Name is provided, update it and regenerate the Slug if necessary
             // (Check if: not null/empty, different from current, within length limit)
