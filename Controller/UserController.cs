@@ -255,6 +255,11 @@ namespace TuneMates_Backend.Controller
 
             AccessToken accessToken = await spotifyApi.GetUserAccessTokenFromCode(code);
 
+            // Check if Spotify user ID is already linked to another account
+            var existingUserWithSpotifyId = await db.Users.Where(u => u.SpotifyId == accessToken.SpotifyUserId && u.Id != user.Id).FirstOrDefaultAsync();
+            if (existingUserWithSpotifyId != null)
+                return TypedResults.Conflict("This Spotify account is already linked to another user.");
+
             EncryptionService encryptionService = new(cfg);
 
             user.Token = encryptionService.Encrypt(accessToken.Token);
