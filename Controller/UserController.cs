@@ -260,7 +260,7 @@ namespace TuneMates_Backend.Controller
             user.Token = encryptionService.Encrypt(accessToken.Token);
             user.RefreshToken = encryptionService.Encrypt(accessToken.RefreshToken);
             user.TokenExpiresAt = DateTime.UtcNow.AddSeconds(accessToken.ExpiresIn);
-            user.SpotifyId = encryptionService.Encrypt(accessToken.SpotifyUserId);
+            user.SpotifyId = accessToken.SpotifyUserId;
             
             await db.SaveChangesAsync();
 
