@@ -78,13 +78,11 @@ namespace TuneMates_Backend.Controller
             if (owner is null)
                 return TypedResults.NotFound("Room owner not found");
 
-            EncryptionService encryptionService = new(cfg);
-
             SpotifyApi spotifyApi = new(db, cfg, cache);
             string ownerToken = await spotifyApi.GetUserAccessTokenAsync(owner, ct);
             var snapshotId = await spotifyApi.AddSongToPlaylistAsync(
                 ownerToken,
-                encryptionService.Decrypt(room.SpotifyPlaylistId),
+                room.SpotifyPlaylistId,
                 song.SongId,
                 ct
              );
@@ -122,12 +120,10 @@ namespace TuneMates_Backend.Controller
             if (user is null)
                 return TypedResults.NotFound("User not found");
 
-            EncryptionService encryptionService = new(cfg);
             SpotifyApi spotifyApi = new(db, cfg, cache);
 
             string userToken = await spotifyApi.GetUserAccessTokenAsync(user);
-            string spotifyUserId = encryptionService.Decrypt(user.SpotifyId);
-            SpotifyDTO.PlaylistResponse playlists = await spotifyApi.GetUserPlaylists(userToken, spotifyUserId);
+            SpotifyDTO.PlaylistResponse playlists = await spotifyApi.GetUserPlaylists(userToken, user.SpotifyId);
 
             return TypedResults.Ok(playlists);
         }
