@@ -286,7 +286,6 @@ namespace TuneMates_Backend.Controller
                 return TypedResults.Unauthorized();
 
             var user = await db.Users.FindAsync(id);
-
             if (user == null)
                 return TypedResults.NotFound("User not found.");
 
@@ -294,7 +293,7 @@ namespace TuneMates_Backend.Controller
                 return TypedResults.BadRequest("Password is required to delete the account.");
 
             if (!Argon2.Verify(user.PasswordHash, userDto.Password))
-                return TypedResults.Unauthorized();
+                return TypedResults.BadRequest("Invalid password.");
 
             db.Users.Remove(user);
             await db.SaveChangesAsync();
