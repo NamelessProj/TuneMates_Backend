@@ -9,7 +9,7 @@ where they can share and enjoy music together in real-time. The backend is built
 This repository contains the backend code for the TuneMates application, which handles user authentication, room management, song proposals, and integration with the Spotify API.
 You can find the frontend part [here](https://github.com/NamelessProj/TuneMates_Frontend).
 
-The frontend is hosted on [Vercel](https://tune-mates-frontend.vercel.app). For the moment the backend still need to be self-hosted (localhost).
+The frontend is hosted on [Vercel](https://tunemates.vercel.app/). For the moment the backend still need to be self-hosted (localhost).
 
 ## Features
 - User authentication and authorization
