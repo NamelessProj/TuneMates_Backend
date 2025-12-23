@@ -68,6 +68,29 @@ namespace TuneMates_Backend.Controller
         }
 
         /// <summary>
+        /// Get a room by its room code. This endpoint is public and does not require authentication.
+        /// </summary>
+        /// <param name="db">The database context.</param>
+        /// <param name="code">The room code to retrieve the room.</param>
+        /// <returns>A <see cref="RoomResponse"/> if found and valid, otherwise an appropriate error response.</returns>
+        public static async Task<IResult> GetRoomByCode(AppDbContext db, string code)
+        {
+            var roomCode = await db.RoomCodes.Where(rc => rc.Code == code).FirstOrDefaultAsync();
+            if (roomCode == null)
+                return TypedResults.NotFound("Room code not found.");
+
+            // Check if the room code has expired
+            if (roomCode.ExpiresAt < DateTime.UtcNow)
+                return TypedResults.BadRequest("Room code has expired.");
+
+            var room = await db.Rooms.Where(r => r.Id == roomCode.RoomId && r.IsActive).FirstOrDefaultAsync();
+            if (room == null)
+                return TypedResults.NotFound("Room not found.");
+
+            return TypedResults.Ok(new { room = new RoomResponse(room) });
+        }
+
+        /// <summary>
         /// Create a new room for the authenticated user.
         /// </summary>
         /// <param name="http">The HTTP context, used to get the user ID from JWT claims.</param>
