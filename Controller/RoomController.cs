@@ -132,7 +132,7 @@ namespace TuneMates_Backend.Controller
             }
 
             string code = await GenerateUniqueCodeAsync();
-            DateTime expiresAt = DateTime.UtcNow.AddHours(Math.Clamp(rcDTO.ExpiresInHours, 1, Constants.MaxHoursForACodeBeforeExpiry));
+            DateTime expiresAt = DateTime.UtcNow.AddHours(Math.Clamp(rcDTO.ExpiresInHours, Constants.MinHoursForACodeBeforeExpiry, Constants.MaxHoursForACodeBeforeExpiry));
 
             RoomCode rc = new()
             {
