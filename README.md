@@ -243,16 +243,17 @@ You can find the queries to create the necessary tables in the [`database.sql`](
 |  ✔️  | PUT    | `/api/users/me/password`                                  | Update the current user's password.                                                 | [UserDTO](/DataBase/UserDTO.cs)  | [User](/DataBase/UserResponse.cs)         |
 
 ### Rooms
-| Auth | Method | Endpoint                        | Description                                                          | Body                            | Response                                   |
-|:----:|--------|---------------------------------|----------------------------------------------------------------------|---------------------------------|--------------------------------------------|
-|  ✔️  | POST   | `/api/rooms`                    | Create a new room.                                                   | None                            | [Room](/DataBase/RoomResponse.cs)          |
-|  ❌  | POST   | `/api/rooms/slug/{slug:string}` | Get details of a specific room by its slug. _Requires room password_ | [RoomDTO](/DataBase/RoomDTO.cs) | [Room](/DataBase/RoomResponse.cs)          |
-|  ✔️  | GET    | `/api/rooms`                    | Get a list of all rooms from the authenticated user.                 | None                            | List of [Room](/DataBase/RoomResponse.cs)  |
-|  ✔️  | GET    | `/api/rooms/{id:int}`           | Get a list of all rooms from the authenticated user.                 | None                            | List of [Room](/DataBase/RoomResponse.cs)  |
-|  ❌  | GET    | `/api/rooms/{code:string}`      | Get details of a specific room using a code. _No password needed_    | None                            | [Room](/DataBase/RoomResponse.cs)          |
-|  ✔️  | PUT    | `/api/rooms/{id:int}`           | Update details of a specific room by its id.                         | [RoomDTO](/DataBase/RoomDTO.cs) | [Room](/DataBase/RoomResponse.cs)          |
-|  ✔️  | PUT    | `/api/rooms/password/{id:int}`  | Update details of a specific room's password by its id.              | [RoomDTO](/DataBase/RoomDTO.cs) | [Room](/DataBase/RoomResponse.cs)          |
-|  ✔️  | DELETE | `/api/rooms/{id:int}`           | Delete a room by its id.                                             | None                            | string                                     |
+| Auth | Method | Endpoint                        | Description                                                                                             | Body                                    | Response                                       |
+|:----:|--------|---------------------------------|---------------------------------------------------------------------------------------------------------|-----------------------------------------|------------------------------------------------|
+|  ✔️  | POST   | `/api/rooms`                    | Create a new room.                                                                                      | None                                    | [Room](/DataBase/RoomResponse.cs)              |
+|  ✔️  | POST   | `/api/rooms/code/{roomId:int}`  | Create and get the code to access the room easily. No password required if you have the code of a room. | [RoomCodeDTO](/DataBase/RoomCodeDTO.cs) | An object with the code and the expiracy date. |
+|  ❌  | POST   | `/api/rooms/slug/{slug:string}` | Get details of a specific room by its slug. _Requires room password_                                    | [RoomDTO](/DataBase/RoomDTO.cs)         | [Room](/DataBase/RoomResponse.cs)              |
+|  ✔️  | GET    | `/api/rooms`                    | Get a list of all rooms from the authenticated user.                                                    | None                                    | List of [Room](/DataBase/RoomResponse.cs)      |
+|  ✔️  | GET    | `/api/rooms/{id:int}`           | Get a list of all rooms from the authenticated user.                                                    | None                                    | List of [Room](/DataBase/RoomResponse.cs)      |
+|  ❌  | GET    | `/api/rooms/{code:string}`      | Get details of a specific room using a code. _No password needed_                                       | None                                    | [Room](/DataBase/RoomResponse.cs)              |
+|  ✔️  | PUT    | `/api/rooms/{id:int}`           | Update details of a specific room by its id.                                                            | [RoomDTO](/DataBase/RoomDTO.cs)         | [Room](/DataBase/RoomResponse.cs)              |
+|  ✔️  | PUT    | `/api/rooms/password/{id:int}`  | Update details of a specific room's password by its id.                                                 | [RoomDTO](/DataBase/RoomDTO.cs)         | [Room](/DataBase/RoomResponse.cs)              |
+|  ✔️  | DELETE | `/api/rooms/{id:int}`           | Delete a room by its id.                                                                                | None                                    | string                                         |
 
 ### Songs
 | Auth | Method | Endpoint                                           | Description                                                                                                                          | Body                       | Response                          |
