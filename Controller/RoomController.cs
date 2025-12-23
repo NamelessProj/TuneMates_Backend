@@ -91,6 +91,64 @@ namespace TuneMates_Backend.Controller
         }
 
         /// <summary>
+        /// Generate a room code for a specific room. Only the owner of the room can generate a code.
+        /// </summary>
+        /// <param name="http">The HTTP context, used to get the user ID from JWT claims.</param>
+        /// <param name="db">The database context.</param>
+        /// <param name="roomId">The ID of the room for which to generate the code.</param>
+        /// <param name="rcDTO">The room code data transfer object containing the password and expiration details.</param>
+        /// <returns>A room code and its expiration time if successful, otherwise an appropriate error response.</returns>
+        /// <exception cref="Exception">Thrown if a unique code cannot be generated after multiple attempts.</exception>
+        public static async Task<IResult> GetCodeForARoom(HttpContext http, AppDbContext db, int roomId, [FromBody] RoomCodeDTO rcDTO)
+        {
+            var userId = HelpMethods.GetUserIdFromJwtClaims(http);
+            if (userId == null || !await db.Users.AnyAsync(u => u.Id == userId))
+                return TypedResults.Unauthorized();
+
+            var room = await db.Rooms.FindAsync(roomId);
+
+            if (room == null ||
+                room.UserId != userId ||
+                string.IsNullOrWhiteSpace(rcDTO.Password) ||
+                !Argon2.Verify(room.PasswordHash, rcDTO.Password))
+                return TypedResults.Unauthorized();
+
+            /// <summary>
+            /// Generates a unique room code that does not already exist in the database.
+            /// </summary>
+            /// <exception cref="Exception">Thrown if a unique code cannot be generated after multiple attempts.</exception>
+            async Task<string> GenerateUniqueCodeAsync()
+            {
+                string code;
+                int attempts = 0;
+                do
+                {
+                    code = HelpMethods.GenerateRandomString(12);
+                    attempts++;
+                    if (attempts > 10)
+                        throw new Exception("Could not generate a unique room code after multiple attempts.");
+                } while (await db.RoomCodes.AnyAsync(rc => rc.Code == code));
+                return code;
+            }
+
+            string code = await GenerateUniqueCodeAsync();
+            DateTime expiresAt = DateTime.UtcNow.AddHours(Math.Clamp(rcDTO.ExpiresInHours, 1, Constants.MaxHoursForACodeBeforeExpiry));
+
+            RoomCode rc = new()
+            {
+                Code = code,
+                RoomId = roomId,
+                CreatedAt = DateTime.UtcNow,
+                ExpiresAt = expiresAt
+            };
+
+            db.RoomCodes.Add(rc);
+            await db.SaveChangesAsync();
+
+            return TypedResults.Ok(new { code = rc.Code, expiresAt = rc.ExpiresAt });
+        }
+
+        /// <summary>
         /// Create a new room for the authenticated user.
         /// </summary>
         /// <param name="http">The HTTP context, used to get the user ID from JWT claims.</param>
