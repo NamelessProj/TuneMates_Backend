@@ -64,3 +64,13 @@ create table public."Songs" (
   constraint Songs_pkey primary key ("Id"),
   constraint Songs_RoomId_fkey foreign KEY ("RoomId") references "Rooms" ("Id") on delete CASCADE
 ) TABLESPACE pg_default;
+
+-- RoomCodes Table
+create table public."RoomCodes" (
+  "Code" text not null default ''::text,
+  "RoomId" bigint not null,
+  "CreatedAt" timestamp with time zone not null default now(),
+  "ExpiresAt" timestamp with time zone not null default now(),
+  constraint RoomCodes_pkey primary key ("Code"),
+  constraint RoomCodes_RoomId_fkey foreign KEY ("RoomId") references "Rooms" ("Id") on delete CASCADE
+) TABLESPACE pg_default;
