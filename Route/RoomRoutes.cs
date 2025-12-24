@@ -16,7 +16,7 @@ namespace TuneMates_Backend.Route
 
             roomGroup.MapGet("/", RoomController.GetAllRoomsFromUser).RequireRateLimiting(RateLimitPolicies.SearchTight).RequireAuthorization();
             roomGroup.MapGet("/{id:int}", RoomController.GetRoomById).RequireRateLimiting(RateLimitPolicies.SearchTight).RequireAuthorization();
-            roomGroup.MapGet("/{code}", RoomController.GetRoomByCode).RequireRateLimiting(RateLimitPolicies.SearchTight);
+            roomGroup.MapGet("/code/{code}", RoomController.GetRoomByCode).RequireRateLimiting(RateLimitPolicies.SearchTight);
             roomGroup.MapGet("/codes/{roomId:int}", RoomController.GetAllCodeOfARoom).RequireRateLimiting(RateLimitPolicies.SearchTight).RequireAuthorization();
             roomGroup.MapPost("/", RoomController.CreateRoom).RequireAuthorization();
             roomGroup.MapPost("/code/{roomId:int}", RoomController.GetCodeForARoom).RequireRateLimiting(RateLimitPolicies.Mutations).RequireAuthorization();
@@ -24,6 +24,7 @@ namespace TuneMates_Backend.Route
             roomGroup.MapPut("/{roomId:int}", RoomController.EditRoom).RequireRateLimiting(RateLimitPolicies.Mutations).RequireAuthorization();
             roomGroup.MapPut("/password/{id:int}", RoomController.EditRoomPassword).RequireRateLimiting(RateLimitPolicies.Mutations).RequireAuthorization();
             roomGroup.MapDelete("/{id:int}", RoomController.DeleteRoom).RequireAuthorization();
+            roomGroup.MapDelete("/code/{code}", RoomController.DeleteCode).RequireAuthorization();
 
             return roomGroup;
         }
