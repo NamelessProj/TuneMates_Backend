@@ -149,6 +149,31 @@ namespace TuneMates_Backend.Controller
         }
 
         /// <summary>
+        /// Get all room codes for a specific room. Only the owner of the room can access the codes.
+        /// </summary>
+        /// <param name="http">The HTTP context, used to get the user ID from JWT claims.</param>
+        /// <param name="db">The database context.</param>
+        /// <param name="roomId">The ID of the room for which to retrieve the codes.</param>
+        /// <returns>A list of room codes if successful, otherwise an appropriate error response.</returns>
+        public static async Task<IResult> GetAllCodeOfARoom(HttpContext http, AppDbContext db, int roomId)
+        {
+            var userId = HelpMethods.GetUserIdFromJwtClaims(http);
+            if (userId == null)
+                return TypedResults.Unauthorized();
+
+            var room = await db.Rooms.FindAsync(roomId);
+            if (room == null || room.UserId != userId)
+                return TypedResults.Unauthorized();
+
+            // Retrieve all room codes for the specified room
+            var roomCodes = await db.RoomCodes
+                .Where(rc => rc.RoomId == roomId)
+                .ToListAsync();
+
+            return TypedResults.Ok(new { codes = roomCodes });
+        }
+
+        /// <summary>
         /// Create a new room for the authenticated user.
         /// </summary>
         /// <param name="http">The HTTP context, used to get the user ID from JWT claims.</param>
