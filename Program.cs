@@ -19,6 +19,7 @@ builder.Services.AddHostedService<TokenCleanupService>();
 builder.Services.AddHostedService<ProposalCleanupService>();
 builder.Services.AddHostedService<RoomCleanupService>();
 builder.Services.AddHostedService<SpotifyStateCleanupService>();
+builder.Services.AddHostedService<RoomCodeCleanupService>();
 
 // Add Memory Cache
 builder.Services.AddMemoryCache();
