@@ -256,6 +256,7 @@ You can find the queries to create the necessary tables in the [`database.sql`](
 |  ✔️  | PUT    | `/api/rooms/{id:int}`           | Update details of a specific room by its id.                                                            | [RoomDTO](/DataBase/RoomDTO.cs)         | [Room](/DataBase/RoomResponse.cs)              |
 |  ✔️  | PUT    | `/api/rooms/password/{id:int}`  | Update details of a specific room's password by its id.                                                 | [RoomDTO](/DataBase/RoomDTO.cs)         | [Room](/DataBase/RoomResponse.cs)              |
 |  ✔️  | DELETE | `/api/rooms/{id:int}`           | Delete a room by its id.                                                                                | None                                    | string                                         |
+|  ✔️  | DELETE | `/api/rooms/code/{code:string}` | Delete a code.                                                                                          | None                                    | string                                         |
 
 ### Songs
 | Auth | Method | Endpoint                                           | Description                                                                                                                          | Body                       | Response                          |
