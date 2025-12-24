@@ -356,5 +356,29 @@ namespace TuneMates_Backend.Controller
             await db.SaveChangesAsync();
             return TypedResults.Ok("Room deleted successfully.");
         }
+
+        /// <summary>
+        /// Delete a room code by its code string. Only the owner of the room can delete the code.
+        /// </summary>
+        /// <param name="http">The HTTP context, used to get the user ID from JWT claims.</param>
+        /// <param name="db">The database context.</param>
+        /// <param name="code">The room code string to be deleted.</param>
+        /// <returns>A success message if the room code is deleted successfully, otherwise an appropriate error response.</returns>
+        public static async Task<IResult> DeleteCode(HttpContext http, AppDbContext db, string code)
+        {
+            var roomCode = await db.RoomCodes.Where(rc => rc.Code == code).FirstOrDefaultAsync();
+            if (roomCode == null)
+                return TypedResults.NotFound("Room code not found.");
+
+            var room = await db.Rooms.FindAsync(roomCode.RoomId);
+
+            var userId = HelpMethods.GetUserIdFromJwtClaims(http);
+            if (userId == null || room == null || room.UserId != userId)
+                return TypedResults.Unauthorized();
+
+            db.RoomCodes.Remove(roomCode);
+            await db.SaveChangesAsync();
+            return TypedResults.Ok("Room code deleted successfully.");
+        }
     }
 }
