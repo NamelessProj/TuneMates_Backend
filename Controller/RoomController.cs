@@ -113,6 +113,10 @@ namespace TuneMates_Backend.Controller
                 !Argon2.Verify(room.PasswordHash, rcDTO.Password))
                 return TypedResults.Unauthorized();
 
+            // Check if the room already has the maximum number of active codes
+            if (await db.RoomCodes.CountAsync(rc => rc.RoomId == roomId && rc.ExpiresAt > DateTime.UtcNow) >= Constants.MaxCodesPerRoom)
+                return TypedResults.BadRequest($"This room has reached the maximum number of active codes allowed ({Constants.MaxCodesPerRoom}). Please wait for an existing code to expire before generating a new one.");
+
             /// <summary>
             /// Generates a unique room code that does not already exist in the database.
             /// </summary>
