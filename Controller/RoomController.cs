@@ -102,7 +102,7 @@ namespace TuneMates_Backend.Controller
         public static async Task<IResult> GetCodeForARoom(HttpContext http, AppDbContext db, int roomId, [FromBody] RoomCodeDTO rcDTO)
         {
             var userId = HelpMethods.GetUserIdFromJwtClaims(http);
-            if (userId == null || !await db.Users.AnyAsync(u => u.Id == userId))
+            if (userId == null)
                 return TypedResults.Unauthorized();
 
             var room = await db.Rooms.FindAsync(roomId);
