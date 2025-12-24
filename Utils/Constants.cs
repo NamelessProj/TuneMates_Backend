@@ -33,5 +33,6 @@
         public const int JwtTokenValidityHours = 3;
         public const int MinHoursForACodeBeforeExpiry = 1;
         public const int MaxHoursForACodeBeforeExpiry = 48;
+        public const int MaxCodesPerRoom = 1;
     }
 }
