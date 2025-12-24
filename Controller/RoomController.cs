@@ -182,7 +182,6 @@ namespace TuneMates_Backend.Controller
         /// <returns>A <see cref="RoomResponse"/> if the room is created successfully, otherwise an appropriate error response.</returns>
         public static async Task<IResult> CreateRoom(HttpContext http, AppDbContext db, [FromBody] RoomDTO roomDto)
         {
-
             var userId = HelpMethods.GetUserIdFromJwtClaims(http);
             if (userId == null || !await db.Users.AnyAsync(u => u.Id == userId))
                 return TypedResults.Unauthorized();
