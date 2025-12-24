@@ -162,7 +162,8 @@ You can find a sample configuration in [`appsettings.sample.json`](/appsettings.
     "TokenIntervalHours": 3,
     "ProposalIntervalHours": 3,
     "RoomIntervalHours": 24,
-    "SpotifyStateIntervalHours": 1
+    "SpotifyStateIntervalHours": 1,
+    "RoomCodeIntervalHours": 24
   },
   "Cors": {
     "AllowedOrigins": [
