@@ -71,11 +71,14 @@ namespace TuneMates_Backend.Controller
         /// Get a room by its room code. This endpoint is public and does not require authentication.
         /// </summary>
         /// <param name="db">The database context.</param>
-        /// <param name="code">The room code to retrieve the room.</param>
+        /// <param name="rcDTO">The room code data transfer object containing the room code.</param>
         /// <returns>A <see cref="RoomResponse"/> if found and valid, otherwise an appropriate error response.</returns>
-        public static async Task<IResult> GetRoomByCode(AppDbContext db, string code)
+        public static async Task<IResult> GetRoomByCode(AppDbContext db, [FromBody] RoomCode rcDTO)
         {
-            var roomCode = await db.RoomCodes.Where(rc => rc.Code == code).FirstOrDefaultAsync();
+            if (string.IsNullOrWhiteSpace(rcDTO.Code))
+                return TypedResults.BadRequest("Room code is required.");
+
+            var roomCode = await db.RoomCodes.Where(rc => rc.Code == rcDTO.Code).FirstOrDefaultAsync();
             if (roomCode == null)
                 return TypedResults.NotFound("Room code not found.");
 
