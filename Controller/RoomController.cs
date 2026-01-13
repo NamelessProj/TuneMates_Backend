@@ -365,11 +365,14 @@ namespace TuneMates_Backend.Controller
         /// </summary>
         /// <param name="http">The HTTP context, used to get the user ID from JWT claims.</param>
         /// <param name="db">The database context.</param>
-        /// <param name="code">The room code string to be deleted.</param>
+        /// <param name="code">The room code to be deleted.</param>
         /// <returns>A success message if the room code is deleted successfully, otherwise an appropriate error response.</returns>
-        public static async Task<IResult> DeleteCode(HttpContext http, AppDbContext db, string code)
+        public static async Task<IResult> DeleteCode(HttpContext http, AppDbContext db, [FromBody] RoomCode code)
         {
-            var roomCode = await db.RoomCodes.Where(rc => rc.Code == code).FirstOrDefaultAsync();
+            if (string.IsNullOrWhiteSpace(code.Code))
+                return TypedResults.BadRequest("Room code is required.");
+
+            var roomCode = await db.RoomCodes.Where(rc => rc.Code == code.Code).FirstOrDefaultAsync();
             if (roomCode == null)
                 return TypedResults.NotFound("Room code not found.");
 
