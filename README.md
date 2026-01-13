@@ -233,6 +233,11 @@ You can find the queries to create the necessary tables in the [`database.sql`](
 > ❌: Endpoints that do not require authentication.
 
 ### Users
+
+<details>
+
+<summary>Routes</summary>
+
 | Auth | Method | Endpoint                                                  | Description                                                                         | Body                             | Response                                  |
 |:----:|--------|-----------------------------------------------------------|-------------------------------------------------------------------------------------|----------------------------------|-------------------------------------------|
 |  ❌  | POST   | `/api/users/register`                                     | Register a new user.                                                                | None                            | [User](/DataBase/UserResponse.cs) & token |
@@ -243,7 +248,14 @@ You can find the queries to create the necessary tables in the [`database.sql`](
 |  ✔️  | PUT    | `/api/users/me`                                           | Update the current user's information.                                              | [UserDTO](/DataBase/UserDTO.cs)  | [User](/DataBase/UserResponse.cs)         |
 |  ✔️  | PUT    | `/api/users/me/password`                                  | Update the current user's password.                                                 | [UserDTO](/DataBase/UserDTO.cs)  | [User](/DataBase/UserResponse.cs)         |
 
+</details>
+
 ### Rooms
+
+<details>
+
+<summary>Routes</summary>
+
 | Auth | Method | Endpoint                        | Description                                                                                             | Body                                     | Response                                       |
 |:----:|--------|---------------------------------|---------------------------------------------------------------------------------------------------------|------------------------------------------|------------------------------------------------|
 |  ✔️  | POST   | `/api/rooms`                    | Create a new room.                                                                                      | None                                     | [Room](/DataBase/RoomResponse.cs)              |
@@ -258,14 +270,28 @@ You can find the queries to create the necessary tables in the [`database.sql`](
 |  ✔️  | PUT    | `/api/rooms/password/{id:int}`  | Update details of a specific room's password by its id.                                                 | [RoomDTO](/DataBase/RoomDTO.cs)          | [Room](/DataBase/RoomResponse.cs)              |
 |  ✔️  | DELETE | `/api/rooms/{id:int}`           | Delete a room by its id.                                                                                | None                                     | string                                         |
 
+</details>
+
 ### Songs
+
+<details>
+
+<summary>Routes</summary>
+
 | Auth | Method | Endpoint                                           | Description                                                                                                                          | Body                       | Response                          |
 |:----:|--------|----------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------|----------------------------|-----------------------------------|
 |  ❌  | POST   | `/api/songs/room/{roomId:int}/{songId?:string}`    | Add a new song to a room using a Spotify song ID or the Track URI or URL (in body). The song will be in "Pending" status by default. | [Song](/DataBase/Song.cs)? | [Song](/DataBase/Song.cs)         |
 |  ✔️  | GET    | `/api/songs/room/{roomId:int}`                     | Get all songs in a specific room.                                                                                                    | None                       | List of [Song](/DataBase/Song.cs) |
 |  ✔️  | GET    | `/api/songs/room/{roomId:int}/status/{status:int}` | Get songs in a specific room by their status ([SongStatus](/DataBase/SongStatus.cs) Pending: `0`, Approved: `1`, Refused: `2`).      | None                       | List of [Song](/DataBase/Song.cs) |
 
+</details>
+
 ### Spotify
+
+<details>
+
+<summary>Routes</summary>
+
 | Auth | Method | Endpoint                                                      | Description                                                                                                                                                         | Body  | Response                                        |
 |:----:|--------|---------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------|-------------------------------------------------|
 |  ✔️  | POST   | `/api/spotify/playlist/{roomId:int}/{songId:int}`             | Add a new song directly to the room's Spotify playlist using the songId from the database. The song will be in `Approved` status after being added to the playlist. | None  | [Song](/DataBase/Song.cs) & snapshot id         |
@@ -273,3 +299,5 @@ You can find the queries to create the necessary tables in the [`database.sql`](
 |  ❌  | GET    | `/api/spotify/oathlink`                                       | Get the Spotify OAuth link to authorize the application.                                                                                                            | None  | string                                          |
 |  ✔️  | GET    | `/api/spotify/playlist/me`                                    | Get the authenticated user, all their playlists from Spotify.                                                                                                       | None  | [Playlist Response](/DataBase/SpotifyDTO.cs)    |
 |  ❌  | GET    | `/api/spotify/search/{q:string}/{offset:int}/{market:string}` | Search for songs on Spotify by a query string, with pagination and market specification.                                                                            | None  | [PageResult Response](/DataBase/SpotifyDTO.cs)  |
+
+</details>
