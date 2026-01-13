@@ -47,6 +47,10 @@ It's necessary to run the project locally without Docker.
 ### Running with Docker
 The project includes a Dockerfile for containerized deployment with .NET 9.0, ensuring consistent runtime environments across different hosts.
 
+<details>
+
+<summary>Everything you need to know</summary>
+
 #### Configuration Options
 Docker supports three ways to configure the application:
 
@@ -130,6 +134,8 @@ A `docker-compose.yml` file is included in the repository for convenient deploym
    ```
 
 See [`docker-compose.env.example`](/docker-compose.env.example) for all available environment variables.
+
+</details>
 
 ### Appsettings
 Make sure to configure _(maybe even create)_ your `appsettings.json` file with the necessary settings, such as database connection strings and JWT secret keys.
