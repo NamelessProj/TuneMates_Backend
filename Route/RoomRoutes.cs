@@ -21,10 +21,10 @@ namespace TuneMates_Backend.Route
             roomGroup.MapPost("/code", RoomController.GetRoomByCode).RequireRateLimiting(RateLimitPolicies.SearchTight);
             roomGroup.MapPost("/code/{roomId:int}", RoomController.GetCodeForARoom).RequireRateLimiting(RateLimitPolicies.Mutations).RequireAuthorization();
             roomGroup.MapPost("/slug/{slug}", RoomController.GetRoomBySlug).RequireRateLimiting(RateLimitPolicies.SearchTight);
+            roomGroup.MapPost("/delete/code", RoomController.DeleteCode).RequireRateLimiting(RateLimitPolicies.Mutations).RequireAuthorization();
             roomGroup.MapPut("/{roomId:int}", RoomController.EditRoom).RequireRateLimiting(RateLimitPolicies.Mutations).RequireAuthorization();
             roomGroup.MapPut("/password/{id:int}", RoomController.EditRoomPassword).RequireRateLimiting(RateLimitPolicies.Mutations).RequireAuthorization();
             roomGroup.MapDelete("/{id:int}", RoomController.DeleteRoom).RequireAuthorization();
-            roomGroup.MapDelete("/code/{code}", RoomController.DeleteCode).RequireAuthorization();
 
             return roomGroup;
         }
